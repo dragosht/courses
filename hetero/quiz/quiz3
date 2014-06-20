@@ -1,0 +1,54 @@
+
+Week #3 Quiz
+In accordance with the Coursera Honor Code, I (Dragoș Tărcatu) certify that the answers here are my own work. Thank you!
+
+Question 1
+For a tiled 1D convolution, if the output tile width is 250 elements and mask width is 7 elements, what is the input tile width?
+254 <--- FAIL!
+250
+256 <---
+7
+
+Question 2
+In Question 1, if we assume that the input tile does not involve any ghost element, what would be the ratio of global memory reduction for generating the output tile by loading the input tile into the shared memory?
+250*7/256 <---
+7
+256*7/250
+250
+
+Question 3
+For a tiled 2D convolution, if each output tile is a square with 12 elements on each side and the mask is a square with 5 elements on each side, how many elements are in each input tile?
+(12+2) * (12+2) = 194 <--- FAIL!
+12*12 = 144
+5*5 = 25
+(12+4) * (12+4) = 256 <---
+
+Question 4
+For a tiled 2D convolution, assume that we load an entire input tile, including the halo elements into the shared memory when calculating an output tile. Further assume that the tiles are internal and thus do not involve any ghost elements. If each output tile is a square with 12 elements on each side and the mask is a square with 5 elements on each side, which of the following best approximate the average number of times each input element will be accessed from the shared memory during the calculation of an output tile?
+37 <--- FAIL!
+4.9 <--- FAIL!
+256 <--- FAIL!
+14
+
+Question 5
+For a tiled 3D convolution, assume that we load an entire input tile, including the halo elements into the shared memory when calculating an output tile. Further assume that the tiles are internal and thus do not involve any ghost elements. If the mask is a cube with 5 elements on each side and due to the limited size of the shared memory, each output tile is a cube with 8 elements on each side. What is the average number of times each input element will be accessed from the shared memory during the calculation an output tile?
+14 <--- FAIL!
+256 <--- FAIL!
+37 <---
+4.9
+
+Question 6
+In a tiled 2D convolution with 12x12 output tiles and 5x5 mask, how many warps in each thread block have control divergence?
+2 <--- FAIL!
+16 <--- FAIL!
+4 <--- FAIL!
+6
+
+Question 7
+For a tiled 3D convolution, assume that we load an entire input tile, including the halo elements into the shared memory when calculating an output tile. Further assume that the tiles are internal and thus do not involve any ghost elements. If the mask is a cube with 5 elements on each side what is the trend of the average number of times each input element will be accessed from the shared memory during the calculation an output tile as a function of the input tile width?
+Decreases with the width of tile size with a limit of 25 <--- FAIL!
+Increases with the width of the tile size with a limit of 125
+Increases with the width of the tile size with a limit of 25 <--- FAIL!
+Decreases with the width of the tile size with a limit of 125 <--- FAIL!
+    
+

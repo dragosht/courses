@@ -1,0 +1,28 @@
+
+Question 1
+Which of the following is a correct CUDA API call that allocates 1024 bytes of pinned memory for h_A?
+cudaHostAlloc((void **) h_A, 1024, cudaHostAllocDefault);
+cudaHostAlloc((void **) &h_A, 1024, cudaHostAllocDefault); <---
+cudaPinnedAlloc((void **) h_A, 1024, cudaPinnedAllocDefault);
+cudaPinnedAlloc((void **) &h_A, 1024, cudaPinnedAllocDefault);
+
+Question 2
+Which of the following statements is true?
+Data transfer between CUDA device and host is done by DMA hardware using virtual addresses. <---
+Pinned memory is allocated with cudaMalloc() function.
+The OS always guarantees that any memory being used by DMA hardware is not swapped out.
+If a pageable data is to be transferred by cudaMemcpy(), it needs to be first copied to a pinned memory buffer before transferred. <---
+
+Question 3
+Which of the following CUDA API call can be used to perform an asynchronous data transfer?
+cudaAsyncMemcpy();
+cudaMemcpy();
+cudaMemcpyAsync(); <---
+cudaDeviceSynchronize();
+
+Question 4
+What is the CUDA API call that makes sure that all previous kernel executions and memory copies in a device have been completed?
+__barrier()
+cudaStreamSynchronize()
+cudaDeviceSynchronize() <---
+__syncthreads()

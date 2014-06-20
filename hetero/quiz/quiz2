@@ -1,0 +1,107 @@
+
+Warning: You have 30 minutes to complete this quiz.
+
+Week #2 Quiz
+In accordance with the Coursera Honor Code, I (Dragoș Tărcatu) certify that the answers here are my own work.
+Question 1
+We are to process a 600X800 (800 pixels in the x or horizontal direction, 600 pixels in the y or vertical direction) picture with the PictureKernel(). That is m’s value is 600 and n’s value is 800.
+
+__global__ void PictureKernel(float* d_Pin, float* d_Pout, int n, int m) {
+
+  // Calculate the row # of the d_Pin and d_Pout element to process
+  int Row = blockIdx.y*blockDim.y + threadIdx.y;
+
+  // Calculate the column # of the d_Pin and d_Pout element to process
+  int Col = blockIdx.x*blockDim.x + threadIdx.x;
+
+  // each thread computes one element of d_Pout if in range
+  if ((Row < m) && (Col < n)) {
+    d_Pout[Row*n+Col] = 2*d_Pin[Row*n+Col];
+  }
+}
+
+Assume that we decided to use a grid of 16X16 blocks. That is, each block is organized as a 2D 16X16 array of threads. How many warps will be generated during the execution of the kernel?
+38*8*50 <---
+38*50
+38*50*2
+37*16
+
+Question 2
+In Question 1, how many warps will have control divergence?
+50 <--- FAIL!
+38*16 <--- FAIL!
+37 + 50*8 <--- FAIL!
+0 <---
+
+Question 3
+In Question 1, if we are to process an 800x600 picture (600 pixels in the x or horizontal direction and 800 pixels in the y or vertical direction) picture, how many warps will have control divergence?
+38*16
+0
+37+50*8
+50*8 <---
+
+Question 4
+In Question 1, if are to process a 799x600 picture (600 pixels in the x direction and 799 pixels in the y direction), how many warps will have control divergence?
+50*8
+0
+37+50*8 <---
+(37+50)*8 <--- FAIL!
+
+Question 5
+Assume the following simple matrix multiplication kernel
+
+__global__ void MatrixMulKernel(float* M, float* N, float* P, int Width)
+{
+  int Row = blockIdx.y*blockDim.y+threadIdx.y;
+  int Col = blockIdx.x*blockDim.x+threadIdx.x;
+  if ((Row < Width) && (Col < Width)) {
+    float Pvalue = 0;
+    for (int k = 0; k < Width; ++k) {Pvalue += M[Row*Width+k] * N[k*Width+Col];}
+    P[Row*Width+Col] = Pvalue;
+  }
+}
+
+If we launch the kernel with a block size of 16X16 on a 1000X1000 matrix, how many warps will have control divergence?
+
+500 <---
+1,000 <--- FAIL!
+1,008
+508
+
+Question 6
+If a CUDA device’s SM (streaming multiprocessor) can take up to 1,536 threads and up to 8 thread blocks. Which of the following block configuration would result in the most number of threads in each SM?Question text
+512 threads per block <---
+64 threads per block <--- FAIL!
+128 threads per block <--- FAIL!
+1,024 threads per block
+
+Question 7
+Assume that a kernel is launched with 1000 thread blocks each of which has 512 threads. If a variable is declared as a shared memory variable, how many versions of the variable will be created through the lifetime of the execution of the kernel?
+512 <--- FAIL!
+512,000
+1
+1,000 <---
+
+Question 8
+For our tiled matrix-matrix multiplication kernel, if we use a 32X32 tile, what is the reduction of memory bandwidth usage for input matrices A and B?
+1/64 of the original usage
+1/8 of the original usage
+1/16 of the original usage
+1/32 of the original usage <---
+
+Question 9
+For the tiled single-precision matrix multiplication kernel as shown in Lecture 2.6, assume that the tile size is 32X32 and the system has a DRAM bust size of 128 bytes. How many DRAM bursts will be delivered to the processor as a result of loading one A-matrix tile by a thread block?
+16 <--- FAIL!
+128 <--- FAIL!
+32 <---
+64
+
+Question 10
+Assume a tiled matrix multiplication that handles boundary conditions as explained in Lecture 2.8. Assume that we use 32X32 tiles to process square matrices of 1,000X1,000. Within EACH thread block, what is the maximal number of warps that will have control divergence due to handling boundary conditions for loading A tiles throughout the kernel execution?
+8
+32 <---
+24
+16
+
+
+
