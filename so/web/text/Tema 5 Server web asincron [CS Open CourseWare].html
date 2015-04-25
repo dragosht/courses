@@ -1,0 +1,766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0043)http://ocw.cs.pub.ro/courses/so/teme/tema-5 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    Tema 5 Server web asincron    [CS Open CourseWare]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2014-05-21T22:02:01+0300">
+<meta name="keywords" content="so,teme,tema-5">
+<link rel="search" type="application/opensearchdescription+xml" href="http://ocw.cs.pub.ro/courses/lib/exe/opensearch.php" title="CS Open CourseWare">
+<link rel="start" href="http://ocw.cs.pub.ro/courses/">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://ocw.cs.pub.ro/courses/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://ocw.cs.pub.ro/courses/feed.php?mode=list&ns=so:teme">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://ocw.cs.pub.ro/courses/_export/xhtml/so/teme/tema-5">
+<link rel="canonical" href="./Tema 5 Server web asincron [CS Open CourseWare]_files/Tema 5 Server web asincron [CS Open CourseWare].html">
+<link rel="stylesheet" type="text/css" href="./Tema 5 Server web asincron [CS Open CourseWare]_files/css.php">
+<script type="text/javascript">/*<![CDATA[*/var NS='so:teme';var JSINFO = {"id":"so:teme:tema-5","namespace":"so:teme","isadmin":0,"isauth":0};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 5 Server web asincron [CS Open CourseWare]_files/js.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		  
+/*!]]>*/</script><script src="./Tema 5 Server web asincron [CS Open CourseWare]_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var pageTracker = _gat._getTracker("UA-38383934-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+		  
+/*!]]>*/</script>
+<script type="text/x-mathjax-config;executed=true">/*<![CDATA[*/MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+        displayMath: [ ["$$","$$"], ["\\[","\\]"] ],
+        processEscapes: true
+    }
+});
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 5 Server web asincron [CS Open CourseWare]_files/MathJax.js"></script>
+
+  <link rel="shortcut icon" href="http://ocw.cs.pub.ro/courses/lib/tpl/arctic/images/favicon.ico">
+
+  
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXc-script {font-size: .8em}
+.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXc-bold {font-weight: bold}
+.MJXc-italic {font-style: italic}
+.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-largeop {font-size: 150%}
+.MJXc-largeop.MJXc-int {vertical-align: -.2em}
+.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXc-display {display: block; text-align: center; margin: 1em 0}
+.MJXc-math span {display: inline-block}
+.MJXc-box {display: block!important; text-align: center}
+.MJXc-box:after {content: " "}
+.MJXc-rule {display: block!important; margin-top: .1em}
+.MJXc-char {display: block!important}
+.MJXc-mo {margin: 0 .15em}
+.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXc-denom {display: inline-table!important; width: 100%}
+.MJXc-denom > * {display: table-row!important}
+.MJXc-surd {vertical-align: top}
+.MJXc-surd > * {display: block!important}
+.MJXc-script-box > *  {display: table!important; height: 50%}
+.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXc-script-box > *:last-child > * {vertical-align: bottom}
+.MJXc-script-box > * > * > * {display: block!important}
+.MJXc-mphantom {visibility: hidden}
+.MJXc-munderover {display: inline-table!important}
+.MJXc-over {display: inline-block!important; text-align: center}
+.MJXc-over > * {display: block!important}
+.MJXc-munderover > * {display: table-row!important}
+.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXc-mtr {display: table-row!important}
+.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-mlabeledtr {display: table-row!important}
+.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<div id="wrapper" class="show">
+  <div class="dokuwiki">
+
+    
+    <div class="stylehead">
+      <div class="header">
+        <div class="pagename">
+          <a href="http://ocw.cs.pub.ro/courses/so/"><img height="70" src="./Tema 5 Server web asincron [CS Open CourseWare]_files/sigla_so.png"> </a>        </div>
+        <div class="logo">
+          <a style="color: #AAA !important;" href="http://ocw.cs.pub.ro/courses/systems/"><img height="70" src="./Tema 5 Server web asincron [CS Open CourseWare]_files/systems.png" name="dokuwiki__top"></a>        </div>
+      </div>
+    
+       
+      <div class="breadcrumbs">
+              </div>
+      
+            </div>
+
+                  <div class="bar" id="bar__top">
+        <div class="bar-left">
+                  </div>
+        <div class="bar-right">
+          <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5?do=login&sectok=39572f64e4a211baa2bc1705fc977261" class="action login" rel="nofollow" title="Login">Login</a>        </div>
+    </div>
+        
+    
+    
+    
+              <div class="left_page">
+          
+<h1 class="sectionedit1" id="tema_5_server_web_asincron">Tema 5 Server web asincron</h1>
+<div class="level1">
+
+<p>
+</p><p></p><div class="noteimportant">
+Dată publicare: 8 Mai 2014
+<p></p>
+
+<p>
+Deadline hard: 21 Mai 2014, ora 23:55
+
+</p></div><p></p>
+<p></p>
+
+</div>
+
+<h2 class="sectionedit2" id="obiectivele_temei">Obiectivele temei</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Aprofundarea noțiunilor legate de lucrul cu sockeți.</div>
+</li>
+<li class="level1"><div class="li">Deprinderi de implementare și proiectare a aplicațiilor care folosesc operații asincrone și alte operații I/O avansate.</div>
+</li>
+<li class="level1"><div class="li">Aprofundarea utilizării <abbr title="Application Programming Interface">API</abbr>-ului pentru operații I/O avansate la nivelul sistemelor de operare Linux și Windows.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3" id="enunt">Enunț</h2>
+<div class="level2">
+
+<p>
+Să se implementeze un server web care să folosească operații avansate de intrare/ieșire:
+</p>
+<ul>
+<li class="level1"><div class="li">operații asincrone pe fișiere;</div>
+</li>
+<li class="level1"><div class="li">operații non-blocante pe sockeți;</div>
+</li>
+<li class="level1"><div class="li">zero-copying;</div>
+</li>
+<li class="level1"><div class="li">multiplexarea operațiilor I/O.</div>
+</li>
+</ul>
+
+<p>
+Pentru implementare se va folosi <abbr title="Application Programming Interface">API</abbr>-ul de operații I/O avansate specific sistemelor de operare Linux și Windows:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" rel="nofollow"> sendfile</a>/<a href="http://msdn.microsoft.com/en-us/library/ms740565(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms740565(VS.85).aspx" rel="nofollow"> TransmitFile</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html" rel="nofollow"> io_setup &amp; friends</a>/<a href="http://msdn.microsoft.com/en-us/library/ms684342(v=VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms684342(v=VS.85).aspx" rel="nofollow"> Overlapped I/O</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" rel="nofollow"> epoll</a>/<a href="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" rel="nofollow"> Completion Ports</a>.</div>
+</li>
+</ul>
+
+<p>
+Serverul web va utiliza <abbr title="Application Programming Interface">API</abbr>-ul modern de multiplexare pentru a aștepta conexiuni din partea clienților: <a href="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" rel="nofollow"> epoll</a> (Linux) și <a href="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" rel="nofollow"> Completion Ports</a> pe Windows. Pe conexiunile realizate se vor recepționa cereri din partea clienților și apoi se vor distribui răspunsurile către aceștia.
+</p>
+
+<p>
+Clienții și serverul vor comunica folosind protocolul HTTP. Pentru parsarea cererilor HTTP din partea clienților recomandăm folosirea <a href="http://github.com/joyent/http-parser" class="urlextern" title="http://github.com/joyent/http-parser" rel="nofollow"> acestui parser HTTP</a>, disponibil și în cadrul <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/" rel="nofollow"> directorului de resurse ale temei</a>. Va trebui să folosiți un callback pentru obținerea căii către resursa locală solicitată de client. Tot în directorul de resurse, găsiți un exemplu simplificat de folosire a parser-ului.
+</p>
+
+<p>
+Serverul implementează o <strong>funcționalitate limitată</strong> a protocolului HTTP, aceea de a <strong>transmite fișiere clienților</strong>. Serverul va furniza fișiere din directorul <code>AWS_DOCUMENT_ROOT</code>, definit în cadrul antetului temei. Fișiere se găsesc doar în subdirectoarele <code>AWS_DOCUMENT_ROOT/static/</code>, respectiv <code>AWS_DOCUMENT_ROOT/dynamic/</code>, iar <em>request path</em>-uri corespunzătoare vor fi, de exemplu, <code>AWS_DOCUMENT_ROOT/static/test.dat</code>, respectiv <code>AWS_DOCUMENT_ROOT/dynamic/test.dat</code>. Prelucrarea fișierelor va fi următoarea:
+</p>
+<ul>
+<li class="level1"><div class="li">Fișierele din directorul <code>AWS_DOCUMENT_ROOT/static/</code> sunt fișiere statice care vor fi transmise clienților folosind <abbr title="Application Programming Interface">API</abbr> de zero-copying (<a href="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" rel="nofollow"> sendfile</a>/<a href="http://msdn.microsoft.com/en-us/library/ms740565(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms740565(VS.85).aspx" rel="nofollow"> TransmitFile</a>).</div>
+</li>
+<li class="level1"><div class="li">Fișierele din directorul <code>AWS_DOCUMENT_ROOT/dynamic/</code> sunt fișiere pentru care se presupune că este necesară o fază de post-procesare din partea serverului. Aceste fișiere vor fi citite de pe disc folosind <abbr title="Application Programming Interface">API</abbr> asincron și apoi vor fi transmise către clienți. Transmiterea va folosi sockeți non-blocanți (Linux) și Overlapped I/O pe sockeți (Windows).</div>
+</li>
+<li class="level1"><div class="li">Pentru <em>request path</em>-uri nevalide se va transmite un mesaj <a href="http://en.wikipedia.org/wiki/HTTP_404" class="urlextern" title="http://en.wikipedia.org/wiki/HTTP_404" rel="nofollow"> HTTP 404</a>.</div>
+</li>
+</ul>
+
+<p>
+După transmiterea unui fișier, conform protocolului HTTP, conexiunea este închisă.
+</p>
+
+</div>
+
+<h2 class="sectionedit4" id="precizarirecomandari_pentru_implementare">Precizări/recomandări pentru implementare</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Implementarea temei presupune existența unei mașini de stări pentru fiecare conexiune, pe care să o interogați și actualizați periodic pe măsura desfășurării transferului.</div>
+<ul>
+<li class="level2"><div class="li">Recomandăm crearea unei structuri care să gestioneze o conexiune, starea acesteia, conținutul bufferelor.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Definițiile macro-urilor și structurilor utile se găsesc în <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" rel="nofollow"> header-ul temei</a>.</div>
+</li>
+<li class="level1"><div class="li">Răspunsurile HTTP vor avea codul 200 pentru fișiere existente și 404 pentru fișiere inexistente.</div>
+<ul>
+<li class="level2"><div class="li">Un răspuns valid este format din antetul HTTP, conținând directivele aferente, două newline-uri (<code>\r\n\r\n</code>, urmat de conținutul efectiv (fișierul).</div>
+</li>
+<li class="level2"><div class="li">Exemple de răspunsuri găsiți în <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/test.c" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/test.c" rel="nofollow"> fișierul de test al parser-ului</a> sau în <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/samples/test_get_request_path.c" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/samples/test_get_request_path.c" rel="nofollow"> sample-ul pus la dispoziție</a>.</div>
+</li>
+<li class="level2"><div class="li">Puteți folosi directive de request predefinite, precum <code>Date</code>, <code>Last-Modified</code> etc.</div>
+<ul>
+<li class="level3"><div class="li">Directiva <code>Content-Length</code> trebuie să precizeze dimensiunea conținutului HTTP (datelor efective) la nivel de octeți.</div>
+</li>
+<li class="level3"><div class="li">Directiva <code>Connection</code> trebuie inițializată la <code>close</code>.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Portul pe care serverul web ascultă pentru conexiuni este definit în cadrul <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" rel="nofollow"> header-ului temei</a> ca macro: <code>AWS_LISTEN_PORT</code>.</div>
+</li>
+<li class="level1"><div class="li">Directorul rădăcină raportat la care se caută resursele/fișierele este definit în cadrul <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/aws.h" rel="nofollow"> header-ului temei</a> ca macro: <code>AWS_DOCUMENT_ROOT</code>.</div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit5" id="resurse_utile">Resurse utile</h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li">Pentru parsarea cererii HTTP și obținerea <em>request path</em>-ului puteți folosi <a href="http://github.com/joyent/http-parser" class="urlextern" title="http://github.com/joyent/http-parser" rel="nofollow"> acest parser HTTP</a> disponibil și în directorul de resurse ale temei.</div>
+<ul>
+<li class="level2"><div class="li">Pentru compilare, folosiți fișierul <code>Makefile</code>.</div>
+</li>
+<li class="level2"><div class="li">Consultați fișierul <code>README.md</code>.</div>
+</li>
+<li class="level2"><div class="li">Un exemplu specific de folosire a parser-ului pentru obținerea <em>request path</em>-ului este disponibil în <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/samples/" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/http-parser/samples/" rel="nofollow"> subdirectorul samples/</a>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru aspecte de depanare și tratare a erorilor, folosiți fișierele header disponibile.</div>
+</li>
+<li class="level1"><div class="li">Folosiți subdirectorul <code>samples/</code> din directorul aferent fiecărui sistem de operare pentru exemple de utilizare a <abbr title="Application Programming Interface">API</abbr>-ului pe sockeți.</div>
+<ul>
+<li class="level2"><div class="li">Găsiți implementat ca exemplu un server echo bazat pe <abbr title="Application Programming Interface">API</abbr> avansat de multiplexare.</div>
+</li>
+<li class="level2"><div class="li">Găsiți implementat ca exemplu un server care trimite un răspuns HTTP.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit6" id="depanaretroubleshooting">Depanare/troubleshooting</h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li">Pentru depanarea serverului, recomandăm folosirea <a href="http://linux.die.net/man/1/wget" class="urlextern" title="http://linux.die.net/man/1/wget" rel="nofollow"> wget</a> și a <a href="http://linux.die.net/man/1/nc" class="urlextern" title="http://linux.die.net/man/1/nc" rel="nofollow"> netcat</a>.</div>
+<ul>
+<li class="level2"><div class="li">Pentru netcat, dacă doriți să comunicați folosind HTTP, va trebui să transmiteți o cerere specifică (spre exemplu <code>GET /path/to/resource HTTP/1.0</code>). Exemplu de folosire:<pre class="code">$ nc localhost 8888
+GET / HTTP/1.0
+</pre>
+</div>
+<ul>
+<li class="level3"><div class="li">Sau:<pre class="code">echo -e "GET / HTTP/1.0\n" | nc -q 2 localhost 8888</pre>
+</div>
+</li>
+</ul>
+</li>
+<li class="level2"><div class="li">Exemple de utilizare găsiți în <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#testare" title="so:teme:tema-5 ↵" class="wikilink1"> teste</a>.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit7" id="precizari_pentru_windows">Precizări pentru Windows</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Operațiile pe sockeți și fișiere (<a href="http://msdn.microsoft.com/en-us/library/aa365467(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365467(v=vs.85).aspx" rel="nofollow"> ReadFile</a>, <a href="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" rel="nofollow"> WSASend</a>, <a href="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" rel="nofollow"> TransmitFile</a>) vor fi operații asincrone realizate folosind <a href="http://msdn.microsoft.com/en-us/library/aa365683(v=VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365683(v=VS.85).aspx" rel="nofollow"> Overlapped I/O</a>.</div>
+</li>
+<li class="level1"><div class="li">Așteptarea încheierii operațiilor asincrone (atât pe fișiere cât și pe sockeți) se va realiza unificat, folosind <a href="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365198(VS.85).aspx" rel="nofollow"> I/O Completion Ports</a>.</div>
+</li>
+<li class="level1"><div class="li">Pentru implementare, recomandăm să porniți de la <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/iocp_echo_server.c" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/iocp_echo_server.c" rel="nofollow"> exemplul de echo server</a> pus la dispoziție.</div>
+<ul>
+<li class="level2"><div class="li"><abbr title="Application Programming Interface">API</abbr>-ul I/O Completion Ports este apelat prin intermediul wrapper-elor din cadrul header-ului <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/w_iocp.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/w_iocp.h" rel="nofollow"> w_iocp.h</a>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Sockeți creați folosind apelul <a href="http://msdn.microsoft.com/en-us/library/ms740506(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms740506(v=vs.85).aspx" rel="nofollow"> socket</a> sunt sockeți ce pot fi folosiți pentru <a href="http://msdn.microsoft.com/en-us/library/aa365683(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365683(v=vs.85).aspx" rel="nofollow"> operații asincrone</a>.</div>
+</li>
+<li class="level1"><div class="li">Pentru operații asincrone de comunicare pe sockeți folosiți funcțiile <a href="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms742203(v=vs.85).aspx" rel="nofollow"> WSASend</a>. respectiv <a href="http://msdn.microsoft.com/en-us/library/ms741688(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms741688(v=vs.85).aspx" rel="nofollow"> WSARecv</a>.</div>
+<ul>
+<li class="level2"><div class="li">Structura <a href="http://msdn.microsoft.com/en-us/library/ms741665(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms741665(v=vs.85).aspx" rel="nofollow"> WSAOVERLAPPED</a> conține informațiile necesare pentru operațiile asincrone pe sockeți. Este echivalentă structurii <a href="http://msdn.microsoft.com/en-us/library/ms684342(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms684342(v=vs.85).aspx" rel="nofollow"> OVERLAPPED</a>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru adăugarea socket-ului listener în I/O Completion Port, va trebui să folosiți apelul <a href="http://msdn.microsoft.com/en-us/library/ms737524(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms737524(v=vs.85).aspx" rel="nofollow"> AcceptEx</a>, așa cum se observă și în <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/iocp_echo_server.c" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/iocp_echo_server.c" rel="nofollow"> exemplul de echo server</a>.</div>
+<ul>
+<li class="level2"><div class="li"><a href="http://msdn.microsoft.com/en-us/library/ms737524(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms737524(v=vs.85).aspx" rel="nofollow"> AcceptEx</a> permite notificarea unei acțiuni în momentul în care aceasta are loc, împreună cu binding-ul socket-ului.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru operații asincrone cu sistemul de fișiere, folosiți funcțiile <a href="http://msdn.microsoft.com/en-us/library/aa365467(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365467(VS.85).aspx" rel="nofollow"> ReadFile</a> și <a href="http://msdn.microsoft.com/en-us/library/aa365747(v=VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/aa365747(v=VS.85).aspx" rel="nofollow"> WriteFile</a> cu argumentele de Overlapped I/O activate.</div>
+</li>
+<li class="level1"><div class="li">Pentru obținerea de informații despre o operație asincronă încheiată (prin intermediul structurii <a href="http://msdn.microsoft.com/en-us/library/ms684342(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms684342(v=vs.85).aspx" rel="nofollow"> OVERLAPPED</a>), folosiți <a href="http://msdn.microsoft.com/en-us/library/ms683209(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms683209(v=vs.85).aspx" rel="nofollow"> GetOverlappedResult</a> (fișiere), respectiv <a href="http://msdn.microsoft.com/en-us/library/ms741582(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms741582(v=vs.85).aspx" rel="nofollow"> WSAGetOverlappedResult</a> (sockeți).</div>
+</li>
+<li class="level1"><div class="li">Transmiterea de fișiere statice se realizează folosind <a href="http://msdn.microsoft.com/en-us/library/ms740565(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/ms740565(v=vs.85).aspx" rel="nofollow"> TransmitFile</a>.</div>
+</li>
+<li class="level1"><div class="li">Tema se va rezolva folosind doar funcții Win32. Se pot folosi de asemenea și funcțiile de formatare <code>printf</code>, <code>scanf</code>, funcțiile de alocare de memorie <code>malloc</code>, <code>free</code> și funcțiile de manipulare a șirurilor de caractere (<code>strcat</code>, <code>strdup</code> etc.).</div>
+</li>
+<li class="level1"><div class="li">Pentru partea de I/O și procese se vor folosi doar funcții Win32. De exemplu, funcțiile <code>open</code>, <code>read</code>, <code>write</code>, <code>close</code> nu trebuie folosite; în locul acestora folosiți <code>CreateFile</code>, <code>ReadFile</code>, <code>WriteFile</code>, <code>CloseHandle</code>.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit8" id="precizari_pentru_linux">Precizări pentru Linux</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Atât citirea cât și scrierea peste sockeți se realizează doar la notificarea dată de <abbr title="Application Programming Interface">API</abbr>-ul specific sistemului de operare, folosind. <a href="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" rel="nofollow"> epoll</a>.</div>
+<ul>
+<li class="level2"><div class="li">Tot folosind <a href="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html" rel="nofollow"> epoll</a> se va aștepta notificarea încheierii operațiilor asincrone pe fișiere.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru implementare, recomandăm să porniți de la <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/samples/epoll_echo_server.c" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/samples/epoll_echo_server.c" rel="nofollow"> exemplul de echo server</a> pus la dispoziție.</div>
+<ul>
+<li class="level2"><div class="li"><abbr title="Application Programming Interface">API</abbr>-ul epoll este apelat prin intermediul wrapper-elor din cadrul header-ului <a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/w_epoll.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/w_epoll.h" rel="nofollow"> w_epoll.h</a>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Scrierea pe sockeți, atât în cazul fișierelor statice, cât și în cazul fișierelor dinamice, se realizează non-blocant: sockeții sunt marcați ca non-blocanți, iar la un apel de scriere se scrie cât permite buffer-ul socketului. La următoarea notificare din partea <abbr title="Application Programming Interface">API</abbr>-ului specific se va realiza o nouă scriere și așa mai departe.</div>
+<ul>
+<li class="level2"><div class="li">Pentru configurarea unui socket ca non-blocant puteți folosi <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/fcntl.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/fcntl.2.html" rel="nofollow"> fcntl</a> (flag-ul <code>O_NONBLOCK</code>).</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru implementarea operațiilor I/O, folosiți funcțiile din familia <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html" rel="nofollow"> io_setup</a>.</div>
+<ul>
+<li class="level2"><div class="li">Pentru utilizarea funcțiilor va trebui să realizați link-area cu <a href="http://lse.sourceforge.net/io/aio.html" class="urlextern" title="http://lse.sourceforge.net/io/aio.html" rel="nofollow"> biblioteca libaio</a> și includerea header-ului <code>&lt;libaio.h&gt;</code>.</div>
+</li>
+<li class="level2"><div class="li">Pentru instalarea bibliotecii pe mașina virtuală folosiți comanda<pre class="code">apt-get install libaio-dev</pre>
+</div>
+</li>
+<li class="level2"><div class="li">Recomandăm folosirea unei variabile globale de tipul <code>io_context_t</code> și a unui descriptor <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/eventfd.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/eventfd.2.html" rel="nofollow"> eventfd</a> pentru fiecare conexiune.</div>
+</li>
+<li class="level2"><div class="li">Pentru încheierea operațiilor asincrone, folosiți <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/io_getevents.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/io_getevents.2.html" rel="nofollow"> io_getevents</a>.</div>
+</li>
+<li class="level2"><div class="li">Puteți consulta <a href="http://www.xmailserver.org/eventfd-aio-test.c" class="urlextern" title="http://www.xmailserver.org/eventfd-aio-test.c" rel="nofollow"> acest exemplu</a> de integrare a operațiilor I/O asincrone cu <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/eventfd.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/eventfd.2.html" rel="nofollow"> eventfd</a>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Transmiterea de fișiere statice se realizează folosind <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" class="urlextern" title="http://www.kernel.org/doc/man-pages/online/pages/man2/sendfile.2.html" rel="nofollow"> sendfile</a>.</div>
+</li>
+<li class="level1"><div class="li">Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare din familia <code>printf</code>, funcțiile de alocare de memorie <code>malloc</code>, <code>free</code> și funcțiile de lucru cu șiruri de caractere (<code>strcat</code>, <code>strdup</code> etc.)</div>
+</li>
+<li class="level1"><div class="li">Pentru partea de I/O se vor folosi doar funcții POSIX și funcții pentru operații asincrone. De exemplu, funcțiile <code>fopen</code>, <code>fread</code>, <code>fwrite</code>, <code>fclose</code> nu trebuie folosite; în locul acestora folosiți <code>open</code>, <code>io_setup</code>, <code>io_submit</code>, <code>close</code>.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit9" id="testare">Testare</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Corectarea temelor se va realiza automat cu ajutorul unor suite de teste publice:</div>
+<ul>
+<li class="level2"><div class="li">teste Linux   – <a href="http://elf.cs.pub.ro/so/res/teme/tema5-checker-lin.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-checker-lin.zip" rel="nofollow"> tema5-checker-lin.zip</a></div>
+</li>
+<li class="level2"><div class="li">teste Windows – <a href="http://elf.cs.pub.ro/so/res/teme/tema5-checker-win.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-checker-win.zip" rel="nofollow"> tema5-checker-win</a> <img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/fixme.gif" class="icon" alt="FIXME"></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Indicații despre utilizarea suitei de teste se găsesc în fișierul <code>README</code> din cadrul arhivei.</div>
+</li>
+<li class="level1"><div class="li">Pentru testare, pe Windows, se folosește o versiune a utilitarului <code>netcat</code>; puteți descărca arhiva completă (inclusiv executabilul necesar) <a href="http://joncraton.org/media/files/nc111nt.zip" class="urlextern" title="http://joncraton.org/media/files/nc111nt.zip" rel="nofollow"> de aici</a>.</div>
+</li>
+<li class="level1"><div class="li">Pentru evaluare și corectare tema va fi uploadată folosind <a href="https://elf.cs.pub.ro/vmchecker/ui" class="urlextern" title="https://elf.cs.pub.ro/vmchecker/ui" rel="nofollow"> interfața vmchecker</a>.</div>
+</li>
+<li class="level1"><div class="li">În urma compilării temei trebuie să rezulte un executabil denumit <code>aws</code> (Linux), respectiv <code>aws.exe</code> (Windows).</div>
+<ul>
+<li class="level2"><div class="li">Pe Windows, va trebui ca, în urma compilării, să rezulte și fișierul obiect <code>aws.obj</code> (pentru verificările de simboluri folosind <code>nm</code>).</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Suita de teste conține un set de teste. Trecerea unui test conduce la obținerea punctajului aferent acestuia.</div>
+<ul>
+<li class="level2"><div class="li">În urma rulării testelor, se va acorda, în mod automat, un punctaj total. Punctajul total maxim este de 90 de puncte, pentru o temă care trece toate testele. La acest punctaj se adaugă 10 puncte care reprezintă aprecierea temei de către asistentul care o corectează.</div>
+</li>
+<li class="level2"><div class="li">Cele 100 de puncte corespund la 10 puncte din cadrul notei finale.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pot exista penalizări în caz de întârzieri sau pentru neajunsuri de implementare sau de stil.</div>
+</li>
+<li class="level1"><div class="li">Penalizările pentru neajunsuri de implementare pot constitui maxim 1 punct din nota finală a temei.</div>
+<ul>
+<li class="level2"><div class="li">Pe lângă penalizările precizate în cadrul <a href="http://elf.cs.pub.ro/so/wiki/teme/general#lista-depunctari" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/teme/general#lista-depunctari" rel="nofollow"> listei de depunctări</a>, se vor avea în vedere următoarele elemente:</div>
+<ul>
+<li class="level3"><div class="li"><code>-2p</code> – folosirea de operații blocante pe sockeți în locul operațiilor non-blocante (Linux), folosirea <abbr title="Application Programming Interface">API</abbr>-ului sincron pe Windows în fața celui asincron (Overlapped I/O).</div>
+</li>
+<li class="level3"><div class="li"><code>-2p</code> – pe Linux, operațiile I/O asincrone pe fișiere nu sunt așteptate “integrat” folosind <code>eventfd</code> și <code>epoll</code>.</div>
+</li>
+<li class="level3"><div class="li"><code>-1p</code> – alte implementări nevalide la nivelul sistemului asincron de comunicație.</div>
+</li>
+</ul>
+</li>
+<li class="level2"><div class="li">Nu se punctează o temă care <strong>nu</strong> folosește operații I/O asincrone pe fișiere: <code>io_*</code> (din <code>libaio</code>) pe Linux, respectiv Overlapped I/O pe Windows.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit10" id="resurse_de_suport">Resurse de suport</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Cursuri</div>
+<ul>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/wiki/cursuri/curs-09" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/cursuri/curs-09" rel="nofollow"> Curs 9 - Dispozitive de intrare/ieșire</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Laboratoare</div>
+<ul>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/wiki/laboratoare/laborator-10" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/laboratoare/laborator-10" rel="nofollow"> Laborator 10 - Operații I/O avansate -- Windows</a></div>
+</li>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/wiki/laboratoare/laborator-11" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/laboratoare/laborator-11" rel="nofollow"> Laborator 11 - Operații I/O avansate -- Linux</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://github.com/joyent/http-parser" class="urlextern" title="http://github.com/joyent/http-parser" rel="nofollow"> Parser-ul HTTP</a> recomandat pentru parsarea cererilor.</div>
+</li>
+<li class="level1"><div class="li"><a href="http://www.jmarshall.com/easy/http/" class="urlextern" title="http://www.jmarshall.com/easy/http/" rel="nofollow"> Tutorial HTTP</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema5-util.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util.zip" rel="nofollow"> Resurse tema 5</a></div>
+</li>
+<li class="level1"><div class="li">Sample-uri pentru lucru cu sockeți</div>
+<ul>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/samples/" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/lin/samples/" rel="nofollow"> Sample-uri Linux</a></div>
+</li>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-util/win/samples/" rel="nofollow"> Sample-uri Windows</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Teste</div>
+<ul>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema5-checker-lin.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-checker-lin.zip" rel="nofollow"> Teste Linux</a></div>
+</li>
+<li class="level2"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema5-checker-win.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema5-checker-win.zip" rel="nofollow"> Teste Windows</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="https://elf.cs.pub.ro/vmchecker/ui" class="urlextern" title="https://elf.cs.pub.ro/vmchecker/ui" rel="nofollow"> Interfața de upload vmchecker</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://news.gmane.org/gmane.education.region.romania.operating-systems" class="urlextern" title="http://news.gmane.org/gmane.education.region.romania.operating-systems" rel="nofollow"> Lista de discuții a cursului</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit11" id="faq">FAQ</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Tema se poate face în C++?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit12" id="suport_intrebari_si_clarificari">Suport, întrebări și clarificări</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Pentru întrebări sau nelămuriri legate de temă puteți <a href="http://news.gmane.org/gmane.education.region.romania.operating-systems" class="urlextern" title="http://news.gmane.org/gmane.education.region.romania.operating-systems" rel="nofollow"> consulta</a> lista de discuții sau puteți <a href="mailto:mailto:so@cursuri.cs.pub.ro" class="mail" title="mailto:so@cursuri.cs.pub.ro"> trimite un e-mail</a>.</div>
+</li>
+<li class="level1"><div class="li">Trebuie să fiți <a href="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so" class="urlextern" title="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so" rel="nofollow"> înregistrați</a> pe listă pentru a putea trimite mesaje.</div>
+</li>
+<li class="level1"><div class="li">Vă rugăm să urmăriți și să respectați <a href="http://elf.cs.pub.ro/so/wiki/resurse/lista-discutii#mailing-list-guidelines" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/resurse/lista-discutii#mailing-list-guidelines" rel="nofollow"> indicațiile de utilizare a listei</a>.</div>
+</li>
+<li class="level1"><div class="li">Puteți edita această pagină pentru a clarifica/îmbunătăți enunțul.</div>
+</li>
+<li class="level1"><div class="li">Pentru a urmări actualizarea enunțului temei, recomandăm să vă abonați la &lt;rss href=“<a href="http://elf.cs.pub.ro/so/wiki/feed.php?mode=list&ns=teme&linkto=diff&content=diff&num=5" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/feed.php?mode=list&amp;ns=teme&amp;linkto=diff&amp;content=diff&amp;num=5" rel="nofollow">http://elf.cs.pub.ro/so/wiki/feed.php?mode=list&amp;ns=teme&amp;linkto=diff&amp;content=diff&amp;num=5</a>” name=“feed-ul de teme”&gt;.</div>
+</li>
+</ul>
+
+<p>
+~~DISCUSSION:off~~
+
+</p>
+
+</div>
+
+        </div>
+        <div class="right_sidebar">
+          <form action="http://ocw.cs.pub.ro/courses/start" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>          <div class="namespace_sidebar sidebar_box">
+
+
+
+<h1 class="sectionedit1" id="informatii_generale_so">Informații generale SO</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_73698760054e8f4a1ddbdc" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/documentatie" class="wikilink1" title="so:info:documentatie">Documentație și alte resurse</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/feed" class="wikilink1" title="so:info:feed">Feed-uri RSS</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/hall" class="wikilink1" title="so:info:hall">Hall of SO</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/lista-discutii" class="wikilink1" title="so:info:lista-discutii">Listă de discuții</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/mv" class="wikilink1" title="so:info:mv">Mașini virtuale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/trimitere-teme" class="wikilink1" title="so:info:trimitere-teme">Trimitere teme</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT1 SECTION "Informații generale SO" [12-175] -->
+<h1 class="sectionedit2" id="informatii_so_2013-2014">Informații SO 2013-2014</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_70150019054e8f4a1de858" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen" class="indexmenu_idx_head">Examen</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2012-2013" class="wikilink1" title="so:meta:examen:2012-2013">Teste SO 2012-2013</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2013-2014" class="wikilink1" title="so:meta:examen:2013-2014">Lucrări SO 2013-2014</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare" class="indexmenu_idx_head">Reguli generale și notare</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-ca-cc" class="wikilink1" title="so:meta:notare:reguli-notare-ca-cc">Notare CA/CC</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-cb" class="wikilink1" title="so:meta:notare:reguli-notare-cb">Notare CB</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/anunturi" class="wikilink1" title="so:meta:anunturi">Anunțuri</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/calendar" class="wikilink1" title="so:meta:calendar">Calendar</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/catalog" class="wikilink1" title="so:meta:catalog">Catalog</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/echivalari" class="wikilink1" title="so:meta:echivalari">Echivalări teme 2014 - 2015</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/karma" class="wikilink1" title="so:meta:karma">Karma Awards</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/need-to-know" class="wikilink1" title="so:meta:need-to-know">SO Need to Know</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/orar" class="wikilink1" title="so:meta:orar">Orar și împărțire pe semigrupe</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT2 SECTION "Informații SO 2013-2014" [176-243] -->
+<h1 class="sectionedit3" id="laboratoare">Laboratoare</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so/laboratoare-2013/start" class="wikilink1" title="so:laboratoare-2013:start"> Arhivă laboratoare 2012-2013</a></div>
+</li>
+</ul>
+
+<div><div id="nojs_indexmenu_83735273854e8f4a1df343" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse" class="indexmenu_idx_head">Resurse</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/c_tips" class="wikilink1" title="so:laboratoare:resurse:c_tips">C/SO Tips</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/die" class="wikilink1" title="so:laboratoare:resurse:die">Macro-ul DIE</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/gdb" class="wikilink1" title="so:laboratoare:resurse:gdb">GDB</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/home" class="wikilink1" title="so:laboratoare:resurse:home">Resurse</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/injections" class="wikilink1" title="so:laboratoare:resurse:injections">Function Hooking and Windows Dll Injection</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/joc" class="wikilink1" title="so:laboratoare:resurse:joc">Desfășurare Joc</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/oprofile" class="wikilink1" title="so:laboratoare:resurse:oprofile">Oprofile</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/recapitulare" class="wikilink1" title="so:laboratoare:resurse:recapitulare">Recapitulare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/threaduri_extra" class="wikilink1" title="so:laboratoare:resurse:threaduri_extra">Thread-uri - Extra</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/vs_tips" class="wikilink1" title="so:laboratoare:resurse:vs_tips">Visual Studio Tips and Tricks</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/windows-video" class="wikilink1" title="so:laboratoare:resurse:windows-video">windows-video</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-01" class="wikilink1" title="so:laboratoare:laborator-01">Laborator 01 - Introducere</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-02" class="wikilink1" title="so:laboratoare:laborator-02">Laborator 02 - Operații I/O simple</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-03" class="wikilink1" title="so:laboratoare:laborator-03">Laborator 03 - Procese</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-04" class="wikilink1" title="so:laboratoare:laborator-04">Laborator 04 - Semnale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-05" class="wikilink1" title="so:laboratoare:laborator-05">Laborator 05 - Gestiunea memoriei</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-06" class="wikilink1" title="so:laboratoare:laborator-06">Laborator 06 - Memoria virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-07" class="wikilink1" title="so:laboratoare:laborator-07">Laborator 07 - Profiling &amp; Debugging</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-08" class="wikilink1" title="so:laboratoare:laborator-08">Laborator 08 - Thread-uri Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-09" class="wikilink1" title="so:laboratoare:laborator-09">Laborator 09 - Thread-uri Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-10" class="wikilink1" title="so:laboratoare:laborator-10">Laborator 10 - Operații IO avansate - Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-11" class="wikilink1" title="so:laboratoare:laborator-11">Laborator 11 - Operații IO avansate - Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-12" class="wikilink1" title="so:laboratoare:laborator-12">Laborator 12 - Implementarea sistemelor de fișiere</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT3 SECTION "Laboratoare" [244-372] -->
+<h1 class="sectionedit4" id="cursuri">Cursuri</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_81028052754e8f4a1df5db" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-01" class="indexmenu_idx_head">Curs 01 - Introducere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-02" class="indexmenu_idx_head">Curs 02 - Sistemul de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-03" class="indexmenu_idx_head">Curs 03 - Procese</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-04" class="indexmenu_idx_head">Curs 04 - Planificarea execuției</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-05" class="indexmenu_idx_head">Curs 05 - Gestiunea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-06" class="indexmenu_idx_head">Curs 06 - Memoria virtuală</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-07" class="indexmenu_idx_head">Curs 07 - Securitatea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-08" class="indexmenu_idx_head">Curs 08 - Fire de execuție</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-09" class="indexmenu_idx_head">Curs 09 - Sincronizare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-10" class="indexmenu_idx_head">Curs 10 - Dispozitive de intrare/ieșire</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-11" class="indexmenu_idx_head">Curs 11 - Networking in Sistemul de Operare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-12" class="indexmenu_idx_head">Curs 12 - Implementarea sistemelor de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-13" class="indexmenu_idx_head">Curs 13 - Securitatea sistemului</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/quiz?idx=so:cursuri:quiz" class="indexmenu_idx">quiz</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-2" class="wikilink1" title="so:cursuri:curs-extra-2">Curs extra - Android</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-3" class="wikilink1" title="so:cursuri:curs-extra-3">Curs extra - Virtualizare</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra" class="wikilink1" title="so:cursuri:curs-extra">Curs extra - Sincronizarea proceselor</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/note" class="wikilink1" title="so:cursuri:note">Note de curs</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT4 SECTION "Cursuri" [373-425] -->
+<h1 class="sectionedit5" id="teme">Teme</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_168349368654e8f4a1df89c" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-asist" class="indexmenu_idx_head">Tema Asistenți - Guardian process</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/general" class="wikilink1" title="so:teme:general">Indicații generale teme</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-1" class="wikilink1" title="so:teme:tema-1">Tema 1 Multi-platform Development</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2" class="wikilink1" title="so:teme:tema-2">Tema 2 Mini-shell</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-3" class="wikilink1" title="so:teme:tema-3">Tema 3 Memorie virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4" class="wikilink1" title="so:teme:tema-4">Tema 4 Planificator de threaduri</a></div></li>
+<li class="level1"><div class="li"><span class="curid"><a href="./Tema 5 Server web asincron [CS Open CourseWare]_files/Tema 5 Server web asincron [CS Open CourseWare].html" class="wikilink1" title="so:teme:tema-5">Tema 5 Server web asincron</a></span></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT5 SECTION "Teme" [426-] -->
+</div>
+<div class="toc_sidebar sidebar_box">
+<!-- TOC START -->
+<div id="sb__right__dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#tema_5_server_web_asincron">Tema 5 Server web asincron</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#obiectivele_temei">Obiectivele temei</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#enunt">Enunț</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#precizarirecomandari_pentru_implementare">Precizări/recomandări pentru implementare</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#resurse_utile">Resurse utile</a></div></li>
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#depanaretroubleshooting">Depanare/troubleshooting</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#precizari_pentru_windows">Precizări pentru Windows</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#precizari_pentru_linux">Precizări pentru Linux</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#testare">Testare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#resurse_de_suport">Resurse de suport</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#faq">FAQ</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#suport_intrebari_si_clarificari">Suport, întrebări și clarificări</a></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+</div>
+        </div>
+      
+    
+      <div class="stylefoot">
+        <div class="meta">
+          <div class="user">
+                    </div>
+          <div class="doc">
+          so/teme/tema-5.txt · Last modified: 2014/05/21 22:02 by adrian.sendroiu          </div>
+        </div>
+      </div>
+
+    <div class="clearer"></div>
+
+    
+                <div class="bar" id="bar__bottom">
+      <div class="bar-left">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5?do=revisions" class="action revs" accesskey="o" rel="nofollow" title="Old revisions [O]">Old revisions</a>      </div>
+      <div class="bar-right">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5?do=media&ns=so%3Ateme" class="action media" rel="nofollow" title="Media Manager">Media Manager</a><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]">Back to top</a>      </div>
+    </div>
+    <div class="clearer"></div>
+            
+    <div align="center" class="footerinc">
+  <div class="license"><a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/cc-by-sa.png" alt="CC Attribution-Share Alike 3.0 Unported"></a></div>
+  <a target="_blank" href="http://www.chimeric.de/" title="www.chimeric.de"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-chimeric-de.png" width="80" height="15" alt="www.chimeric.de" border="0"></a>
+
+  <a target="_blank" href="http://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-css.png" width="80" height="15" alt="Valid CSS" border="0"></a>
+
+  <a target="_blank" href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" border="0"></a>
+
+  <a target="_blank" href="http://www.firefox-browser.de/" title="do yourself a favour and use a real browser - get firefox"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-firefox.png" width="80" height="15" alt="do yourself a favour and use a real browser - get firefox!!" border="0"></a>
+  
+  <a target="_blank" href="http://ocw.cs.pub.ro/courses/feed.php" title="Recent changes RSS feed"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" border="0"></a>
+
+  <a target="_blank" href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" border="0"></a>
+</div>
+
+  </div>
+</div>
+
+<div class="no"><img src="./Tema 5 Server web asincron [CS Open CourseWare]_files/indexer.php" width="2" height="1" alt=""></div>
+
+
+</body></html>

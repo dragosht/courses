@@ -1,0 +1,116 @@
+Obiectivele temei
+
+Aprofundarea noțiunilor legate de lucrul cu sockeți.
+Deprinderi de implementare și proiectare a aplicațiilor care folosesc operații asincrone și alte operații I/O avansate.
+Aprofundarea utilizării API-ului pentru operații I/O avansate la nivelul sistemelor de operare Linux și Windows.
+Enunț
+
+Să se implementeze un server web care să folosească operații avansate de intrare/ieșire:
+
+operații asincrone pe fișiere;
+operații non-blocante pe sockeți;
+zero-copying;
+multiplexarea operațiilor I/O.
+Pentru implementare se va folosi API-ul de operații I/O avansate specific sistemelor de operare Linux și Windows:
+
+sendfile/ TransmitFile
+io_setup & friends/ Overlapped I/O
+epoll/ Completion Ports.
+Serverul web va utiliza API-ul modern de multiplexare pentru a aștepta conexiuni din partea clienților: epoll (Linux) și Completion Ports pe Windows. Pe conexiunile realizate se vor recepționa cereri din partea clienților și apoi se vor distribui răspunsurile către aceștia.
+
+Clienții și serverul vor comunica folosind protocolul HTTP. Pentru parsarea cererilor HTTP din partea clienților recomandăm folosirea acestui parser HTTP, disponibil și în cadrul directorului de resurse ale temei. Va trebui să folosiți un callback pentru obținerea căii către resursa locală solicitată de client. Tot în directorul de resurse, găsiți un exemplu simplificat de folosire a parser-ului.
+
+Serverul implementează o funcționalitate limitată a protocolului HTTP, aceea de a transmite fișiere clienților. Serverul va furniza fișiere din directorul AWS_DOCUMENT_ROOT, definit în cadrul antetului temei. Fișiere se găsesc doar în subdirectoarele AWS_DOCUMENT_ROOT/static/, respectiv AWS_DOCUMENT_ROOT/dynamic/, iar request path-uri corespunzătoare vor fi, de exemplu, AWS_DOCUMENT_ROOT/static/test.dat, respectiv AWS_DOCUMENT_ROOT/dynamic/test.dat. Prelucrarea fișierelor va fi următoarea:
+
+Fișierele din directorul AWS_DOCUMENT_ROOT/static/ sunt fișiere statice care vor fi transmise clienților folosind API de zero-copying ( sendfile/ TransmitFile).
+Fișierele din directorul AWS_DOCUMENT_ROOT/dynamic/ sunt fișiere pentru care se presupune că este necesară o fază de post-procesare din partea serverului. Aceste fișiere vor fi citite de pe disc folosind API asincron și apoi vor fi transmise către clienți. Transmiterea va folosi sockeți non-blocanți (Linux) și Overlapped I/O pe sockeți (Windows).
+Pentru request path-uri nevalide se va transmite un mesaj HTTP 404.
+După transmiterea unui fișier, conform protocolului HTTP, conexiunea este închisă.
+
+Precizări/recomandări pentru implementare
+
+Implementarea temei presupune existența unei mașini de stări pentru fiecare conexiune, pe care să o interogați și actualizați periodic pe măsura desfășurării transferului.
+Recomandăm crearea unei structuri care să gestioneze o conexiune, starea acesteia, conținutul bufferelor.
+Definițiile macro-urilor și structurilor utile se găsesc în header-ul temei.
+Răspunsurile HTTP vor avea codul 200 pentru fișiere existente și 404 pentru fișiere inexistente.
+Un răspuns valid este format din antetul HTTP, conținând directivele aferente, două newline-uri (\r\n\r\n, urmat de conținutul efectiv (fișierul).
+Exemple de răspunsuri găsiți în fișierul de test al parser-ului sau în sample-ul pus la dispoziție.
+Puteți folosi directive de request predefinite, precum Date, Last-Modified etc.
+Directiva Content-Length trebuie să precizeze dimensiunea conținutului HTTP (datelor efective) la nivel de octeți.
+Directiva Connection trebuie inițializată la close.
+Portul pe care serverul web ascultă pentru conexiuni este definit în cadrul header-ului temei ca macro: AWS_LISTEN_PORT.
+Directorul rădăcină raportat la care se caută resursele/fișierele este definit în cadrul header-ului temei ca macro: AWS_DOCUMENT_ROOT.
+Resurse utile
+
+Pentru parsarea cererii HTTP și obținerea request path-ului puteți folosi acest parser HTTP disponibil și în directorul de resurse ale temei.
+Pentru compilare, folosiți fișierul Makefile.
+Consultați fișierul README.md.
+Un exemplu specific de folosire a parser-ului pentru obținerea request path-ului este disponibil în subdirectorul samples/.
+Pentru aspecte de depanare și tratare a erorilor, folosiți fișierele header disponibile.
+Folosiți subdirectorul samples/ din directorul aferent fiecărui sistem de operare pentru exemple de utilizare a API-ului pe sockeți.
+Găsiți implementat ca exemplu un server echo bazat pe API avansat de multiplexare.
+Găsiți implementat ca exemplu un server care trimite un răspuns HTTP.
+Depanare/troubleshooting
+
+Pentru depanarea serverului, recomandăm folosirea wget și a netcat.
+Pentru netcat, dacă doriți să comunicați folosind HTTP, va trebui să transmiteți o cerere specifică (spre exemplu GET /path/to/resource HTTP/1.0). Exemplu de folosire:
+$ nc localhost 8888
+GET / HTTP/1.0
+Sau:
+echo -e "GET / HTTP/1.0\n" | nc -q 2 localhost 8888
+Exemple de utilizare găsiți în teste.
+Precizări pentru Windows
+
+Operațiile pe sockeți și fișiere ( ReadFile, WSASend, TransmitFile) vor fi operații asincrone realizate folosind Overlapped I/O.
+Așteptarea încheierii operațiilor asincrone (atât pe fișiere cât și pe sockeți) se va realiza unificat, folosind I/O Completion Ports.
+Pentru implementare, recomandăm să porniți de la exemplul de echo server pus la dispoziție.
+API-ul I/O Completion Ports este apelat prin intermediul wrapper-elor din cadrul header-ului w_iocp.h.
+Sockeți creați folosind apelul socket sunt sockeți ce pot fi folosiți pentru operații asincrone.
+Pentru operații asincrone de comunicare pe sockeți folosiți funcțiile WSASend. respectiv WSARecv.
+Structura WSAOVERLAPPED conține informațiile necesare pentru operațiile asincrone pe sockeți. Este echivalentă structurii OVERLAPPED.
+Pentru adăugarea socket-ului listener în I/O Completion Port, va trebui să folosiți apelul AcceptEx, așa cum se observă și în exemplul de echo server.
+AcceptEx permite notificarea unei acțiuni în momentul în care aceasta are loc, împreună cu binding-ul socket-ului.
+Pentru operații asincrone cu sistemul de fișiere, folosiți funcțiile ReadFile și WriteFile cu argumentele de Overlapped I/O activate.
+Pentru obținerea de informații despre o operație asincronă încheiată (prin intermediul structurii OVERLAPPED), folosiți GetOverlappedResult (fișiere), respectiv WSAGetOverlappedResult (sockeți).
+Transmiterea de fișiere statice se realizează folosind TransmitFile.
+Tema se va rezolva folosind doar funcții Win32. Se pot folosi de asemenea și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free și funcțiile de manipulare a șirurilor de caractere (strcat, strdup etc.).
+Pentru partea de I/O și procese se vor folosi doar funcții Win32. De exemplu, funcțiile open, read, write, close nu trebuie folosite; în locul acestora folosiți CreateFile, ReadFile, WriteFile, CloseHandle.
+Precizări pentru Linux
+
+Atât citirea cât și scrierea peste sockeți se realizează doar la notificarea dată de API-ul specific sistemului de operare, folosind. epoll.
+Tot folosind epoll se va aștepta notificarea încheierii operațiilor asincrone pe fișiere.
+Pentru implementare, recomandăm să porniți de la exemplul de echo server pus la dispoziție.
+API-ul epoll este apelat prin intermediul wrapper-elor din cadrul header-ului w_epoll.h.
+Scrierea pe sockeți, atât în cazul fișierelor statice, cât și în cazul fișierelor dinamice, se realizează non-blocant: sockeții sunt marcați ca non-blocanți, iar la un apel de scriere se scrie cât permite buffer-ul socketului. La următoarea notificare din partea API-ului specific se va realiza o nouă scriere și așa mai departe.
+Pentru configurarea unui socket ca non-blocant puteți folosi fcntl (flag-ul O_NONBLOCK).
+Pentru implementarea operațiilor I/O, folosiți funcțiile din familia io_setup.
+Pentru utilizarea funcțiilor va trebui să realizați link-area cu biblioteca libaio și includerea header-ului <libaio.h>.
+Pentru instalarea bibliotecii pe mașina virtuală folosiți comanda
+apt-get install libaio-dev
+Recomandăm folosirea unei variabile globale de tipul io_context_t și a unui descriptor eventfd pentru fiecare conexiune.
+Pentru încheierea operațiilor asincrone, folosiți io_getevents.
+Puteți consulta acest exemplu de integrare a operațiilor I/O asincrone cu eventfd.
+Transmiterea de fișiere statice se realizează folosind sendfile.
+Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare din familia printf, funcțiile de alocare de memorie malloc, free și funcțiile de lucru cu șiruri de caractere (strcat, strdup etc.)
+Pentru partea de I/O se vor folosi doar funcții POSIX și funcții pentru operații asincrone. De exemplu, funcțiile fopen, fread, fwrite, fclose nu trebuie folosite; în locul acestora folosiți open, io_setup, io_submit, close.
+Testare
+
+Corectarea temelor se va realiza automat cu ajutorul unor suite de teste publice:
+teste Linux – tema5-checker-lin.zip
+teste Windows – tema5-checker-win FIXME
+Indicații despre utilizarea suitei de teste se găsesc în fișierul README din cadrul arhivei.
+Pentru testare, pe Windows, se folosește o versiune a utilitarului netcat; puteți descărca arhiva completă (inclusiv executabilul necesar) de aici.
+Pentru evaluare și corectare tema va fi uploadată folosind interfața vmchecker.
+În urma compilării temei trebuie să rezulte un executabil denumit aws (Linux), respectiv aws.exe (Windows).
+Pe Windows, va trebui ca, în urma compilării, să rezulte și fișierul obiect aws.obj (pentru verificările de simboluri folosind nm).
+Suita de teste conține un set de teste. Trecerea unui test conduce la obținerea punctajului aferent acestuia.
+În urma rulării testelor, se va acorda, în mod automat, un punctaj total. Punctajul total maxim este de 90 de puncte, pentru o temă care trece toate testele. La acest punctaj se adaugă 10 puncte care reprezintă aprecierea temei de către asistentul care o corectează.
+Cele 100 de puncte corespund la 10 puncte din cadrul notei finale.
+Pot exista penalizări în caz de întârzieri sau pentru neajunsuri de implementare sau de stil.
+Penalizările pentru neajunsuri de implementare pot constitui maxim 1 punct din nota finală a temei.
+Pe lângă penalizările precizate în cadrul listei de depunctări, se vor avea în vedere următoarele elemente:
+-2p – folosirea de operații blocante pe sockeți în locul operațiilor non-blocante (Linux), folosirea API-ului sincron pe Windows în fața celui asincron (Overlapped I/O).
+-2p – pe Linux, operațiile I/O asincrone pe fișiere nu sunt așteptate “integrat” folosind eventfd și epoll.
+-1p – alte implementări nevalide la nivelul sistemului asincron de comunicație.
+Nu se punctează o temă care nu folosește operații I/O asincrone pe fișiere: io_* (din libaio) pe Linux, respectiv Overlapped I/O pe Windows.
+

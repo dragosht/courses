@@ -1,0 +1,824 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0043)http://ocw.cs.pub.ro/courses/so/teme/tema-4 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    Tema 4 Planificator de threaduri    [CS Open CourseWare]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2014-04-21T21:39:09+0300">
+<meta name="keywords" content="so,teme,tema-4">
+<link rel="search" type="application/opensearchdescription+xml" href="http://ocw.cs.pub.ro/courses/lib/exe/opensearch.php" title="CS Open CourseWare">
+<link rel="start" href="http://ocw.cs.pub.ro/courses/">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://ocw.cs.pub.ro/courses/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://ocw.cs.pub.ro/courses/feed.php?mode=list&ns=so:teme">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://ocw.cs.pub.ro/courses/_export/xhtml/so/teme/tema-4">
+<link rel="canonical" href="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/Tema 4 Planificator de threaduri [CS Open CourseWare].html">
+<link rel="stylesheet" type="text/css" href="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/css.php">
+<script type="text/javascript">/*<![CDATA[*/var NS='so:teme';var JSINFO = {"id":"so:teme:tema-4","namespace":"so:teme","isadmin":0,"isauth":0};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/js.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		  
+/*!]]>*/</script><script src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var pageTracker = _gat._getTracker("UA-38383934-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+		  
+/*!]]>*/</script>
+<script type="text/x-mathjax-config;executed=true">/*<![CDATA[*/MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+        displayMath: [ ["$$","$$"], ["\\[","\\]"] ],
+        processEscapes: true
+    }
+});
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/MathJax.js"></script>
+
+  <link rel="shortcut icon" href="http://ocw.cs.pub.ro/courses/lib/tpl/arctic/images/favicon.ico">
+
+  
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXc-script {font-size: .8em}
+.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXc-bold {font-weight: bold}
+.MJXc-italic {font-style: italic}
+.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-largeop {font-size: 150%}
+.MJXc-largeop.MJXc-int {vertical-align: -.2em}
+.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXc-display {display: block; text-align: center; margin: 1em 0}
+.MJXc-math span {display: inline-block}
+.MJXc-box {display: block!important; text-align: center}
+.MJXc-box:after {content: " "}
+.MJXc-rule {display: block!important; margin-top: .1em}
+.MJXc-char {display: block!important}
+.MJXc-mo {margin: 0 .15em}
+.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXc-denom {display: inline-table!important; width: 100%}
+.MJXc-denom > * {display: table-row!important}
+.MJXc-surd {vertical-align: top}
+.MJXc-surd > * {display: block!important}
+.MJXc-script-box > *  {display: table!important; height: 50%}
+.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXc-script-box > *:last-child > * {vertical-align: bottom}
+.MJXc-script-box > * > * > * {display: block!important}
+.MJXc-mphantom {visibility: hidden}
+.MJXc-munderover {display: inline-table!important}
+.MJXc-over {display: inline-block!important; text-align: center}
+.MJXc-over > * {display: block!important}
+.MJXc-munderover > * {display: table-row!important}
+.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXc-mtr {display: table-row!important}
+.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-mlabeledtr {display: table-row!important}
+.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<div id="wrapper" class="show">
+  <div class="dokuwiki">
+
+    
+    <div class="stylehead">
+      <div class="header">
+        <div class="pagename">
+          <a href="http://ocw.cs.pub.ro/courses/so/"><img height="70" src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/sigla_so.png"> </a>        </div>
+        <div class="logo">
+          <a style="color: #AAA !important;" href="http://ocw.cs.pub.ro/courses/systems/"><img height="70" src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/systems.png" name="dokuwiki__top"></a>        </div>
+      </div>
+    
+       
+      <div class="breadcrumbs">
+              </div>
+      
+            </div>
+
+                  <div class="bar" id="bar__top">
+        <div class="bar-left">
+                  </div>
+        <div class="bar-right">
+          <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4?do=login&sectok=39572f64e4a211baa2bc1705fc977261" class="action login" rel="nofollow" title="Login">Login</a>        </div>
+    </div>
+        
+    
+    
+    
+              <div class="left_page">
+          
+<h1 class="sectionedit1" id="tema_4_planificator_de_threaduri">Tema 4 Planificator de threaduri</h1>
+<div class="level1">
+
+<p>
+</p><p></p><div class="noteimportant">
+Dată publicare: 17 Aprilie 2014
+<p></p>
+
+<p>
+Deadline: 7 Mai 2014, ora 23:55
+</p>
+
+<p>
+Deadline hard: 14 Mai 2014, ora 23:55
+
+</p></div><p></p>
+<p></p>
+
+</div>
+
+<h2 class="sectionedit2" id="obiectivele_temei">Obiectivele temei</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Aprofundarea următoarelor noțiuni:</div>
+<ul>
+<li class="level2"><div class="li">threaduri POSIX și WINDOWS</div>
+</li>
+<li class="level2"><div class="li">planificarea proceselor/threadurilor</div>
+</li>
+<li class="level2"><div class="li">mecanisme de sincronizare între threaduri</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3" id="enunt">Enunț</h2>
+<div class="level2">
+
+<p>
+Să se implementeze un planificator de threaduri care va controla execuția acestora în user-space. Acesta va simula un <strong>scheduler</strong> de procese preemptiv, într-un sistem uniprocesor, care utilizează un algoritm de planificare Round Robin cu priorități.
+</p>
+
+<p>
+Implementarea planificatorului de threaduri se va face într-o bibliotecă partajată dinamică, pe care o vor încărca thread-urile ce urmează să fie planificate. Aceasta va trebui să exporte următoarele funcții:
+</p>
+<ul>
+<li class="level1"><div class="li"><code>INIT</code> - inițializează structurile interne ale planificatorului.</div>
+</li>
+<li class="level1"><div class="li"><code>FORK</code> - pornește un nou thread.</div>
+</li>
+<li class="level1"><div class="li"><code>EXEC</code> - simulează execuția unei instrucțiuni.</div>
+</li>
+<li class="level1"><div class="li"><code>WAIT</code> - așteaptă un eveniment/operație I/O.</div>
+</li>
+<li class="level1"><div class="li"><code>SIGNAL</code> - semnalează threadurile care așteaptă un eveniment/operație I/O.</div>
+</li>
+<li class="level1"><div class="li"><code>END</code> - distruge planificatorul și eliberează structurile alocate.</div>
+</li>
+</ul>
+
+<p>
+Pe lângă implementarea propriu-zisă a funcțiilor de mai sus, va trebui să asigurați și planificarea/execuția corectă a threadurilor, conform algoritmului <span class="curid"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#round_robin_cu_prioritati" class="wikilink1" title="so:teme:tema-4">Round Robin cu priorități</a></span>. Fiecare thread trebuie să ruleze în contextul unui thread real din sistem. Fiind un planificator pentru sisteme uniprocesor, un singur thread va putea rula la un moment dat.
+</p>
+
+</div>
+
+<h2 class="sectionedit4" id="descriere_detaliata_a_functionarii_planificatorului">Descriere detaliată a funcționării planificatorului</h2>
+<div class="level2">
+
+</div>
+
+<h3 class="sectionedit5" id="timp_executie">Timp execuție:</h3>
+<div class="level3">
+
+<p>
+Într-un sistem real, pentru controlul execuției, contorizarea timpului de rulare a unui proces se realizează la fiecare întrerupere de ceas.
+</p>
+
+<p>
+Pentru facilitarea implementării, modelul temei va simula un sistem real astfel:
+</p>
+<ol>
+<li class="level1"><div class="li"> sistemul simulat va folosi un timp virtual (logic), independent de cel real pentru a contoriza timpul de rulare pe procesor.</div>
+</li>
+<li class="level1"><div class="li"> veți considera că o <code>instructiune</code> durează o <strong>singură</strong> perioadă de ceas (unitate de timp logic).</div>
+</li>
+<li class="level1"><div class="li"> fiecare din funcțiile prezentate mai sus reprezintă o <strong>singură</strong> <code>instructiune</code> ce poate fi executată de un thread la un moment dat.</div>
+</li>
+</ol>
+
+</div>
+
+<h3 class="sectionedit6" id="evenimente_si_io">Evenimente și I/O</h3>
+<div class="level3">
+
+<p>
+Threadurile din sistem se pot bloca în așteptarea unui eveniment sau a unei operații de I/O. Un astfel de eveniment va fi identificat printr-un id (0 - nr_events). Numărul total de evenimente (care pot apărea la un moment dat în sistem) va fi dat ca parametru la inițializarea planificatorului.
+</p>
+
+<p>
+Un thread se blochează în urma apelului funcției <code>wait</code> (ce primește ca parametru id-ul/indexul evenimentului/dispozitivului) și este eliberat atunci când un alt thread apelează funcția <code>signal</code> pe același eveniment/dispozitiv. Signal trezește toate threadurile care așteapta un anumit eveniment.
+</p>
+
+<p>
+Atenție, un thread care a apelat funcția <code>wait</code>, indiferent de prioritate, nu poate fi planificat decât după ce este trezit de un alt thread.
+</p>
+
+</div>
+
+<h3 class="sectionedit7" id="round_robin_cu_prioritati">Round Robin cu priorități</h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li">fiecare task are asociată o prioritate statică, care este specificată la pornirea threadului.</div>
+</li>
+<li class="level1"><div class="li">întotdeauna va fi planificat threadul cu cea mai mare prioritate.</div>
+</li>
+<li class="level1"><div class="li">la expirarea cuantei de timp, threadul care rulează este preemptat și se alege un nou task.</div>
+</li>
+<li class="level1"><div class="li">dacă un thread este preemptat și revine în starea READY (ex: cazul în care îi expiră cuanta), iar în sistem nu mai există un alt thread READY de prioritate mai mare sau egală cu al lui, va fi replanificat același thread.</div>
+</li>
+<li class="level1"><div class="li">threadurile cu aceeași prioritate vor fi planificate după modelul Round Robin (ex: puteți folosi cozi de priorități ce vor fi parcurse circular).</div>
+</li>
+<li class="level1"><div class="li">dacă un thread proaspăt creat (sau care doar ce a ieșit din starea de waiting) are prioritate mai mare decât threadul care rulează, cel din urmă va fi preemptat și va rula thread-ul cu prioritatea mai mare.</div>
+</li>
+<li class="level1"><div class="li">la replanificarea unui thread, cuanta acestuia de rulare pe procesor va fi resetată la valoarea maximă.</div>
+</li>
+<li class="level1"><div class="li"><strong>preempția</strong>: odată ce o funcție/instrucțiune a fost planificată, ea nu poate fi preemptată decât după ce și-a terminat treaba (“do work” în exemplul de mai jos). Pentru a simula preempția, puteți bloca funcția curentă folosind mecanisme de sincronizare. De exemplu, o instrucțiune se poate abstractiza astfel:</div>
+</li>
+</ul>
+<pre class="code">instruction()
+{
+    do work
+    check scheduler
+    if (preempted)
+        block();
+    return;
+}</pre>
+
+<p>
+Prin urmare, cazurile în care threadul curent este preemptat și un alt thread începe rularea sunt:
+</p>
+<ul>
+<li class="level1"><div class="li">un task cu o prioritate mai mare intră în sistem.</div>
+</li>
+<li class="level1"><div class="li">un task cu o prioritate mai mare este semnalat printr-o operație de tipul <code>signal</code>.</div>
+</li>
+<li class="level1"><div class="li">task-ului curent i-a expirat cuanta de timp.</div>
+</li>
+<li class="level1"><div class="li">așteaptă la un eveniment cu ajutorul unei operații de tipul <code>wait</code>.</div>
+</li>
+<li class="level1"><div class="li">nu mai are instrucțiuni de executat.</div>
+</li>
+</ul>
+
+<p>
+Pentru mai multe detalii despre algoritmi de planificare puteți consulta <a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-04" class="wikilink1" title="so:cursuri:curs-04">cursul 4</a>.
+</p>
+
+</div>
+
+<h3 class="sectionedit8" id="stari_threaduri">Stări threaduri:</h3>
+<div class="level3">
+
+<p>
+Stările prin care poate trece un thread sunt:
+</p>
+<ul>
+<li class="level1"><div class="li"><strong>New</strong> - thread nou creat în urma unui apel de tipul <code>fork</code>.</div>
+</li>
+<li class="level1"><div class="li"><strong>Ready</strong> - așteaptă să fie planificat.</div>
+</li>
+<li class="level1"><div class="li"><strong>Running</strong> - planificat - un singur thread poate rula la un moment dat.</div>
+</li>
+<li class="level1"><div class="li"><strong>Waiting</strong> - așteaptă după un eveniment sau o operație I/O. Un thread se va bloca în starea de wait în urma apelului <code>so_wait(event/io)</code>.</div>
+</li>
+<li class="level1"><div class="li"><strong>Terminated</strong> - și-a încheiat execuția.</div>
+</li>
+</ul>
+
+<p>
+Pentru o mai bună întelegere a algoritmilor de planificare, se recomandă urmărirea tranzițiilor dintre stări ca în desenul de mai jos.
+</p>
+
+<p>
+<a href="http://ocw.cs.pub.ro/courses/_detail/so/teme/thr_states.png?id=so%3Ateme%3Atema-4" class="media" title="so:teme:thr_states.png"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/thr_states.png" class="media" alt=""></a>
+</p>
+
+</div>
+
+<h3 class="sectionedit9" id="detalii_implementare_instructiuni">Detalii implementare instrucțiuni</h3>
+<div class="level3">
+
+<p>
+Funcțiile care trebuie exportate de planificator, alături de parametrii fiecăruia, sunt detaliate mai jos:
+</p>
+<ul>
+<li class="level1"><div class="li"><code>int so_init(cuantă, io)</code> - inițializează planificatorul. Primește ca argumente cuanta de timp după care un proces trebuie preemptat și numărul de evenimente (dispozitive I/O) suportate. Întoarce 0 dacă planificatorul a fost inițializat cu succes, sau negativ în caz de eroare. <span style="color:red;">Numărul maxim de dispozitive I/O suportate este 256.</span></div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><code>void so_end()</code> - eliberează resursele planificatorului și așteaptă terminarea tuturor threadurilor înainte de părăsirea sistemului.</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><code>void so_exec()</code> - simulează execuția unei instrucțiuni generice. Practic, doar consumă timp pe procesor.</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><code>int so_wait(event/io)</code> - threadul curent se blochează în așteptarea unui eveniment sau a unei operații de I/O. Întoarce 0 dacă evenimentul există (id-ul acestuia este valid) sau negativ în caz de eroare.</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><code>int so_signal(event/io)</code> - trezește unul sau mai multe threaduri care așteaptă un anumit eveniment. Întoarce numărul total de threaduri deblocate, sau negativ în caz de eroare (evenimentul nu este valid).</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><code>tid_t so_fork(handler, prioritate)</code> - pornește și introduce în planificator un nou thread. Primește ca parametru o rutină pe care threadul o va executa după ce va fi planificat și prioritatea cu care acesta va rula și întoarce un id unic corespunzător threadului. Handlerul executat de thread va primi ca parametru prioritatea acestuia.</div>
+</li>
+</ul>
+
+<p>
+În mod normal, so_fork va fi apelată din contextul unui alt thread din sistem. Se garantează faptul că va exista întotdeauna cel puțin un thread ce poate fi planificat, pe întreg parcursul rulării planificatorului. Excepție face cazul primului so_fork ce va crea primul thread din sistem și va fi apelat din contextul testelor, neavând ca parinte un thread din sistemul simulat. 
+</p>
+
+<p>
+Un exemplu de model de implementare a funcției fork, ar putea fi folosirea unei funcții suplimentare (ex start_thread) care să determine contextul în care se va executa noul thread (handlerul primit ca parametru) ca în descrierea de mai jos:
+</p>
+<pre class="code">so_fork(handler, prio)
+-&gt; initializare thread struct
+-&gt; creare thread nou ce va executa functia start_thread
+-&gt; asteaptă ca threadul să intre în starea READY/RUN
+-&gt; returnează id-ul noului thread
+
+start_thread(params)
+-&gt; asteaptă să fie planificat
+-&gt; call handler(prio)
+-&gt; iesire thread
+</pre>
+
+<p>
+<strong>Atenție:</strong> Funcția se va întoarce abia după ce noul thread creat fie a fost planificat fie a intrat în starea READY.
+</p>
+
+</div>
+
+<h2 class="sectionedit10" id="exemplu_executie">Exemplu execuție</h2>
+<div class="level2">
+<div class="table sectionedit11"><table class="inline">
+	<tbody><tr class="row0">
+		<th class="col0 leftalign"> = Thread 0 =      </th><th class="col1 leftalign"> = Thread 1 =       </th><th class="col2 leftalign"> = Thread 2 =         </th><th class="col3 leftalign"> = Thread 3 =        </th>
+	</tr>
+	<tr class="row1">
+		<td class="col0 leftalign"> exec    </td><td class="col1 leftalign"> exec     </td><td class="col2 leftalign"> exec        </td><td class="col3 centeralign">  exec    </td>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> fork(thr2, 2)    </td><td class="col1 leftalign"> signal(3)    </td><td class="col2 leftalign"> wait(3)        </td><td class="col3 centeralign">  exec    </td>
+	</tr>
+	<tr class="row3">
+		<td class="col0 leftalign"> fork(thr1, 1)    </td><td class="col1 leftalign"> fork(thr3, 1)    </td><td class="col2 leftalign"> exec        </td><td class="col3 leftalign">     </td>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> exec    </td><td class="col1 leftalign"> exec    </td><td class="col2 leftalign">        </td><td class="col3 leftalign">     </td>
+	</tr>
+	<tr class="row5">
+		<td class="col0 leftalign">     </td><td class="col1 leftalign"> exec    </td><td class="col2 leftalign">        </td><td class="col3 leftalign">     </td>
+	</tr>
+	<tr class="row6">
+		<td class="col0 leftalign">     </td><td class="col1 leftalign"> exec    </td><td class="col2 leftalign">        </td><td class="col3 leftalign">     </td>
+	</tr>
+</tbody></table></div>
+
+<p>
+În exemplul de mai sus, threadul 0 are prioritatea 0. Acesta pornește threadurile 1 și 2 cu prioritățile asociate. Threadul 2 se blochează așteptând evenimentul cu id-ul 3, eveniment ce va fi semnalat de threadul 1. Cuanta de rulare pe procesor este 3. În final, instrucțiunile se vor executa în următoarea ordine:
+</p>
+<pre class="code">T0 exec
+T0 forks T2, prio 2
+--&gt; T2 preempts T0 (prio(T2) &gt; prio(T0))
+T2 exec
+T2 waits for event 3
+--&gt; T2 blocks and is preempted
+T0 forks T1, prio 1
+--&gt; T1 preempts T0
+T1 exec
+T1 signals event 3
+--&gt; T2 is woken up and preempts T1
+T2 exec
+--&gt; T2 finished
+T1 forks T3, prio 1
+T1 exec
+T1 exec
+--&gt; T1 is preempted, its CPU quantum expired
+T3 exec
+T3 exec
+--&gt; T3 finished
+T1 exec
+--&gt; T1 finished
+T0 exec
+--&gt; T0 finished</pre>
+
+</div>
+
+<h2 class="sectionedit12" id="precizari_linux">Precizări Linux</h2>
+<div class="level2">
+
+<p>
+Identificatorul întors de funcția <code>so_fork</code> trebuie să fie structura <code>pthread_t</code> populată de funcția POSIX <code>pthread_create()</code>.
+</p>
+
+<p>
+Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free, și funcțiile de manipulare a șirurilor de caractere (strcat, strdup, etc.)
+</p>
+
+<p>
+Tema se va rezolva folosind fire de execuție POSIX și exclusiv mecanisme de sincronizare a firelor de execuție POSIX (mutex, variabile de condiție).
+</p>
+
+</div>
+
+<h2 class="sectionedit13" id="precizari_windows">Precizări Windows</h2>
+<div class="level2">
+
+<p>
+Pe lângă mecanismele de sincronizare învățate la laborator, aveți voie să folosiți și <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682052(v=vs.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682052(v=vs.85).aspx" rel="nofollow">variabile de condiție</a>.
+</p>
+
+<p>
+Identificatorul întors de funcția <code>so_fork</code> trebuie să fie cel întors de funcția <code>GetCurrentThreadId()</code> apelată în contextul threadului nou creat.
+</p>
+
+<p>
+Tema se va rezolva folosind doar funcții Win32. Se pot folosi de asemenea și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free și funcțiile de manipulare a șirurilor de caractere (strcat, strdup, etc.)
+</p>
+
+</div>
+
+<h2 class="sectionedit14" id="utile">Utile</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema4-util/so_scheduler.h" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema4-util/so_scheduler.h" rel="nofollow"> Header</a> - conține semnăturile funcțiilor exportate.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit15" id="testare">Testare</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Corectarea temelor se va realiza automat cu ajutorul unor suite de teste publice:</div>
+<ul>
+<li class="level2"><div class="li">teste Linux   – <a href="http://elf.cs.pub.ro/so/res/teme/tema4-checker-lin.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema4-checker-lin.zip" rel="nofollow"> tema4-checker-lin.zip</a></div>
+</li>
+<li class="level2"><div class="li">teste Windows – <a href="http://elf.cs.pub.ro/so/res/teme/tema4-checker-win.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema4-checker-win.zip" rel="nofollow"> tema4-checker-win.zip</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pentru evaluare și corectare tema va fi uploadată folosind <a href="https://elf.cs.pub.ro/vmchecker/ui" class="urlextern" title="https://elf.cs.pub.ro/vmchecker/ui" rel="nofollow"> interfața vmchecker</a>.</div>
+</li>
+<li class="level1"><div class="li">În urma compilării temei trebuie să rezulte o bibliotecă shared-object (Linux) denumită <code>libscheduler.so</code> sau o bibliotecă dinamică (Windows) denumită <code>libscheduler.dll</code>.</div>
+</li>
+<li class="level1"><div class="li">Suita de teste conține un set de teste. Trecerea unui test conduce la obținerea punctajului aferent acestuia.</div>
+<ul>
+<li class="level2"><div class="li">În urma rulării testelor, se va acorda, în mod automat, un punctaj total. Punctajul total maxim este de 90 de puncte, pentru o temă care trece toate testele. La acest punctaj se adaugă 10 puncte care reprezintă aprecierea temei de către asistentul care o corectează.</div>
+</li>
+<li class="level2"><div class="li">Cele 100 de puncte corespund la 10 puncte din cadrul notei finale.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pot exista penalizări în caz de întârzieri sau pentru neajunsuri de implementare sau de stil. Ca excepție, pot apărea depunctări mai mari de 1 pct, în cazul în care tema trece teste prin “hackuri” în implementare (ex: sincronizări cu sleep, threadurile nu rulează peste threaduri reale din sistem, etc). </div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit16" id="notare">Notare</h2>
+<div class="level2">
+
+<p>
+Nota maximă este de 100p.
+</p>
+
+<p>
+Depunctări suplimentare:
+</p>
+<ul>
+<li class="level1"><div class="li">-0.6 erori de sincronizare (deadlock, race condition, etc.).</div>
+</li>
+<li class="level1"><div class="li">nerespectarea regulilor de <a href="http://ocw.cs.pub.ro/courses/so/teme/general" class="wikilink1" title="so:teme:general">aici</a>.</div>
+</li>
+<li class="level1"><div class="li">alte depunctări pentru implementări greșite, ce nu respectă cerința generală a temei.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit17" id="materiale_ajutatoare">Materiale ajutătoare</h2>
+<div class="level2">
+
+<p>
+Cursuri:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-04" class="wikilink1" title="so:cursuri:curs-04">Curs 4</a> - Planificarea execuției</div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-08" class="wikilink1" title="so:cursuri:curs-08">Curs 8</a> - Fire de execuție</div>
+</li>
+</ul>
+
+<p>
+Laboratoare:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-08" class="wikilink1" title="so:laboratoare:laborator-08">Laborator 8</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-09" class="wikilink1" title="so:laboratoare:laborator-09">Laborator 9</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit18" id="faq">FAQ</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Tema se poate face în C++?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit19" id="lista_de_discutii">Lista de discuții</h2>
+<div class="level2">
+
+<p>
+Pentru întrebări sau nelămuriri legate de temă puteți <a href="http://elf.cs.pub.ro/so/wiki/resurse/lista-discutii" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/resurse/lista-discutii" rel="nofollow"> căuta</a>, <a href="http://cursuri.cs.pub.ro/pipermail/so" class="urlextern" title="http://cursuri.cs.pub.ro/pipermail/so" rel="nofollow"> consulta</a> sau <a href="mailto:mailto:so@cursuri.cs.pub.ro" class="mail" title="mailto:so@cursuri.cs.pub.ro"> trimite un mail pe</a>  lista de discuții  (trebuie să fiți <a href="http://cursuri.cs.pub.ro/liste/so" class="urlextern" title="http://cursuri.cs.pub.ro/liste/so" rel="nofollow"> înregistrați</a>).
+</p>
+
+</div>
+
+        </div>
+        <div class="right_sidebar">
+          <form action="http://ocw.cs.pub.ro/courses/start" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>          <div class="namespace_sidebar sidebar_box">
+
+
+
+<h1 class="sectionedit1" id="informatii_generale_so">Informații generale SO</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_177761665754e8f3ddd9518" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/documentatie" class="wikilink1" title="so:info:documentatie">Documentație și alte resurse</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/feed" class="wikilink1" title="so:info:feed">Feed-uri RSS</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/hall" class="wikilink1" title="so:info:hall">Hall of SO</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/lista-discutii" class="wikilink1" title="so:info:lista-discutii">Listă de discuții</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/mv" class="wikilink1" title="so:info:mv">Mașini virtuale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/trimitere-teme" class="wikilink1" title="so:info:trimitere-teme">Trimitere teme</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT1 SECTION "Informații generale SO" [12-175] -->
+<h1 class="sectionedit2" id="informatii_so_2013-2014">Informații SO 2013-2014</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_33230682654e8f3ddda29f" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen" class="indexmenu_idx_head">Examen</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2012-2013" class="wikilink1" title="so:meta:examen:2012-2013">Teste SO 2012-2013</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2013-2014" class="wikilink1" title="so:meta:examen:2013-2014">Lucrări SO 2013-2014</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare" class="indexmenu_idx_head">Reguli generale și notare</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-ca-cc" class="wikilink1" title="so:meta:notare:reguli-notare-ca-cc">Notare CA/CC</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-cb" class="wikilink1" title="so:meta:notare:reguli-notare-cb">Notare CB</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/anunturi" class="wikilink1" title="so:meta:anunturi">Anunțuri</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/calendar" class="wikilink1" title="so:meta:calendar">Calendar</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/catalog" class="wikilink1" title="so:meta:catalog">Catalog</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/echivalari" class="wikilink1" title="so:meta:echivalari">Echivalări teme 2014 - 2015</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/karma" class="wikilink1" title="so:meta:karma">Karma Awards</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/need-to-know" class="wikilink1" title="so:meta:need-to-know">SO Need to Know</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/orar" class="wikilink1" title="so:meta:orar">Orar și împărțire pe semigrupe</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT2 SECTION "Informații SO 2013-2014" [176-243] -->
+<h1 class="sectionedit3" id="laboratoare">Laboratoare</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so/laboratoare-2013/start" class="wikilink1" title="so:laboratoare-2013:start"> Arhivă laboratoare 2012-2013</a></div>
+</li>
+</ul>
+
+<div><div id="nojs_indexmenu_102819646254e8f3dddbc30" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse" class="indexmenu_idx_head">Resurse</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/c_tips" class="wikilink1" title="so:laboratoare:resurse:c_tips">C/SO Tips</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/die" class="wikilink1" title="so:laboratoare:resurse:die">Macro-ul DIE</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/gdb" class="wikilink1" title="so:laboratoare:resurse:gdb">GDB</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/home" class="wikilink1" title="so:laboratoare:resurse:home">Resurse</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/injections" class="wikilink1" title="so:laboratoare:resurse:injections">Function Hooking and Windows Dll Injection</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/joc" class="wikilink1" title="so:laboratoare:resurse:joc">Desfășurare Joc</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/oprofile" class="wikilink1" title="so:laboratoare:resurse:oprofile">Oprofile</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/recapitulare" class="wikilink1" title="so:laboratoare:resurse:recapitulare">Recapitulare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/threaduri_extra" class="wikilink1" title="so:laboratoare:resurse:threaduri_extra">Thread-uri - Extra</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/vs_tips" class="wikilink1" title="so:laboratoare:resurse:vs_tips">Visual Studio Tips and Tricks</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/windows-video" class="wikilink1" title="so:laboratoare:resurse:windows-video">windows-video</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-01" class="wikilink1" title="so:laboratoare:laborator-01">Laborator 01 - Introducere</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-02" class="wikilink1" title="so:laboratoare:laborator-02">Laborator 02 - Operații I/O simple</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-03" class="wikilink1" title="so:laboratoare:laborator-03">Laborator 03 - Procese</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-04" class="wikilink1" title="so:laboratoare:laborator-04">Laborator 04 - Semnale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-05" class="wikilink1" title="so:laboratoare:laborator-05">Laborator 05 - Gestiunea memoriei</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-06" class="wikilink1" title="so:laboratoare:laborator-06">Laborator 06 - Memoria virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-07" class="wikilink1" title="so:laboratoare:laborator-07">Laborator 07 - Profiling &amp; Debugging</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-08" class="wikilink1" title="so:laboratoare:laborator-08">Laborator 08 - Thread-uri Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-09" class="wikilink1" title="so:laboratoare:laborator-09">Laborator 09 - Thread-uri Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-10" class="wikilink1" title="so:laboratoare:laborator-10">Laborator 10 - Operații IO avansate - Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-11" class="wikilink1" title="so:laboratoare:laborator-11">Laborator 11 - Operații IO avansate - Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-12" class="wikilink1" title="so:laboratoare:laborator-12">Laborator 12 - Implementarea sistemelor de fișiere</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT3 SECTION "Laboratoare" [244-372] -->
+<h1 class="sectionedit4" id="cursuri">Cursuri</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_212445991154e8f3dddbe93" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-01" class="indexmenu_idx_head">Curs 01 - Introducere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-02" class="indexmenu_idx_head">Curs 02 - Sistemul de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-03" class="indexmenu_idx_head">Curs 03 - Procese</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-04" class="indexmenu_idx_head">Curs 04 - Planificarea execuției</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-05" class="indexmenu_idx_head">Curs 05 - Gestiunea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-06" class="indexmenu_idx_head">Curs 06 - Memoria virtuală</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-07" class="indexmenu_idx_head">Curs 07 - Securitatea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-08" class="indexmenu_idx_head">Curs 08 - Fire de execuție</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-09" class="indexmenu_idx_head">Curs 09 - Sincronizare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-10" class="indexmenu_idx_head">Curs 10 - Dispozitive de intrare/ieșire</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-11" class="indexmenu_idx_head">Curs 11 - Networking in Sistemul de Operare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-12" class="indexmenu_idx_head">Curs 12 - Implementarea sistemelor de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-13" class="indexmenu_idx_head">Curs 13 - Securitatea sistemului</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/quiz?idx=so:cursuri:quiz" class="indexmenu_idx">quiz</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-2" class="wikilink1" title="so:cursuri:curs-extra-2">Curs extra - Android</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-3" class="wikilink1" title="so:cursuri:curs-extra-3">Curs extra - Virtualizare</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra" class="wikilink1" title="so:cursuri:curs-extra">Curs extra - Sincronizarea proceselor</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/note" class="wikilink1" title="so:cursuri:note">Note de curs</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT4 SECTION "Cursuri" [373-425] -->
+<h1 class="sectionedit5" id="teme">Teme</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_158061875354e8f3dddc128" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-asist" class="indexmenu_idx_head">Tema Asistenți - Guardian process</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/general" class="wikilink1" title="so:teme:general">Indicații generale teme</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-1" class="wikilink1" title="so:teme:tema-1">Tema 1 Multi-platform Development</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2" class="wikilink1" title="so:teme:tema-2">Tema 2 Mini-shell</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-3" class="wikilink1" title="so:teme:tema-3">Tema 3 Memorie virtuală</a></div></li>
+<li class="level1"><div class="li"><span class="curid"><a href="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/Tema 4 Planificator de threaduri [CS Open CourseWare].html" class="wikilink1" title="so:teme:tema-4">Tema 4 Planificator de threaduri</a></span></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5" class="wikilink1" title="so:teme:tema-5">Tema 5 Server web asincron</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT5 SECTION "Teme" [426-] -->
+</div>
+<div class="toc_sidebar sidebar_box">
+<!-- TOC START -->
+<div id="sb__right__dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#tema_4_planificator_de_threaduri">Tema 4 Planificator de threaduri</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#obiectivele_temei">Obiectivele temei</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#enunt">Enunț</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#descriere_detaliata_a_functionarii_planificatorului">Descriere detaliată a funcționării planificatorului</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#timp_executie">Timp execuție:</a></div></li>
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#evenimente_si_io">Evenimente și I/O</a></div></li>
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#round_robin_cu_prioritati">Round Robin cu priorități</a></div></li>
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#stari_threaduri">Stări threaduri:</a></div></li>
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#detalii_implementare_instructiuni">Detalii implementare instrucțiuni</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#exemplu_executie">Exemplu execuție</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#precizari_linux">Precizări Linux</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#precizari_windows">Precizări Windows</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#utile">Utile</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#testare">Testare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#notare">Notare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#materiale_ajutatoare">Materiale ajutătoare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#faq">FAQ</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#lista_de_discutii">Lista de discuții</a></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+</div>
+        </div>
+      
+    
+      <div class="stylefoot">
+        <div class="meta">
+          <div class="user">
+                    </div>
+          <div class="doc">
+          so/teme/tema-4.txt · Last modified: 2014/04/21 21:39 by razvan.crainea          </div>
+        </div>
+      </div>
+
+    <div class="clearer"></div>
+
+    
+                <div class="bar" id="bar__bottom">
+      <div class="bar-left">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4?do=revisions" class="action revs" accesskey="o" rel="nofollow" title="Old revisions [O]">Old revisions</a>      </div>
+      <div class="bar-right">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4?do=media&ns=so%3Ateme" class="action media" rel="nofollow" title="Media Manager">Media Manager</a><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]">Back to top</a>      </div>
+    </div>
+    <div class="clearer"></div>
+            
+    <div align="center" class="footerinc">
+  <div class="license"><a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/cc-by-sa.png" alt="CC Attribution-Share Alike 3.0 Unported"></a></div>
+  <a target="_blank" href="http://www.chimeric.de/" title="www.chimeric.de"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-chimeric-de.png" width="80" height="15" alt="www.chimeric.de" border="0"></a>
+
+  <a target="_blank" href="http://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-css.png" width="80" height="15" alt="Valid CSS" border="0"></a>
+
+  <a target="_blank" href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" border="0"></a>
+
+  <a target="_blank" href="http://www.firefox-browser.de/" title="do yourself a favour and use a real browser - get firefox"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-firefox.png" width="80" height="15" alt="do yourself a favour and use a real browser - get firefox!!" border="0"></a>
+  
+  <a target="_blank" href="http://ocw.cs.pub.ro/courses/feed.php" title="Recent changes RSS feed"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" border="0"></a>
+
+  <a target="_blank" href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" border="0"></a>
+</div>
+
+  </div>
+</div>
+
+<div class="no"><img src="./Tema 4 Planificator de threaduri [CS Open CourseWare]_files/indexer.php" width="2" height="1" alt=""></div>
+
+
+</body></html>

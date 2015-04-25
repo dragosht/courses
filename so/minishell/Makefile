@@ -1,0 +1,15 @@
+CC=gcc
+CFLAGS=-g -ggdb -Wall
+OBJ_PARSER=parser.tab.o parser.yy.o
+OBJ=mini-shell.o utils-lin.o
+TARGET=mini-shell
+
+build: $(TARGET)
+
+all: build
+
+$(TARGET): $(OBJ) $(OBJ_PARSER)
+	$(CC) $(CFLAGS) $(OBJ) $(OBJ_PARSER) -o $(TARGET)
+
+clean:
+	rm -rf $(OBJ) $(OBJ_PARSER) $(TARGET) *~

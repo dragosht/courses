@@ -1,0 +1,308 @@
+
+<!-- saved from url=(0078)http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+
+
+
+<title>Sisteme de Operare</title>
+    
+    <meta http-equiv="description" content="Sisteme de Operare">
+    <meta http-equiv="distribution" content="\&quot;Global\&quot;">
+    <link rel="stylesheet" href="./Sisteme de Operare_files/base.css" type="text/css">
+    <link rel="stylesheet" href="./Sisteme de Operare_files/vmchecker.css" type="text/css">
+</head>
+
+      
+<body><table width="70%" border="0" cellspacing="0" cellpadding="5" align="center">
+    <tbody><tr><td align="center" bgcolor="#ffce3d" class="fontmaroon">
+	Sisteme de Operare    </td></tr>
+    <tr><td align="center" bgcolor="#ffea9c" class="fontred">
+	Teme&nbsp;
+    </td></tr>
+</tbody></table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tbody><tr><td align="center"><br>
+<table width="96%" border="0" cellspacing="0" cellpadding="0">
+
+    <tbody><tr>
+	<td width="16%" valign="top">
+	    
+	<br>
+	<table width="100%" border="0" cellspacing="4" cellpadding="5">
+    	<tbody><tr><td bgcolor="#ffce3d" align="center"> 
+	
+        <a href="http://elf.cs.pub.ro/so/cs/index.php" class="linkmaroon">Home</a>
+	
+	</td></tr>
+        <tr><td bgcolor="#5bb7d3" align="center"> 
+	<br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Examen" class="linkwhite">Examen </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Cursuri" class="linkwhite">Cursuri </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Laboratoare" class="linkwhite">Laboratoare </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Arhive%20discu%C8%9Bii" class="linkwhite">Arhive discuții </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=SearchNew" class="linkwhite">SearchNew </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme" class="linkwhite">Teme </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Search" class="linkwhite">Search </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Reguli%20si%20notare" class="linkwhite">Reguli si notare </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Evaluare" class="linkwhite">Evaluare </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Anunturi" class="linkwhite">Anunturi </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Login" class="linkwhite">Login </a><br>
+	<br></td></tr>
+	<tr><td bgcolor="white">&nbsp;<br><br></td></tr>
+	</tbody></table>
+		</td>
+	<td width="1%">
+	    &nbsp;
+	</td>
+	<td width="62%" valign="top" bgcolor="#f7f3e6">
+	    <table width="100%" border="0" cellspacing="0" cellpadding="10">
+	    <tbody><tr><td>
+    	        <p align="right"><a href="http://elf.cs.pub.ro/so/cs/wiki/index.php?title=Teme:Monitor%20generic">WIKI</a> | <a href="http://elf.cs.pub.ro/so/cs/Teme/04.%20Monitor%20generic.pdf">PDF</a></p><h1 align="center">Monitor generic</h1>			<p align="center">Termen de predare: Miercuri, 20 mai 2009, ora 23:59:59 (2009-05-20)</p>
+<table id="toc" class="toc" summary="Contents"><tbody><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Enun.C5.A3"><span class="tocnumber">1</span> <span class="toctext">Enunţ</span></a>
+<ul>
+<li class="toclevel-2"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Cerin.C5.A3a_1:_Monitor_generic"><span class="tocnumber">1.1</span> <span class="toctext">Cerinţa 1: Monitor generic</span></a></li>
+<li class="toclevel-2"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Cerin.C5.A3a_2:_Readers-Writers"><span class="tocnumber">1.2</span> <span class="toctext">Cerinţa 2: Readers-Writers</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Documenta.C5.A3ie"><span class="tocnumber">2</span> <span class="toctext">Documentaţie</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Descriere_detaliat.C4.83_a_func.C5.A3ion.C4.83rii_unui_monitor"><span class="tocnumber">3</span> <span class="toctext">Descriere detaliată a funcţionării unui monitor</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Preciz.C4.83ri_Windows"><span class="tocnumber">4</span> <span class="toctext">Precizări Windows</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Precizari_Linux"><span class="tocnumber">5</span> <span class="toctext">Precizari Linux</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Testare"><span class="tocnumber">6</span> <span class="toctext">Testare</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#Notare"><span class="tocnumber">7</span> <span class="toctext">Notare</span></a></li>
+<li class="toclevel-1"><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=04.%20Monitor%20generic#.C3.8Entreb.C4.83ri"><span class="tocnumber">8</span> <span class="toctext">Întrebări</span></a></li>
+</ul>
+</td></tr></tbody></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<a name="Enun.C5.A3" id="Enun.C5.A3"></a><h2> <span class="mw-headline">Enunţ</span></h2>
+<a name="Cerin.C5.A3a_1:_Monitor_generic" id="Cerin.C5.A3a_1:_Monitor_generic"></a><h3> <span class="mw-headline">Cerinţa 1: Monitor generic</span></h3>
+<p>Să se implementeze un monitor generic, care să poată fi folosit de către mai multe thread-uri pentru rezolvarea unor probleme de sincronizare. Monitorul va fi generic în sensul că va conţine un număr de variabile de condiţie precizat la crearea sa, cu ajutorul cărora se pot sincroniza thread-urile care îl folosesc.
+</p><p>Implementarea monitorului se va face într-o bibliotecă partajată dinamică pe care o vor încărca thread-urile care se sincronizează cu ajutorul lui. Monitorul va fi expus utilizatorilor săi sub forma unei structuri de date Monitor, care poate fi manipulată cu ajutorul următoarelor primitive (implementate de voi):
+</p>
+<ul><li> <tt>Monitor* Create(int conditions, char policy)</tt> - va crea un monitor cu numărul de variabile condiţie şi cu politica de funcţionare specificate ca parametri
+</li><li> <tt>int Destroy(Monitor *m)</tt> - va distruge monitorul, eliberând toate resursele alocate la crearea acestuia
+</li><li> <tt>int Enter(Monitor *m)</tt> - thread-ul apelant va încerca să intre în monitor
+</li><li> <tt>int Leave(Monitor *m)</tt> - thread-ul apelant va părăsi monitorul
+</li><li> <tt>int Wait(Monitor *m, int cond)</tt> - thread-ul apelant va aştepta după variabila de condiţie <tt>cond</tt>
+</li><li> <tt>int Signal(Monitor *m, int cond)</tt> - thread-ul apelant semnalizează unui alt thread care aştepta după variabila de condiţie cond că poate continua execuţia; dacă nu există un asemenea thread, apelul nu are nici un efect
+</li><li> <tt>int Broadcast(Monitor *m, int cond)</tt> - thread-ul apelant semnalizează tuturor thread-urilor care aşteaptă după variabila de condiţie cond că pot continua execuţia; dacă nu există un asemenea thread, apelul nu are nici un efect
+</li></ul>
+<p>Toate funcţiile de mai sus întorc 0 în caz de succes şi -1 în caz de eroare, cu excepţia lui Create. Funcţia Create întoarce un pointer la monitor în caz de succes şi NULL în caz de eroare.
+</p><p>Trebuie verificate cazurile de folosire incorectă a monitorului precum:
+</p>
+<ul><li> <tt>Enter</tt> apelat de către un fir de execuţie care este deja în monitor
+</li><li> <tt>Leave, Wait, Signal, Broadcast</tt> - apelat de către un fir de execuţie care nu este în monitor
+</li><li> <tt>Destroy</tt> - apelat când monitorul nu este liber (mai există cel puţin un fir de execuţie activ in monitor)
+</li></ul>
+<p>La orice moment de timp, o parte din thread-urile care au apelat <tt>Enter</tt> sunt gata să fie planificate spre execuţie de către acesta. Thread-urile gata de planificare sunt reţinute in 3 cozi:
+</p>
+<ul><li> Waiting queue (W) - coada thread-urilor ce au fost trezite de un Signal şi doresc să-şi continue execuţia
+</li><li> Signaler queue (S) - coada thread-urilor ce au executat Signal, dar nu au fost încă planificate (este nevidă doar în cazul monitoarelor de tipul SIGNAL_AND_WAIT)
+</li><li> Entry queue (E) - coada thread-urilor ce au executat <tt>Enter</tt>, dar nu au intrat încă în monitor
+</li></ul>
+<p>În orice moment în care monitorul doreşte să planifice un thread spre execuţie, el va alege unul din cozile W,S,E, în această ordine (aşadar, prioritatea pentru coada W este maximă, iar pentru E este minimă). Modul de alegere al unui thread atunci când sunt mai multe disponibile în aceeaşi coadă rămâne la latitudinea voastră (implementation-defined). 
+</p><p>Politicile de funcţionare SIGNAL_AND_CONTINUE şi SIGNAL_AND_WAIT sunt singurele valori posibile pentru parametrul policy al funcţiei <tt>Create</tt>. Dacă monitorul funcţionează după politica SIGNAL_AND_CONTINUE, un thread care execută <tt>Signal</tt> îşi va continua execuţia fără să elibereze monitorul. Dacă monitorul funcţionează după politica SIGNAL_AND_WAIT, un thread care execută <tt>Signal</tt> cedează monitorul firelor de execuţie gata de planificare, el însuşi devenind unul dintre ele, fiind mutat în coada S. <b>Implementarea ambelor politici de funcţionare este obligatorie.</b>
+</p><p>Codul (binar) executat de thread-urile care folosesc monitorul se împarte în 2 categorii:
+</p>
+<ul><li> cod "monitor": codul executat atunci când se apelează una din rutinele <tt>Create</tt>, <tt>Destroy</tt>, <tt>Enter</tt>, <tt>Leave</tt>, <tt>Wait</tt>, <tt>Signal</tt>, <tt>Broadcast</tt>, până când acestea se întorc
+</li><li> cod "non-monitor": restul codului (codul efectiv util, care foloseşte sincronizarea oferită de monitor)
+</li></ul>
+<p>O proprietate foarte importantă pe care trebuie să o aibă monitorul implementat de voi este că, <b>la un moment dat de timp, cel mult un thread poate executa cod "non-monitor"</b>. Celelalte thread-uri vor aştepta (fie după variabile de condiţie, fie în cozile E,S,W, de unde se alege următorul thread pentru planificare) ca cel curent să cedeze monitorul. Numai apoi îşi vor putea ele executa propriul codul "non-monitor", în momentul în care vor fi planificate.
+</p>
+<a name="Cerin.C5.A3a_2:_Readers-Writers" id="Cerin.C5.A3a_2:_Readers-Writers"></a><h3> <span class="mw-headline"> Cerinţa 2: Readers-Writers </span></h3>
+<p>Folosind monitorul generic implementat veţi rezolva problema clasică de sincronizare <b>Readers-Writers, cu prioritate pe Writers</b>. 
+</p><p>Aveţi o resursă partajată între N cititori si M scriitori. Resursa poate fi citită simultan de către mai mulţi cititori, sau poate fi actualizată de un singur scriitor (şi nici un alt scriitor nu mai poate scrie, sau alt cititor citi în timp ce acesta actualizează resursa). Orice altă combinaţie de cititori şi scriitori nu poate opera asupra resursei simultan (combinaţiile interzise sunt aşadar: mai mulţi cititori şi cel puţin un scriitor, cel puţin 2 scriitori, un scriitor şi cel puţin un cititor, şi orice altă combinaţie care include una dintre acestea).
+</p><p>Rezolvarea se va prezenta sub forma unei a doua biblioteci dinamice, care oferă funcţiile:
+</p>
+<ul><li> <tt>Monitor* CreateRWMonitor();</tt> - Crează monitorul folosit pentru sincronizare Readers-Writers
+</li><li> <tt>int GetNrConds();</tt> - returnează numărul de variabile de condiţie ale monitorului creat cu <tt>CreateRWMonitor</tt>
+</li><li> <tt>void StartCit(Monitor* m);</tt> - apelată de către un cititor atunci când acesta vrea să înceapă să citească
+</li><li> <tt>void StopCit(Monitor *m);</tt> - apelată de către un cititor pentru a marca faptul că a terminat de citit
+</li><li> <tt>void StartScrit(Monitor* m);</tt> - apelată de către un scriitor atunci când acesta vrea să înceapă să scrie
+</li><li> <tt>void StopScrit(Monitor *m);</tt> - apelată de către un scriitor pentru a marca faptul că a terminat de scris
+</li></ul>
+<p>Explicităm în continuare regulile de execuţie:
+</p>
+<ul><li> dacă un scriitor încearcă să scrie resursa în timp ce alt scriitor o scria deja, aşteaptă până când acesta din urmă termină de scris
+</li><li> dacă un scriitor găseşte cititori care deja citesc resursa, aşteaptă până toţi aceştia termină de citit; orice cititor care va sosi după nu se va alatura celorlalţi care deja citesc, ci îi va acorda prioritate scriitorului, care aşteaptă
+</li><li> dacă un cititor găseşte un scriitor care deja scria resursa, sau descoperă că un scriitor aşteaptă să scrie resursa, nu incepe citirea şi aşteaptă, acordând astfel prioritate scriitorilor.
+</li></ul>
+<a name="Documenta.C5.A3ie" id="Documenta.C5.A3ie"></a><h2> <span class="mw-headline">Documentaţie</span></h2>
+<p>Pentru documentare, aveţi la dispoziţie următoarele două documente: 
+</p>
+<ul><li> <a href="http://elf.cs.pub.ro/~so/wiki/images/1/18/Buhr95monitor.pdf" class="internal" title="Buhr95monitor.pdf">Buhr, Fortier: Monitor classification</a>
+</li><li> <a href="http://elf.cs.pub.ro/~so/wiki/images/c/cd/Paper5.pdf" class="internal" title="Paper5.pdf">Hoare,Monitors: An Operating System Structuring Concept</a>
+</li></ul>
+<p>Primul dintre ele este foarte important. Atenţie, operaţiile pe care le implementaţi (<tt>Enter, Leave, Wait, Signal</tt>), trebuie să respecte specificaţiile formale, precondiţiile şi postcondiţiile specificate prin axiomele prezentate în primul document, pentru fiecare politică în parte. Axiomele respective vor face parte din baremul de corectare. Politica SIGNAL_AND_WAIT la care se face referire în enunţul temei se referă la politica SIGNAL AND URGENT WAIT în terminologie Buhr &amp; Fortier.
+</p><p>Deoarece specificaţiile formale prezentate în documentaţie prin axiome pot fi dificil de inţeles, aveţi mai jos descrierea în limbaj natural a specificaţiilor monitorului. Această descriere conţine şi specificaţiile pentru operaţia <tt>Broadcast</tt>, care lipseşte din documentaţie. Cele două politici de funcţionare sunt descrise la paginile 13 şi 14 din documentaţie sub forma 4.2.2 PB şi 4.2.4 PNB.
+</p>
+<a name="Descriere_detaliat.C4.83_a_func.C5.A3ion.C4.83rii_unui_monitor" id="Descriere_detaliat.C4.83_a_func.C5.A3ion.C4.83rii_unui_monitor"></a><h2> <span class="mw-headline"> Descriere detaliată a funcţionării unui monitor </span></h2>
+<ul><li> <b><tt>Enter(m)</tt></b> 
+<ul><li> Dacă monitorul nu este liber:
+<ul><li> Thread-ul este pus în coada Entry
+</li><li> Va fi planificat la un moment ulterior de către un alt thread, care executa "cod monitor"
+</li><li> Funcţia va bloca până la planificare
+</li></ul>
+</li><li> Dacă monitorul este liber, thread-ul se va auto-planifica, continuându-şi execuţia şi devenind "owner". Owner-ul monitorului este acel thread care execută cod "non-monitor". Owner-ul, dacă există, este unic.
+</li></ul>
+</li></ul>
+<ul><li> <b><tt>Leave(m)</tt></b>
+<ul><li> Thread-ul planifică pe altcineva
+</li><li> Thread-ul părăseşte monitorul
+</li></ul>
+</li></ul>
+<ul><li> <b><tt>Wait(m,c)</tt></b>
+<ul><li> Thread-ul planifică pe altcineva
+</li><li> Thread-ul aşteaptă după variabila de condiţie <tt>c</tt>
+</li><li> În momentul în care este semnalizat, el va fi trecut în coada Waiting (de către altcineva)
+</li><li> La un moment ulterior, va fi planificat pentru execuţie
+</li><li> Funcţia va bloca până la planificare
+</li></ul>
+</li></ul>
+<ul><li> <b><tt>Signal(m,c)</tt></b>
+<ul><li> Se alege un thread care aşteaptă după variabila de condiţie <tt>c</tt> (daca există unul) şi se mută în coada Waiting
+</li><li> Dacă politica este <tt>SIGNAL_AND_WAIT</tt>:
+<ul><li> Thread-ul curent este pus în coada Signaller
+</li><li> Va fi planificat spre execuţie din nou la un moment ulterior. Se observă că cel puţin coada Signaller este nevidă (conţine cel puţin firul curent, care a apelat funcţia <tt>Signal</tt>)
+</li><li> Funcţia va bloca până la planificare
+</li></ul>
+</li><li> Dacă politica este <tt>SIGNAL_AND_CONTINUE</tt>:
+<ul><li> Thread-ul curent işi continuă execuţia, fără a elibera monitorul
+</li></ul>
+</li></ul>
+</li></ul>
+<ul><li> <b><tt>Broadcast(m,c)</tt></b>
+<ul><li> Toate thread-urile care aşteptau după variabila de condiţie <tt>c</tt> sunt mutate în coada Waiting
+</li><li> Dacă politica este <tt>SIGNAL_AND_WAIT</tt>:
+<ul><li> Thread-ul curent este pus în coada Signaller
+</li><li> Va fi planificat spre execuţie din nou la un moment ulterior. Se observă ca cel puţin coada Signaller este nevidă (conţine cel puţin firul curent, care a apelat functia <tt>Broadcast</tt>)
+</li><li> Funcţia va bloca până la planificare
+</li></ul>
+</li><li> Dacă politica este <tt>SIGNAL_AND_CONTINUE</tt>:
+<ul><li> Thread-ul curent îşi continuă execuţia, fără a elibera monitorul
+</li></ul>
+</li></ul>
+</li></ul>
+<p>Se observă că singura diferenţă dintre <tt>Broadcast</tt> şi <tt>Signal</tt> este numărul de thread-uri mutate în coada Waiting.
+</p>
+<a name="Preciz.C4.83ri_Windows" id="Preciz.C4.83ri_Windows"></a><h2> <span class="mw-headline">Precizări Windows</span></h2>
+<p>Tema de Windows trebuie să implementeze cele două biblioteci partajate ca DLL-uri, sub numele de <tt>LibMonitor.DLL</tt> şi <tt>LibRW.DLL</tt>. Pentru instrucţiuni de construire a unui DLL, consultaţi Platform SDK.
+</p><p>Datorită faptului că în Windows DLL-urile nu pot conţine simboluri nedefinite, în momentul în care construiţi DLL-ul va trebuie să-l link-aţi cu <tt>ControlMonitor.obj</tt> şi <tt>ControlRW.obj</tt>, fişiere obţinute din pasul 1 de compilare al testelor. Exemplu:
+</p>
+<pre>build: LibMonitor.obj LibRW.obj
+        link /release /dll /out:LibMonitor.dll  LibMonitor.obj  ControlMonitor.obj
+        link /release /dll /out:LibRW.dll LibRW.obj  ControlRW.obj LibMonitor.lib
+</pre>
+<p>Pentru a testa utilizarea corectă a monitorului, mentineţi un index în Thread Local Storage care indică pentru fiecare thread dacă se află sau nu în interiorul monitorului. Nu e necesar să alocaţi memorie, puteţi folosi doar valoarea pointerului din indexul TLS. Pentru indicaţii privind Thread local Storage pe Windows consultaţi următoarele link-uri din Platform SDK:
+</p>
+<ul><li> <a href="http://msdn.microsoft.com/en-us/library/ms686749.aspx" class="external text" title="http://msdn.microsoft.com/en-us/library/ms686749.aspx" rel="nofollow">Thread Local Storage</a>
+</li><li> <a href="http://msdn.microsoft.com/en-us/library/ms686991(VS.85).aspx" class="external text" title="http://msdn.microsoft.com/en-us/library/ms686991(VS.85).aspx" rel="nofollow">Using Thread Local Storage</a>
+</li></ul>
+<p>Nu este permisă folosirea funcţiei PulseEvent în implementarea temei.
+</p><p>Tema se va rezolva folosind doar funcţii Win32. Se pot folosi de asemenea şi funcţiile de formatare <tt>printf, scanf</tt>, funcţiile de alocare de memorie <tt> malloc, free</tt> şi funcţiile de manipulare a şirurilor de caractere (<tt>strcat</tt>, <tt>strdup</tt>, etc.)
+</p><p>Pentru partea de I/O şi procese se vor folosi doar funcţii Win32. De exemplu, funcţiile <tt>open</tt>, <tt>read</tt>, <tt>write</tt>, <tt>close</tt> nu trebuie folosite, în locul acestor trebuind să folosiţi <tt>CreateFile</tt>, <tt>ReadFile</tt>, <tt>WriteFile</tt>, <tt>CloseHandle</tt>.
+</p>
+<a name="Precizari_Linux" id="Precizari_Linux"></a><h2> <span class="mw-headline">Precizari Linux</span></h2>
+<p>Tema de Linux trebuie să compileze cele două biblioteci partajate folosind numele <tt>LibMonitor.so</tt> şi <tt>LibRW.so</tt>. O bibliotecă partajată se crează folosind opţiunea <tt> -fPIC</tt> la compilare pentru generarea de cod independent de pozitie şi optiunea <tt> -shared</tt> la linkare. Pentru infomaţii mai detaliate despre biblioteci, consultaţi <a href="http://www.tldp.org/HOWTO/Program-Library-HOWTO/" class="external text" title="http://www.tldp.org/HOWTO/Program-Library-HOWTO/" rel="nofollow">Program Library HOWTO</a>.
+</p><p>Pentru a testa utilizarea corectă a monitorului, menţineţi un index în Thread Specific Data care indică pentru fiecare fir de execuţie dacă se află sau nu în interiorul monitorului. Nu e necesar să alocaţi memorie, puteţi folosi doar valoarea pointerului din indexul TSD.
+</p><p>Pentru cazurile în care vă confruntaţi cu deadlock-uri, puteţi folosi <tt>gdb</tt> pentru debugging-ul programului în timp ce acesta rulează:
+</p>
+<ul><li> <tt>gdb ./myprogram pid</tt> - după ce, în prealabil, aţi obţinut pid-ul procesului (<tt>ps ax | grep myprogram</tt>)
+</li><li> <tt>info threads</tt> - informaţii despre thread-urile procesului
+</li><li> <tt>thread N</tt> - comutare la thread-ul <tt>N</tt>
+</li><li> <tt>bt</tt> - backtrace, informaţii despre stiva de apeluri
+</li></ul>
+<p>Tema se va rezolva folosind doar funcţii POSIX. Se pot folosi de asemenea şi funcţiile de formatare <tt>printf, scanf</tt>, funcţiile de alocare de memorie <tt> malloc, free</tt>, şi funcţiile de manipulare a şirurilor de caractere (<tt>strcat</tt>, <tt>strdup</tt>, etc.)
+</p><p>Tema se va rezolva folosind fire de execuţie POSIX şi exclusiv mecanisme de sincronizare a firelor de execuţie POSIX.
+</p><p>Pentru partea de I/O şi procese se vor folosi doar funcţii POSIX. De exemplu, funcţiile <tt>fopen</tt>, <tt>fread</tt>, <tt>fwrite</tt>, <tt>fclose</tt> nu trebuie folosite, în locul acestora trebuind să folosiţi <tt>open</tt>, <tt>read</tt>, <tt>write</tt>, <tt>close</tt>.
+</p>
+<a name="Testare" id="Testare"></a><h2> <span class="mw-headline">Testare</span></h2>
+<p>Programul de test (<a href="http://cs.pub.ro/~so/Teme/4-monitor-lin.zip" class="external text" title="http://cs.pub.ro/~so/Teme/4-monitor-lin.zip" rel="nofollow">linux</a>, <a href="http://cs.pub.ro/~so/Teme/4-monitor-win.zip" class="external text" title="http://cs.pub.ro/~so/Teme/4-monitor-win.zip" rel="nofollow">windows</a>) foloseşte funcţiile oferite de cele două biblioteci pentru a implementa 3 teste:
+</p>
+<ul><li> TestMonitor verifică funcţionarea corectă a monitorului
+</li><li> TestRW verifică funcţionarea corectă a funcţiilor scriitorilor şi cititorilor
+</li><li> TestStres verifică funcţionarea monitorului / scriitorilor şi cititorilor în condiţii de încărcare puternică
+</li></ul>
+<p>Pentru testarea celor două biblioteci va trebui să apelaţi nişte funcţii care vor verifica corectitudinea stării monitorului şi a resursei care este citită şi scrisă. Voi trebuie să decideţi, în funcţie de implementarea voastră, unde anume să inseraţi apelurile lor în cod. Iată lista funcţiilor şi semnificaţia lor:
+</p>
+<ul><li> Functii pentru testarea monitorului generic:
+<ul><li> <tt>void IncEnter();</tt> - un thread a fost pus în coada Entry Queue
+</li><li> <tt>void DecEnter();</tt> - un thread a fost scos din Entry Queue
+</li><li> <tt>void IncSignal();</tt> - un thread a fost pus în coada Signaller Queue
+</li><li> <tt>void DecSignal();</tt> - un thread a fost scos din Signaller Queue
+</li><li> <tt>void IncWait();</tt> - un thread a fost pus în coada Waiting Queue
+</li><li> <tt>void DecWait();</tt> - un thread a fost scos din coada Waiting Queue
+</li><li> <tt>void IncCond(int nrCond);</tt> - a fost pus un thread în coada de aşteptare a variabilei de condiţie nrCond
+</li><li> <tt>void DecCond(int nrCond);</tt> - a fost scos un thread din coada de aşteptare a variabilei de condiţie nrCond
+</li></ul>
+</li><li> Funcţii pentru testarea Readers-Writers:
+<ul><li> <tt>void AnnounceStartCit();</tt> - când un cititor începe efectiv să citească (deci NU când intenţionează să citească, ci ulterior, când începe efectiv să citească)
+</li><li> <tt>void AnnounceStopCit();</tt> - când un cititor se opreşte efectiv din citit
+</li><li> <tt>void AnnounceStartScrit();</tt> - când un scriitor începe efectiv să scrie
+</li><li> <tt>void AnnounceStopScrit();</tt> - când un scriitor se opreşte efectiv din scris
+</li></ul>
+</li></ul>
+<p>Antelele acestor funcţii se găsesc în <a href="http://elf.cs.pub.ro/~so/wiki/images/3/35/CallbackMonitor.h" class="internal" title="CallbackMonitor.h">CallbackMonitor.h</a>, respectiv <a href="http://elf.cs.pub.ro/~so/wiki/images/5/50/CallbackRW.h" class="internal" title="CallbackRW.h">CallbackRW.h</a>. În <a href="http://elf.cs.pub.ro/~so/wiki/images/b/b7/Constante.h" class="internal" title="Constante.h">Constante.h</a> găsiţi constantele pentru politicile de funcţionare ale monitorului. Pentru a rula tema, executaţi următoarea secvenţă de comenzi, după ce aţi dezarhivat testele în directorul cu sursele temei:
+</p>
+<pre> #compileaza testele, stage 1
+ make -f Makefile.checker build-pre &amp;&amp;
+ #compileaza tema
+ make build &amp;&amp;
+ #compileaza testele, stage 2
+ make -f Makefile.checker build-post &amp;&amp;
+ #ruleaza testele
+ make -f Makefile.checker
+ 
+</pre>
+<p>Testele pe Windows au extensia <b><tt>.cpp</tt></b> si se recomanda ca sursele voastre sa urmeze aceeasi conventie, pentru a evita problemele la link-are.
+</p>
+<a name="Notare" id="Notare"></a><h2> <span class="mw-headline">Notare</span></h2>
+<p>Nota maximă este de 100p.
+</p><p>Testele care validează rezolvarea voastră sunt formate din:
+</p>
+<ul><li> 6 teste "Monitor", fiecare a 6.5 puncte
+</li><li> 5 teste "RW", fiecare a 6.5 puncte
+</li><li> 3 teste "Stress", fiecare a 9.5 puncte
+</li></ul>
+<p>Un test este considerat trecut numai dacă toţi paşii din care este format se termină cu succes.
+</p><p>Depunctări suplimentare:
+</p>
+<ul><li> -0.6 erori de sincronizare (deadlock, race condition, etc.) 
+</li><li> -0.4 neverificarea condiţiilor de eroare sau/şi neeliberarea de resurse
+</li><li> -0.1 pentru Makefile incorect
+</li><li> -0.2 pentru README necorespunzator
+</li><li> -0.2 pentru surse prost comentate
+</li><li> -0.1 diverse alte probleme constatate in implementare
+</li></ul>
+<a name=".C3.8Entreb.C4.83ri" id=".C3.8Entreb.C4.83ri"></a><h2> <span class="mw-headline">Întrebări</span></h2>
+<p>Pentru lămuriri suplimentare asupra temei consultaţi <a href="http://cursuri.cs.pub.ro/pipermail/so" class="external text" title="http://cursuri.cs.pub.ro/pipermail/so" rel="nofollow">arhivele</a> listei de discuţii sau daţi un <a href="mailto:so@cursuri.cs.pub.ro" class="external text" title="mailto:so@cursuri.cs.pub.ro" rel="nofollow">mail</a> (trebuie să fiţi <a href="http://cursuri.cs.pub.ro/liste/so" class="external text" title="http://cursuri.cs.pub.ro/liste/so" rel="nofollow">înregistraţi</a> ).
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 115/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key sowiki14:pcache:idhash:38-0!1!0!!en!2!edit=0 and timestamp 20090510130855 -->
+	    </td></tr>
+	    </tbody></table>
+	</td>
+	<td width="1%">
+	    &nbsp;
+	</td>
+	<td width="16%" valign="top">
+	    <br>
+	    
+	<br>
+	<table width="100%" border="0" cellspacing="4" cellpadding="5">
+    	<tbody><tr><td bgcolor="#ffce3d" align="center"> 
+	
+        <a href="http://elf.cs.pub.ro/so/cs/index.php" class="linkmaroon">Teme</a>
+	
+	</td></tr>
+        <tr><td bgcolor="#5bb7d3" align="center"> 
+	<br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=01.%20Mini-shell" class="linkwhite">01. Mini-shell </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=02.%20Mecanisme%20IPC" class="linkwhite">02. Mecanisme IPC </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=02.%20Utilizare%20IPC" class="linkwhite">02. Utilizare IPC </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=03.%20Memorie%20virtuala" class="linkwhite">03. Memorie virtuala </a><br><br><a href="./Sisteme de Operare_files/Sisteme de Operare.html" class="linkwhite">04. Monitor generic </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=05.%20Server%20fisiere" class="linkwhite">05. Server fisiere </a><br><br><a href="http://elf.cs.pub.ro/so/cs/index.php?section=Teme&file=Reguli" class="linkwhite">Reguli </a><br>
+	<br></td></tr>
+	<tr><td bgcolor="white">&nbsp;<br><br></td></tr>
+	</tbody></table>
+		</td>
+    </tr>
+    <tr>
+	<td></td>
+    </tr>
+
+</tbody></table>
+<br><br></td></tr></tbody></table>
+</body></html>

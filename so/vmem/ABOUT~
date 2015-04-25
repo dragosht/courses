@@ -1,0 +1,160 @@
+Enunț
+
+Să se implementeze un shell simplu, care suportă execuția de comenzi externe cu argumente multiple, comenzi interne, redirectări, pipe-uri. Shell-ul trebuie să suporte execuția de comenzi compuse, cu oricâți operatori.
+
+Shell-ul trebuie să suporte următorii operatori de execuție:
+
+operatorul de secvențiere ”;”
+va fi folosit pentru a executa comenzile “pe rând”;
+de exemplu, expr1; expr2 va avea ca efect mai întâi execuția comenzilor expr1 și, după terminarea execuției acestora, execuția comenzilor expr2;
+operatorul de paralelism ”&”
+va fi folosit pentru a executa comenzile în paralel;
+de exemplu, expr1 & expr2 va avea ca efect execuția comenzilor expr1 și a comenzilor expr2 în paralel;
+In implementarea NU aveti voie sa va reapelati singuri executabilul.
+execv("./my_homework", "command");
+operatorul ”|” (pipe)
+va fi folosit pentru înlănțuirea comenzilor;
+de exemplu, expr1 | expr2 va avea ca efect execuția comezilor expr1 cu stdout-ul redirectat în stdin-ul comenzilor expr2;
+operatorii de execuție condiționată ”&&” și ”||”
+vor fi folosiți pentru a executa comenzile în funcție de codul de eroare;
+expr1 && expr2 va avea ca efect execuția comenzilor expr2 doar în cazul în care comenzile expr1 au ca rezultat un cod de eroare 0;
+expr1 || expr2 va avea ca efect execuția comenzilor expr2 doar în cazul în care comenzile expr1 au ca rezultat un cod de eroare diferit de zero.
+Prioritatea operatorilor de execuție este, de la cel mai prioritar la cel mai puțin prioritar:
+
+operatorul |
+operatorii de execuție condiționată
+operatorul de paralelism
+operatorul de secvențiere
+Shell-ul trebuie, de asemenea, să suporte și următorii operatori de redirectare:
+
+”< nume_fisier” pentru redirectarea intrării din fișierul nume_fisier;
+”> nume_fiser” pentru redirectarea ieșirii standard în fișierul nume_fisier;
+”2> nume_fisier” pentru redirectarea ieșirii de eroare standard în fișierul nume_fisier;
+”&> nume_fisier” pentru redirectarea ieșirii standard și ieșirii de eroare standard în fișierul nume_fisier;
+”» nume_fisier” pentru redirectarea ieșirii standard în fișierul nume_fisier în modul “append”;
+”2» nume_fisier” pentru redirectarea ieșirii de eroare standard în fișierul nume_fisier în modul “append”.
+În fine, shell-ul trebuie să suporte următoarele comenzi interne:
+
+exit și quit pentru terminarea shell-ului;
+cd director pentru schimbarea directorului curent.
+Shell-ul trebuie să suporte variabile de mediu:
+
+formatul de utilizare este $VARIABILA_DE_MEDIU identic pe Linux și pe Windows;
+variabilele de mediu sunt moștenite de la shell-ul părinte (Bash) sau sunt definite în mini-shell;
+definirea variabilelor se face sub forma NUME_VARIABILA=valoare;
+nu trebuie tratat cazul în care valoare conține referiri la alte variabile de mediu.
+Daca variabila de mediu nu exista aceasta are valoarea sirul vid (Atentie sirul vid este diferit de NULL)
+Precizări generale
+
+Pentru a simplifica implementarea temei, puteți folosi parserul implementat de noi. Pentru detalii despre parser, citiți fișierul README din arhivă.
+Promptul afișat de shell este impus pentru a facilita testarea automata și este ”>” (adică se va afișa caracterul > urmat de un spațiu).
+Numele executabilului temei trebuie să fie mini-shell pe Linux, respectiv mini-shell.exe pe Windows.
+Din cauza diferenței între Windows și Linux la crearea de noi procese (CreateProcess vs. fork + exec) s-ar putea să nu puteți folosi același tip de parcurgere a arborelui sintactic și pe Windows și pe Linux. Daca vreți să reutilizați concepte/cod de pe Linux pe Windows, concepeți parcurgerea să funcționeze și cu funcția CreateProcess de pe Windows.
+În rezolvarea temei puteți porni de la exemplul de utilizare a parserului (UseParser.cpp sau CUseParser.c).
+Recomandăm rezolvarea și testarea din aproape în aproape a temei dupa pași:
+rularea de comenzi simple
+rularea de comenzi interne (cd, exit, quit)
+implementarea redirectărilor (operatorii >, <, 2>, &>, », 2»)
+variabile de mediu
+secvențierea comenzilor (operatorii &&, ||, ;)
+implementarea operatorilor & (paralel) și | (pipe)
+Aveți mai jos câteva exemple de comenzi și rezultatul generat de acestea:
+ > ls
+ Makefile	  README.checker  mini-shell	mini-shell.o  parser
+ Makefile.checker  inputs	  mini-shell.c	outputs       tags
+ 
+ > uname -a ; ps 
+ Linux bogdan-desktop 2.6.31-19-generic #56-Ubuntu SMP Thu Jan 28 02:39:34 UTC 2010 x86_64 GNU/Linux
+   PID TTY          TIME CMD
+  6078 pts/0    00:00:00 bash
+  6190 pts/0    00:00:00 mini-shell
+  6200 pts/0    00:00:00 ps
+ 
+ > date && sleep 1 ; echo date
+ Mon Feb  8 13:40:25 EET 2010
+ date
+ 
+ > date && sleep 1; date
+ Mon Feb  8 13:40:49 EET 2010
+ Mon Feb  8 13:40:50 EET 2010
+ 
+ > true && date
+ Mon Feb  8 13:41:16 EET 2010
+ 
+ > false && cat mini-shell.c
+ 
+ > false || date
+ Mon Feb  8 13:42:36 EET 2010
+ 
+ > cat /et/services
+ cat: /et/services: No such file or directory
+ 
+ > cta /etc/services
+ Execution failed for 'cta'
+ 
+ > cat /etc/services | grep telnet
+ telnet		23/tcp
+ rtelnet	107/tcp				# Remote Telnet
+ rtelnet	107/udp
+ telnets	992/tcp				# Telnet over SSL
+ telnets	992/udp
+ tfido		60177/tcp			# fidonet EMSI over telnet
+ 
+ > gcc > tmp; echo sep; cat tmp
+ gcc: no input files
+ sep
+ 
+ > strace -e trace=read ls 2> strace.out   
+ Makefile	  README.checker  mini-shell	mini-shell.o  parser	  tags
+ Makefile.checker  inputs	  mini-shell.c	outputs       strace.out  tmp
+ 
+ > head -1 strace.out
+ read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0@#\0\0\0\0\0\0@"..., 832) = 832
+ 
+ > pwd; cd ~; pwd
+ /home/bogdan/Documents/SO/Solutii
+ /home/bogdan
+ 
+ > LETTER=alfa && echo $LETTER
+ alfa
+ 
+ > echo a > test ; echo b >> test && cat test
+ a
+ b
+ 
+ > exit
+Precizări Windows
+
+Tema se va rezolva folosind doar funcții Win32. Se pot folosi, de asemenea, și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free și funcțiile de lucru cu șiruri de caractere (strcat, strdup, etc.)
+Pentru partea de I/O și procese se vor folosi doar funcții Win32. De exemplu, funcțiile open, read, write, close nu trebuie folosite, în locul acestor trebuind să folosiți CreateFile, ReadFile, WriteFile, CloseHandle.
+Pentru a permite transmiterea de caractere speciale în argumente (spre exemplu echo “int main() { return 0; }”) recomandăm să “îngrădiți” argumentele liniei de comandă a CreateProcess cu ghilimele.
+Dacă folosiți Visual Studio dezactivați Unicode (clic dreapta pe proiect → Properties → Character Set → Not Set)
+ATENȚIE: Pentru testarea temei cu testele publice se va folosi cygwin, compilarea sursei se face cu compilatorul specific Windows, cl (în Visual Studio console).
+Instalare Cygwin
+
+Puteți descărca Cygwin de aici
+Asigurați-vă că la instalare ați selectat pachetele make și gcc
+Precizări Linux
+
+Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free și funcțiile de de lucru cu șiruri de caractere (strcat, strdup, etc.)
+Pentru partea de I/O și procese se vor folosi doar funcții POSIX. De exemplu, funcțiile fopen, fread, fwrite, fclose nu trebuie folosite, în locul acestor trebuind să folosiți open, read, write, close.
+Testare
+
+Pentru simplificarea procesului de corectare a temelor, dar și pentru a reduce greșelile temelor trimise, corectarea se va realiza automat cu ajutorul unor test publice disponibile in sectiunea de materiale ajutatoare.
+Există 18 teste. Se pot obține maxim 9 puncte prin trecerea testelor. Se acordă 1 punct din oficiu.
+Pentru a trece testul 18, este obligatoriu să respectați formatul mesajului de eroare impus. Mesajul de eroare trebuie scris la stderr și trebuie să fie identic cu cel așteptat de teste (vezi test_18_ref.txt din teste).
+O temă care trece cele 18 teste automate va obține 10 puncte din 10 (daca nu trișează folosind API interzis, cum ar fi funcția system(), caz în care nu va fi punctată).
+Din punctajul temei se vor scădea automat puncte pentru întârzieri și pentru warning-uri. La revizia temei, se poate scădea suplimentar pentru nerespectărea criteriilor scrise la secțiunea reguli. Astfel:
+-0.1 pentru fișier Makefile incorect (de exemplu compilează de fiecare dată totul)
+-0.2 pentru fișier README necorespunzator
+-0.2 surse necorespunzător comentate
+-0.3 neverificarea condițiilor de eroare sau/și neeliberarea de resurse
+-0.2 diverse alte probleme constatate în implementare
+În cazuri excepționale se poate scădea mai mult decât este menționat mai sus.
+
+Notă
+
+La corectarea temei nu se va ține cont de warning-urile sau leak-urile cauzate de parser. De exemplu:
+	cl /nologo /W3 /EHsc /Za /c parser.yy.c
+parser.yy.c
+parser.yy.c(1302) : warning C4018: '<' : signed/unsigned mismatch

@@ -1,0 +1,134 @@
+.linkmaroon { 
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    font-weight: bold; 
+    cursor: hand; 
+    text-decoration: none;
+    color: maroon
+    }
+.linkmaroon:hover { 
+    text-decoration: underline;
+    color: red
+    }
+.linkwhite {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    font-weight: bold; 
+    cursor: hand; 
+    text-decoration: none;
+    color: white
+    }
+.linkwhite:hover { 
+    text-decoration: underline;
+    color: #facaef
+    }
+.fontmaroon {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    font-weight: bold; 
+    color: maroon
+    }
+.fontred {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    font-weight: bold; 
+    color: #ff4040
+    }
+.fontwhite {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    font-weight: bold; 
+    color: white
+    }
+.text {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    }
+
+.code {  
+    font-family: "Courier New", Courier, mono; 
+    font-size: 12px
+    }
+p,td,ul,li,dd,dt,ol {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px
+    }
+H3 {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 16px
+    }
+
+pre,code {
+	-moz-border-radius-topright: 5px; -webkit-border-radius-topright: 5px;
+	-moz-border-radius-topleft: 5px; -webkit-border-radius-topleft: 5px;
+	-moz-border-radius-bottomright: 5px; -webkit-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px; -webkit-border-radius-bottomleft: 5px;
+	font-family: "DejaVu Sans Mono","Courier New", Courier, mono;
+	font-size: 12px;
+	background: white;
+	padding: 5px;
+}
+
+tt {
+	font-family: "DejaVu Sans Mono","Courier New", Courier, mono;
+	font-size: 8pt;
+}
+
+a {
+	text-decoration: none;
+        color: #1a7e30;
+}
+
+a.navlink {
+	color:maroon;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.title {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    color: black
+    }
+    
+.toc {  
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 12px;
+    color: black
+    }
+
+/* foxX: geshi.css */
+
+.source-cpp {line-height: normal;}
+.source-cpp li {line-height: normal;}
+/**
+ * GeSHi Dynamically Generated Stylesheet
+ * --------------------------------------
+ * Dynamically generated stylesheet for cpp
+ * CSS class: source-cpp, CSS id:
+ * GeSHi (C) 2004 - 2007 Nigel McNie (http://qbnz.com/highlighter)
+*/
+.source-cpp .de1, .source-cpp .de2 {font-family: 'Courier New', Courier, monospace; font-weight: normal;}
+.source-cpp  {}
+.source-cpp .head {}
+.source-cpp .foot {}
+.source-cpp .imp {font-weight: bold; color: red;}
+.source-cpp .ln-xtra {color: #cc0; background-color: #ffc;}
+.source-cpp li {font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;}
+.source-cpp li.li2 {font-weight: bold;}
+.source-cpp .kw1 {color: #0000ff;}
+.source-cpp .kw2 {color: #0000ff;}
+.source-cpp .kw3 {color: #0000dd;}
+.source-cpp .kw4 {color: #0000ff;}
+.source-cpp .co1 {color: #606060; font-style: italic}
+.source-cpp .co2 {color: #0000A0;}
+.source-cpp .coMULTI {color: #606060; font-style: italic;}
+.source-cpp .es0 {color: #666666; font-weight: bold;}
+.source-cpp .br0 {color: #000000;}
+.source-cpp .st0 {color: #991111;}
+.source-cpp .nu0 {color: #0000dd;}
+.source-cpp .me1 {color: #000099;}
+.source-cpp .me2 {color: #000099;}
+

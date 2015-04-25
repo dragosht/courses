@@ -1,0 +1,7 @@
+test:
+	cd _test; bash start_teste.sh
+
+build-pre:
+
+
+build-post:

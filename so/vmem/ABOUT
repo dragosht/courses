@@ -1,0 +1,176 @@
+Obiectivele temei
+
+Aprofundarea conceptelor legate de mecanismele memoriei virtuale.
+Obținerea de deprinderi pentru lucrul cu excepții de memorie pe sistemele Linux și Windows.
+Aprofundarea API-ului Linux și Windows de lucru cu spațiul de adrese și memoria virtuală.
+Recomandări
+
+Înainte de a începe implementarea temei este recomandată acomodarea cu noțiunile și conceptele specifice, precum:
+memorie virtuală
+memorie fizică (RAM)
+spațiu de adresă
+pagini virtuale – pages
+pagini fizice – frames
+tabelă de pagini
+maparea unei pagini virtuale peste o pagină fizică
+page fault
+drepturi de acces la pagină
+demand paging
+spațiu de swap
+swap in
+swap out (evacuare)
+înlocuirea unei pagini – page replacement
+maparea fișierelor – file mapping
+Urmăriți resursele descrise în secțiunea Resurse de suport.
+Enunț
+
+Să se implementeze sub forma unei biblioteci partajate/dinamice un swapper & demand pager. Biblioteca va permite alocarea de multiple zone de memorie virtuală pentru care va simula operații specifice memoriei virtuale: page fault, demand paging, swap in, swap out.
+
+Pentru fiecare zonă alocată diversele componente se vor simula în felul următor:
+
+Memoria virtuală va fi reprezentată de o zonă de memorie din spațiul de adresă al procesului. Veți folosi funcțiile din familia mmap (Linux) și VirtualAlloc (Windows).
+Memoria fizică (memoria RAM) va fi simulată de un fișier. Simularea mapării unei pagini de memorie virtuală (alocarea unei pagini fizice aferente) se va realiza prin maparea acesteia peste o zonă asociată din fișierul RAM. Veți folosi funcțiile mmap (Linux) și MapViewOfFileEx (Windows) pentru maparea paginilor virtuale peste “pagina” aferentă din cadrul fișierului RAM.
+Spațiul de swap va fi simulat de un alt fișier cu dimensiunea egală cu a spațiului virtual de adresă. Fiecărei pagini virtuale îi va corespunde o “pagină” în cadrul fișierului ce simulează spațiul de swap.
+Exprimarea “pagină în cadrul unui fișier” se referă la o regiune de dimensiunea unei pagini din cadrul fișierului. Fișierul RAM are dimensiunea a num_frames pagini (num_frames este numărul de pagini fizice) iar fișierul aferent spațiului de swap are dimensiunea a num_pages pagini.
+
+Simulatorul va oferi următoarele funcționalități:
+
+Alocarea de multiple zone de memorie virtuală; fiecare zonă va fi asociată cu un fișier care simulează memoria RAM și un fișier care simulează spațiul de swap.
+Pentru fiecare zonă, spațiul de swap are dimensiunea spațiului de memorie virtuală. Dimensiunea spațiului de memorie virtuală (numărul de pagini virtuale – pages) trebuie să fie mai mare sau egală cu dimensiunea memoriei RAM (numărul de pagini fizice – frames).
+La un acces la o pagină de memorie virtuală alocată dar nemapată peste RAM, se generează un page fault, corespunzător procesului de demand paging. În urma page fault-ului, pagina de memorie virtuală este mapată peste o pagină din RAM (peste fișierul aferent).
+În momentul în care o pagină virtuală este mapată peste o pagină fizică în urma procesului de demand paging pagina fizică trebuie “curățată” (adică “umplută” cu valori de zero).
+Paginile virtuale se consideră inițial fără protecție. În momentul generării unui page fault și a alocării unei pagini fizice, pagina virtuală este marcată read-only. Dacă accesul a fost de scriere, se va genera un nou page fault se va marca pagina read-write. Astfel, un acces de citire la o pagină nemapată va genera un page fault, iar pagina va fi mapată și marcată read-only. Un acces de scriere la o pagină nemapată va genera două page fault-uri, iar pagina va fi mapată și marcată read-write. Un acces de scriere la o pagină mapată și marcată read-only va genera un page fault, iar pagina va fi marcată read-write. O pagină marcată read-write este marcată și dirty (a fost modificată).
+Dacă în urma unui page fault este nevoie de o pagină fizică iar memoria RAM este ocupată, o pagină fizică trebuie evacuată (swap out).
+Nu se impune nici o costrângere asupra algoritmului de înlocuire a paginii (se poate substitui aceeași pagină, o pagină aleatoare, FIFO, LRU etc.).
+Paginile virtuale mapate pot fi dirty sau nu. O pagină dirty este o pagină care a fost modificată din momentul prezenței acesteia în RAM.
+Paginile curate (non-dirty) selectate pentru a fi înlocuite nu vor fi evacuate (swap out). Adică vor fi înlocuite în RAM dar conținutul lor nu va fi copiat în swap, eliminând astfel overhead-ul de copiere.
+Excepție: dacă o pagină este curată (non-dirty) dar nu a fost niciodată evacuată (a fost alocată prin demand paging), atunci va fi evacuată (swap out).
+Dacă o pagină virtuală (P) are conținutul în spațiul de swap, la accesarea acesteia se generează page fault și pagina trebuie adusă în RAM (swap in). În general, page fault-ul va genera eliberarea unei pagini fizice din RAM (F) (rularea unui algoritm de înlocuire de pagină și swap out); peste pagina fizică (F) astfel eliberată se va mapa pagina (P) la accesul căreia s-a generat page fault-ul.
+Interfața bibliotecii
+
+Interfața de utilizare a bibliotecii este prezentată în cadrul fișierul header vmsim.h. Acesta conține funcții de inițializare și cleanup a bibliotecii (vmsim_init/vmsim_cleanup) și funcții de alocare și eliberare a zonelor de memorie (vm_alloc/vm_free).
+
+#include "common.h"
+ 
+/* virtual memory mapping encapsulation; initialized by vm_alloc */
+typedef struct vm_map {
+	w_ptr_t start;
+	w_handle_t ram_handle;
+	w_handle_t swap_handle;
+} vm_map_t;
+ 
+/* initialize and cleanup library -- consider exception handler */
+w_boolean_t vmsim_init(void);
+w_boolean_t vmsim_cleanup(void);
+ 
+/*
+  * allocate physical pages in RAM mapped by virt_pages in swap
+  * map is to be filled with start address and handle to RAM and swap
+  * files
+  */
+ 
+w_boolean_t vm_alloc(w_size_t num_pages, w_size_t num_frames, vm_map_t *map);
+ 
+/*
+  * free space previously allocated with vm_alloc
+  * start is the start address of the previously allocated area
+  *
+  * implementation has to also close handles corresponding to RAM and
+  * swap files
+  */
+ 
+w_boolean_t vm_free(w_ptr_t start);
+Funcția vmsim_init realizează inițializarea bibliotecii. În cadrul funcției se va realiza, în general, înregistrarea page fault handler-ului în forma unui handler de excepție sau rutină pentru tratarea semnalului SIGSEGV.
+Funcția vmsim_cleanup realizează închiderea bibliotecii. În cadrul funcției se va realiza, în general, deînregistrarea page fault handler-ului.
+Funcția vm_alloc va aloca o zonă de memorie virtuală nemapată și va crea fișierele de suport (fișierul RAM și fișierul pentru spațiul de swap). Funcția primește ca argument numărul de pagini virtuale (num_pages) și numărul de pagini fizice (num_frames) pentru alocarea spațiului virtual și trunchierea fișierelor la dimensiunea necesară. Funcția întoarce pointer-ul din spațiul de adresă către zona de memorie virtuală alocată și handler-ele celor două fișiere în cadrul unei structuri struct vm_map. Handler-ele fișierelor vor fi folosite în cadrul suitei de test.
+Funcția vm_free eliberează zona de memorie virtuală mapată cu vm_alloc și închide și șterge fișierele asociate acesteia. Funcția primește ca argument pointer-ul către zona de memorie virtuală alocată anterior din spațiul de adresă al procesului. Implementarea trebuie să realizeze intern maparea între acest pointer și fișierele aferente pentru ca toate resursele să fie închise la apelul vm_free.
+Imagine
+
+Imaginea de mai jos prezintă “fluxul” paginilor prin memorie și o posibilă stare la un moment dat pentru o zonă dată.
+
+ Posibilă stare a paginilor
+
+Această imagine este doar principială; starea descrisă nu este o stare precisă în care se poate găsi o zonă de memorie în timpul sau ca urmare a execuției testelor.
+
+Precizări/recomandări pentru implementare
+
+Implementarea page fault handler-ului se realizează prin intermediul vectorilor de excepție (Windows) sau a unei rutine de tratare a semnalului SIGSEGV (Linux).
+Pentru a implementa logica de demand paging și cea de swapping trebuie să interceptați page-fault-urile produse în momentul unui acces nevalid la o zonă de memorie. La interceptarea page-fault-urilor, folosiți modificări succesive ale drepturilor paginilor pentru a implementa logica temei. La început, paginile nu au nici un drept (PROTECTION_NONE).
+Modificările realizate asupra memoriei virtuale nu se reflectă imediat în fișierul asociat memoriei RAM (memoria RAM fiind mapată peste acest fișier). De aceea, atunci când se dorește verificarea memoriei RAM (în teste), trebuie realizată sincronizarea paginilor din memorie cu fișierul. Nu este nevoie să realizați sincronizarea între memorie și fișier. Testul va realiza acest lucru, la nevoie printr-un apel la funcțiile de sincronizare a datelor în fișierele mapate.
+Nu se impune nici o restricție de nume asupra fișierelor ce reprezintă memoria RAM, respectiv spațiul de swap. Recomandăm să folosiți API-ul specific de generare a numelor de fișiere ( mkstemp, GetTempFileName).
+Consultați header-ele și fișierele din cadrul fișierelor de test pentru macro-uri și funcții utile.
+Pentru a determina dimensiunea unei pagini, folosiți funcția w_get_page_size definită în fișierul header common.h.
+Pentru implementare, puteți pleca de la următorul set de enumerări/structuri:
+helpers.h
+enum page_state {
+	STATE_IN_RAM,
+	STATE_IN_SWAP,
+	STATE_NOT_ALLOC
+};
+ 
+struct frame;
+ 
+/* handle pages (virtual pages) */
+struct page_table_entry {
+	enum page_state state;
+	enum page_state prev_state;
+	w_boolean_t dirty;
+	w_prot_t protection;
+	w_ptr_t start;
+	struct frame *frame;	/* NULL in case page is not mapped */
+};
+ 
+/* handle frames (physical pages) */
+struct frame {
+	w_size_t index;
+	/* "backlink" to page_table_entry; NULL in case of free frame */
+	struct page_table_entry *pte;
+};
+Structurile de mai sus reprezintă doar un punct de pornire. Se pot adăuga alte câmpuri sau structuri specifice modului în care biblioteca va gestiona zonele de memorie.
+Precizări pentru Linux
+
+Pentru gestiunea memoriei virtuale folosiți funcțiile mmap/ munmap/ mprotect.
+Pentru interceptarea accesului invalid la o zonă de memorie va trebui să interceptați semnalul SIGSEGV folosind apeluri din familia sigaction.
+Veți înregistra un handler în câmpul sa_sigaction al structurii struct sigaction.
+Pentru a determina adresa care a generat page fault-ul folosiți câmpul si_addr din cadrul structurii siginfo_t.
+Pentru eliberarea/evacuarea unei pagini, demapați acea pagină (pagina este mapată peste o “pagină” din fișerul RAM) și remapați-o la aceeași adresă dar ca mapare anonimă (MAP_ANONYMOUS) și fără protecție (PROT_NONE).
+Pentru generarea de fișiere temporare, puteți folosi apelul mkstemp.
+Puteți folosi funcțiile wrapper declarate și implementate în common.h și common_lin.c.
+Puteți extinde fișierele cu funcții wrapper proprii.
+Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare printf, funcțiile de alocare de memorie malloc, free și funcțiile de lucru cu șiruri de caractere (strcat, strdup etc.)
+Pentru partea de I/O și procese se vor folosi doar funcții POSIX. De exemplu, funcțiile fopen, fread, fwrite, fclose nu trebuie folosite; în locul acestora folosiți open, read, write, close.
+Precizări pentru Windows
+
+API-ul oferit de Windows diferă de cel oferit de Linux; există funcții dedicate de gestiune a memoriei virtuale ( VirtualAlloc, VirtualFree) și alte funcții de gestiunea a fișierelor mapate ( CreateFileMapping, MapViewOfFile, MapViewOfFileEx, UnmapViewOfFile).
+Alocarea spațiului de memorie virtuală pentru o zonă se realizează folosind VirtualAlloc. Întrucât operațiile de alocare/dezalocare au loc la nivel de pagină, recomandăm următoarea secvență de acțiuni:
+alocarea întregului spațiului necesar folosind VirtualAlloc;
+eliberarea spațiului ocupat folosind VirtualFree;
+alocarea a N pagini consecutive, la adrese fixe, începând cu adresa de start, folosind VirtualAlloc.
+Funcția de sincronizare din cadrul testului apelează, pentru fiecare pagină, FlushViewOfFile.
+Exemplu de utilizare a mai multor apeluri VirtualAlloc pentru pagini consecutive găsiți aici.
+Pentru maparea unei pagini/zone de memorie virtuală de la o adresă fixă peste un fișier (fișierul RAM), folosiți funcția MapViewOfFileEx.
+Va trebui să demapați pagina de memorie virtuală (folosind VirtualFree sau UnmapViewOfFile) și să realizați noua mapare.
+Un exemplu de utilizarea a MapViewOfFileEx găsiți aici.
+Pentru interceptarea acceselor invalide la zone de memorie (general protection fault), va trebui să folosiți vectori de excepție; aceștia permit înregistrarea, respectiv deînregistrarea unui handler care să fie rulat la apariția unei excepții (acces nevalid). Folosiți apelurile AddVectoredExceptionHandler/ RemoveVectoredExceptionHandler.
+Pentru obținerea adresei care a generat excepția (fault-ul, accessul nevalid), folosiți valoarea ExceptionInformation[1], câmp al structurii ExceptionRecord.
+Pentru generarea de fișiere temporare, puteți folosi apelul GetTempFileName.
+Puteți folosi funcțiile wrapper declarate și implementate în common.h și common_win.c.
+Puteți extinde fișierele cu funcții wrapper proprii.
+Tema se va rezolva folosind doar funcții Win32. Se pot folosi de asemenea și funcțiile de formatare printf, scanf, funcțiile de alocare de memorie malloc, free și funcțiile de manipulare a șirurilor de caractere (strcat, strdup etc.).
+Pentru partea de I/O și procese se vor folosi doar funcții Win32. De exemplu, functiile open, read, write, close nu trebuie folosite; în locul acestora folosiți CreateFile, ReadFile, WriteFile, CloseHandle.
+Testare
+
+Corectarea temelor se va realiza automat cu ajutorul unor suite de teste publice:
+teste Linux – tema3-checker-lin.zip
+teste Windows – tema3-checker-win.zip
+Indicații despre utilizarea suitei de teste se găsesc în fișierul README din cadrul arhivei.
+Pentru evaluare și corectare tema va fi uploadată folosind interfața vmchecker.
+În urma compilării temei trebuie să rezulte o bibliotecă shared-object (Linux) denumită libvmsim.so sau o bibliotecă dinamică (Windows) denumită libvmsim.dll.
+Suita de teste conține un set de teste. Trecerea unui test conduce la obținerea punctajului aferent acestuia.
+În urma rulării testelor, se va acorda, în mod automat, un punctaj total. Punctajul total maxim este de 100 de puncte, pentru o temă care trece toate testele.
+Cele 100 de puncte corespund la 10 puncte din cadrul notei finale.
+Pot exista penalizări în caz de întârzieri sau pentru neajunsuri de implementare sau de stil.
+Penalizările pentru neajunsuri de implementare pot constitui maxim 1 punct din nota finală a temei.
+Pe lângă penalizările precizate în cadrul listei de depunctări, se vor avea în vedere următoarele elemente:
+-0.5 – folosirea unei structuri de dimensiune statică pentru lista zonelor de memorie alocate folosind vm_alloc.
+

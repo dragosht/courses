@@ -1,0 +1,82 @@
+Scopul temei
+
+Recapitularea lucrului cu funcțiile ANSI C:
+lucrul cu fișiere
+alocare dinamică de memorie
+Folosirea pointerilor
+Enunț
+
+Să se implementeze în C o tabelă de dispersie (hashtable) ce va conține cuvinte. Operațiile ce trebuie implementate pentru tabelă sunt următoarele:
+
+add <cuvânt> adauga cuvântul la hashtable (nu se permit dubluri)
+remove <cuvânt> șterge cuvântul din hashtable (nu e obligatoriu să existe cuvântul)
+clear golește tabela
+find <cuvânt> [<fișier_ieșire>] caută cuvântul în hashtable → scrie True sau False pe o linie nouă în fișierul specificat sau la consolă dacă acest parametru lipsește
+print_bucket <index_bucket> [<fișier_ieșire>] scrie cuvintele din bucketul respectiv, pe o singură linie și separate de spațiu în fișierul specificat sau la consolă dacă acest parametru lipsește, index_bucket este valid
+print [<fișier_ieșire>] printeaza toate bucket-urile pe linii diferite, începând cu bucketul 0, în fișierul specificat sau la consolă dacă acest parametru lipsește
+resize double dublează dimensiunea hash-ului (bucket-urile vor fi parcuse în ordine și cuvintele sunt redistribuite)
+resize halve înjumătățește dimensiunea hash-ului (bucket-urile vor fi parcuse în ordine și cuvintele sunt redistribuite, memoria în surplus va fi dealocată)
+Aceste comenzi se vor regăsi una per linie.
+
+Programul va primi o serie de parametri:
+
+Primul parametru este lungimea inițiala a hashului
+Următorii parametri sunt opționali și reprezintă o listă de fișiere de intrare din care se face citirea. Dacă aceștia lipsesc citirea se face de la STDIN. Atenție, în cazul în care sunt specificate mai multe fișiere de intrare, toate operațiile se aplică aceluiași hash.
+Exemplu:
+
+ ./tema1 256 hash1.in hash2.in
+ ./tema1 100 < hash1.in
+ 
+hash1.in:
+add tema
+add hash
+print hash.out
+find tema hash.out
+remove tema
+find tema hash.out
+print hash.out
+resize double
+print
+print_bucket 185 hash2.out
+Hashtable-ul implementat va conține SIZE bucketuri. Fiecare bucket va conține cuvintele în ordinea în care ele au fost introduse. Pentru operația de resize bucketurile vor fi parcurse în ordine și redistribuite. Cuvintele din bucket vor fi parcurse începând cu cel mai vechi și terminand cu cel mai recent.
+
+Precizări generale
+
+Valorile introduse în hashtable sunt cuvinte [A-Za-z].
+Un tablou nu poate conține duplicate.
+Nu există limitări pentru lungimea unui bucket.
+Inserarea într-un tablou (bucket) se face la finalul acestuia.
+Funcția de hash ce trebuie folosită (în întreaga temă) este definită in hash.c. Nu poate fi folosita altă funcție.
+Programul trebuie să execute comenzile în ordine, așa cum au fost primite citite din fișier(e).
+Liniile goale din fișierul de intrare trebuie ignorate (programul nu face nimic și trece la linia următoare)
+În fișiere se va scrie în modul append.
+Dacă dimensiunea hash-ului este impară (2k+1), după înjumătațire dimensiunea lui va fi k.
+Lungimea hash-ului și a unui cuvânt vor fi reprezentate pe un număr pe 32 de biți (fără semn) .
+Șirul vid nu este valid.
+Dimensiunea hash-ului va fi întotdeauna pozitivă.
+Executabilul generat va purta numele tema1 pe Linux și tema1.exe pe Windows.
+Dimensiunea maximă a unei comenzi (operația și cuvântul asociat) este de 20000 de caractere.
+Bufferul folosit pentru citirea comenzilor poate fi declarat cu dimensiune statică.
+Comportamentul dorit la resize este unul echivalent cu urmatorul: se creeaza un nou hash, se itereaza prin bucketurile din vechiul hash si se adauga in noul hash.
+Precizări VMChecker
+
+Arhiva temei va fi încărcată de doua ori pe vmchecker (Linux și Windows). Arhiva trimisă trebuie să fie aceeași pe ambele platforme (se vor compara cele două trimise). Arhivele trebuie să conțina sursele temei, README și două fișiere Makefile care conțin target-urile build și clean:
+
+Fișierul Makefile de Linux se va numi GNUmakefile.
+ATENȚIE: GNUmakefile (cu m mic).
+Fișierul Makefile de Windows se va numi Makefile.
+Executabilul rezultat din operația de compilare și linking se va numi tema1.
+
+Punctare
+
+Tema va fi punctată cu minimul punctajelor obținute pe cele două platforme. Nu aveți voie să folosiți directive de preprocesare de forma:
+#ifdef __linux__
+[...]
+#ifdef _WIN32
+[...]
+Nota mai poate fi modificată prin depunctări suplimentare:
+
+Lista generala de depunctari
+-0.1 diverse alte probleme constatate în implementare
+-4 alocare statică hash
+

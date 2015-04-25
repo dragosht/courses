@@ -1,0 +1,845 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0043)http://ocw.cs.pub.ro/courses/so/teme/tema-2 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    Tema 2 Mini-shell    [CS Open CourseWare]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2014-03-17T23:21:55+0200">
+<meta name="keywords" content="so,teme,tema-2">
+<link rel="search" type="application/opensearchdescription+xml" href="http://ocw.cs.pub.ro/courses/lib/exe/opensearch.php" title="CS Open CourseWare">
+<link rel="start" href="http://ocw.cs.pub.ro/courses/">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://ocw.cs.pub.ro/courses/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://ocw.cs.pub.ro/courses/feed.php?mode=list&ns=so:teme">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://ocw.cs.pub.ro/courses/_export/xhtml/so/teme/tema-2">
+<link rel="canonical" href="./Tema 2 Mini-shell [CS Open CourseWare]_files/Tema 2 Mini-shell [CS Open CourseWare].html">
+<link rel="stylesheet" type="text/css" href="./Tema 2 Mini-shell [CS Open CourseWare]_files/css.php">
+<script type="text/javascript">/*<![CDATA[*/var NS='so:teme';var JSINFO = {"id":"so:teme:tema-2","namespace":"so:teme","isadmin":0,"isauth":0};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 2 Mini-shell [CS Open CourseWare]_files/js.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		  
+/*!]]>*/</script><script src="./Tema 2 Mini-shell [CS Open CourseWare]_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var pageTracker = _gat._getTracker("UA-38383934-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+		  
+/*!]]>*/</script>
+<script type="text/x-mathjax-config;executed=true">/*<![CDATA[*/MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+        displayMath: [ ["$$","$$"], ["\\[","\\]"] ],
+        processEscapes: true
+    }
+});
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 2 Mini-shell [CS Open CourseWare]_files/MathJax.js"></script>
+
+  <link rel="shortcut icon" href="http://ocw.cs.pub.ro/courses/lib/tpl/arctic/images/favicon.ico">
+
+  
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXc-script {font-size: .8em}
+.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXc-bold {font-weight: bold}
+.MJXc-italic {font-style: italic}
+.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-largeop {font-size: 150%}
+.MJXc-largeop.MJXc-int {vertical-align: -.2em}
+.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXc-display {display: block; text-align: center; margin: 1em 0}
+.MJXc-math span {display: inline-block}
+.MJXc-box {display: block!important; text-align: center}
+.MJXc-box:after {content: " "}
+.MJXc-rule {display: block!important; margin-top: .1em}
+.MJXc-char {display: block!important}
+.MJXc-mo {margin: 0 .15em}
+.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXc-denom {display: inline-table!important; width: 100%}
+.MJXc-denom > * {display: table-row!important}
+.MJXc-surd {vertical-align: top}
+.MJXc-surd > * {display: block!important}
+.MJXc-script-box > *  {display: table!important; height: 50%}
+.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXc-script-box > *:last-child > * {vertical-align: bottom}
+.MJXc-script-box > * > * > * {display: block!important}
+.MJXc-mphantom {visibility: hidden}
+.MJXc-munderover {display: inline-table!important}
+.MJXc-over {display: inline-block!important; text-align: center}
+.MJXc-over > * {display: block!important}
+.MJXc-munderover > * {display: table-row!important}
+.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXc-mtr {display: table-row!important}
+.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-mlabeledtr {display: table-row!important}
+.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<div id="wrapper" class="show">
+  <div class="dokuwiki">
+
+    
+    <div class="stylehead">
+      <div class="header">
+        <div class="pagename">
+          <a href="http://ocw.cs.pub.ro/courses/so/"><img height="70" src="./Tema 2 Mini-shell [CS Open CourseWare]_files/sigla_so.png"> </a>        </div>
+        <div class="logo">
+          <a style="color: #AAA !important;" href="http://ocw.cs.pub.ro/courses/systems/"><img height="70" src="./Tema 2 Mini-shell [CS Open CourseWare]_files/systems.png" name="dokuwiki__top"></a>        </div>
+      </div>
+    
+       
+      <div class="breadcrumbs">
+              </div>
+      
+            </div>
+
+                  <div class="bar" id="bar__top">
+        <div class="bar-left">
+                  </div>
+        <div class="bar-right">
+          <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2?do=login&sectok=39572f64e4a211baa2bc1705fc977261" class="action login" rel="nofollow" title="Login">Login</a>        </div>
+    </div>
+        
+    
+    
+    
+              <div class="left_page">
+          
+<h1 class="sectionedit1" id="tema_2_mini-shell">Tema 2 Mini-shell</h1>
+<div class="level1">
+
+<p>
+</p><p></p><div class="noteimportant">
+Dată publicare: 13 Martie 2014
+<p></p>
+
+<p>
+Deadline: 26 Martie 2014, ora 23:55
+</p>
+
+<p>
+Deadline hard: 2 Aprilie 2014, ora 23:55
+
+</p></div><p></p>
+<p></p>
+
+</div>
+
+<h2 class="sectionedit2" id="enunt">Enunț</h2>
+<div class="level2">
+
+<p>
+Să se implementeze un shell simplu, care suportă execuția de comenzi externe cu argumente multiple, comenzi interne, redirectări, pipe-uri. Shell-ul trebuie să suporte execuția de comenzi compuse, cu oricâți operatori.
+</p>
+
+<p>
+Shell-ul trebuie să suporte următorii operatori de execuție:
+</p>
+<ul>
+<li class="level1"><div class="li">operatorul de secvențiere ”<code>;</code>”</div>
+<ul>
+<li class="level2"><div class="li">va fi folosit pentru a executa comenzile “pe rând”;</div>
+</li>
+<li class="level2"><div class="li">de exemplu, <code>expr1; expr2</code> va avea ca efect mai întâi execuția comenzilor <code>expr1</code> și, după terminarea execuției acestora, execuția comenzilor <code>expr2</code>;</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">operatorul de paralelism ”<code>&amp;</code>”</div>
+<ul>
+<li class="level2"><div class="li">va fi folosit pentru a executa comenzile în paralel;</div>
+</li>
+<li class="level2"><div class="li">de exemplu, <code>expr1 &amp; expr2</code> va avea ca efect execuția comenzilor <code>expr1</code> și a comenzilor <code>expr2</code> în paralel;</div>
+</li>
+<li class="level2"><div class="li">In implementarea <strong>NU</strong> aveti voie sa va reapelati singuri executabilul. <pre class="code">execv("./my_homework", "command");</pre>
+</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">operatorul ”<code>|</code>” (pipe) </div>
+<ul>
+<li class="level2"><div class="li">va fi folosit pentru înlănțuirea comenzilor;</div>
+</li>
+<li class="level2"><div class="li">de exemplu, <code>expr1 | expr2</code> va avea ca efect execuția comezilor <code>expr1</code> cu stdout-ul redirectat în stdin-ul comenzilor <code>expr2</code>;</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">operatorii de execuție condiționată ”<code>&amp;&amp;</code>” și ”<code>||</code>”</div>
+<ul>
+<li class="level2"><div class="li">vor fi folosiți pentru a executa comenzile în funcție de codul de eroare;</div>
+</li>
+<li class="level2"><div class="li"><code>expr1 &amp;&amp; expr2</code> va avea ca efect execuția comenzilor <code>expr2</code> doar în cazul în care comenzile <code>expr1</code> au ca rezultat un cod de eroare <code>0</code>;</div>
+</li>
+<li class="level2"><div class="li"><code>expr1 || expr2</code> va avea ca efect execuția comenzilor <code>expr2</code> doar în cazul în care comenzile <code>expr1</code> au ca rezultat un cod de eroare diferit de zero.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+<p>
+Prioritatea operatorilor de execuție este, de la cel mai prioritar la cel mai puțin prioritar:
+</p>
+<ol>
+<li class="level1"><div class="li"> operatorul |</div>
+</li>
+<li class="level1"><div class="li"> operatorii de execuție condiționată</div>
+</li>
+<li class="level1"><div class="li"> operatorul de paralelism</div>
+</li>
+<li class="level1"><div class="li"> operatorul de secvențiere</div>
+</li>
+</ol>
+
+<p>
+Shell-ul trebuie, de asemenea, să suporte și următorii operatori de redirectare:
+</p>
+<ul>
+<li class="level1"><div class="li">”<code>&lt; nume_fisier</code>” pentru redirectarea intrării din fișierul <code>nume_fisier</code>;</div>
+</li>
+<li class="level1"><div class="li">”<code>&gt; nume_fiser</code>” pentru redirectarea ieșirii standard în fișierul <code>nume_fisier</code>;</div>
+</li>
+<li class="level1"><div class="li">”<code>2&gt; nume_fisier</code>” pentru redirectarea ieșirii de eroare standard în fișierul <code>nume_fisier</code>;</div>
+</li>
+<li class="level1"><div class="li">”<code>&amp;&gt; nume_fisier</code>” pentru redirectarea ieșirii standard și ieșirii de eroare standard în fișierul <code>nume_fisier</code>;</div>
+</li>
+<li class="level1"><div class="li">”<code>» nume_fisier</code>” pentru redirectarea ieșirii standard în fișierul <code>nume_fisier</code>  în modul “append”;</div>
+</li>
+<li class="level1"><div class="li">”<code>2» nume_fisier</code>” pentru redirectarea ieșirii de eroare standard în fișierul <code>nume_fisier</code>  în modul “append”.</div>
+</li>
+</ul>
+
+<p>
+În fine, shell-ul trebuie să suporte următoarele comenzi interne:
+</p>
+<ul>
+<li class="level1"><div class="li"><code>exit</code> și <code>quit</code> pentru terminarea shell-ului;</div>
+</li>
+<li class="level1"><div class="li"><code>cd director</code> pentru schimbarea directorului curent.</div>
+</li>
+</ul>
+
+<p>
+Shell-ul trebuie să suporte variabile de mediu:
+</p>
+<ul>
+<li class="level1"><div class="li">formatul de utilizare este <code>$VARIABILA_DE_MEDIU</code> identic pe Linux și pe Windows;</div>
+</li>
+<li class="level1"><div class="li">variabilele de mediu sunt moștenite de la shell-ul părinte (Bash) sau sunt definite în mini-shell;</div>
+</li>
+<li class="level1"><div class="li">definirea variabilelor se face sub forma <code>NUME_VARIABILA=valoare</code>;</div>
+</li>
+<li class="level1"><div class="li">nu trebuie tratat cazul în care <code>valoare</code> conține referiri la alte variabile de mediu.</div>
+</li>
+<li class="level1"><div class="li">Daca variabila de mediu nu exista aceasta are valoarea sirul vid (<strong>Atentie</strong> sirul vid este diferit de NULL)</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3" id="precizari_generale">Precizări generale</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Pentru a simplifica implementarea temei, puteți folosi <a href="http://elf.cs.pub.ro/so/res/teme/tema2-util.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema2-util.zip" rel="nofollow"> parserul</a> implementat de noi. Pentru detalii despre parser, citiți fișierul <code>README</code> din arhivă.</div>
+</li>
+<li class="level1"><div class="li">Promptul afișat de shell este impus pentru a facilita testarea automata și este ”&gt;” (adică se va afișa caracterul <code>&gt;</code> urmat de un spațiu).</div>
+</li>
+<li class="level1"><div class="li">Numele executabilului temei trebuie să fie <code>mini-shell</code> pe Linux, respectiv <code>mini-shell.exe</code> pe Windows.</div>
+</li>
+<li class="level1"><div class="li">Din cauza diferenței între Windows și Linux la crearea de noi procese (<code>CreateProcess</code> vs. <code>fork</code> + <code>exec</code>) s-ar putea să nu puteți folosi același tip de parcurgere a arborelui sintactic și pe Windows și pe Linux. Daca vreți să reutilizați concepte/cod de pe Linux pe Windows, concepeți parcurgerea să funcționeze și cu funcția <code>CreateProcess</code> de pe Windows.</div>
+</li>
+<li class="level1"><div class="li">În rezolvarea temei puteți porni de la exemplul de utilizare a parserului (<code>UseParser.cpp</code> sau <code>CUseParser.c</code>).</div>
+</li>
+<li class="level1"><div class="li">Recomandăm rezolvarea și testarea din aproape în aproape a temei dupa pași:</div>
+<ul>
+<li class="level2"><div class="li">rularea de comenzi simple</div>
+</li>
+<li class="level2"><div class="li">rularea de comenzi interne (<code>cd</code>, <code>exit</code>, <code>quit</code>)</div>
+</li>
+<li class="level2"><div class="li">implementarea redirectărilor (operatorii <code>&gt;</code>, <code>&lt;</code>, <code>2&gt;</code>, <code>&amp;&gt;</code>, <code>»</code>, <code>2»</code>)</div>
+</li>
+<li class="level2"><div class="li">variabile de mediu</div>
+</li>
+<li class="level2"><div class="li">secvențierea comenzilor (operatorii <code>&amp;&amp;</code>, <code>||</code>, <code>;</code>)</div>
+</li>
+<li class="level2"><div class="li">implementarea operatorilor <code>&amp;</code> (paralel) și <code>|</code> (pipe)</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li">Aveți mai jos câteva exemple de comenzi și rezultatul generat de acestea:</div>
+</li>
+</ul>
+<pre class="code bash"> <span class="sy0">&gt;</span> <span class="kw2">ls</span>
+ Makefile	  README.checker  mini-shell	mini-shell.o  parser
+ Makefile.checker  inputs	  mini-shell.c	outputs       tags
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">uname</span> <span class="re5">-a</span> ; <span class="kw2">ps</span> 
+ Linux bogdan-desktop 2.6.31-<span class="nu0">19</span>-generic <span class="co0">#56-Ubuntu SMP Thu Jan 28 02:39:34 UTC 2010 x86_64 GNU/Linux</span>
+   PID TTY          TIME CMD
+  <span class="nu0">6078</span> pts<span class="sy0">/</span><span class="nu0">0</span>    00:00:00 <span class="kw2">bash</span>
+  <span class="nu0">6190</span> pts<span class="sy0">/</span><span class="nu0">0</span>    00:00:00 mini-shell
+  <span class="nu0">6200</span> pts<span class="sy0">/</span><span class="nu0">0</span>    00:00:00 <span class="kw2">ps</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">date</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">sleep</span> <span class="nu0">1</span> ; <span class="kw3">echo</span> <span class="kw2">date</span>
+ Mon Feb  <span class="nu0">8</span> <span class="nu0">13</span>:<span class="nu0">40</span>:<span class="nu0">25</span> EET <span class="nu0">2010</span>
+ <span class="kw2">date</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">date</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">sleep</span> <span class="nu0">1</span>; <span class="kw2">date</span>
+ Mon Feb  <span class="nu0">8</span> <span class="nu0">13</span>:<span class="nu0">40</span>:<span class="nu0">49</span> EET <span class="nu0">2010</span>
+ Mon Feb  <span class="nu0">8</span> <span class="nu0">13</span>:<span class="nu0">40</span>:<span class="nu0">50</span> EET <span class="nu0">2010</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">true</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">date</span>
+ Mon Feb  <span class="nu0">8</span> <span class="nu0">13</span>:<span class="nu0">41</span>:<span class="nu0">16</span> EET <span class="nu0">2010</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">false</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">cat</span> mini-shell.c
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">false</span> <span class="sy0">||</span> <span class="kw2">date</span>
+ Mon Feb  <span class="nu0">8</span> <span class="nu0">13</span>:<span class="nu0">42</span>:<span class="nu0">36</span> EET <span class="nu0">2010</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">cat</span> <span class="sy0">/</span>et<span class="sy0">/</span>services
+ cat: <span class="sy0">/</span>et<span class="sy0">/</span>services: No such <span class="kw2">file</span> or directory
+&nbsp;
+ <span class="sy0">&gt;</span> cta <span class="sy0">/</span>etc<span class="sy0">/</span>services
+ Execution failed <span class="kw1">for</span> <span class="st_h">'cta'</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">cat</span> <span class="sy0">/</span>etc<span class="sy0">/</span>services <span class="sy0">|</span> <span class="kw2">grep</span> telnet
+ telnet		<span class="nu0">23</span><span class="sy0">/</span>tcp
+ rtelnet	<span class="nu0">107</span><span class="sy0">/</span>tcp				<span class="co0"># Remote Telnet</span>
+ rtelnet	<span class="nu0">107</span><span class="sy0">/</span>udp
+ telnets	<span class="nu0">992</span><span class="sy0">/</span>tcp				<span class="co0"># Telnet over SSL</span>
+ telnets	<span class="nu0">992</span><span class="sy0">/</span>udp
+ tfido		<span class="nu0">60177</span><span class="sy0">/</span>tcp			<span class="co0"># fidonet EMSI over telnet</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">gcc</span> <span class="sy0">&gt;</span> tmp; <span class="kw3">echo</span> sep; <span class="kw2">cat</span> tmp
+ gcc: no input files
+ sep
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">strace</span> <span class="re5">-e</span> <span class="re2">trace</span>=<span class="kw2">read</span> <span class="kw2">ls</span> <span class="nu0">2</span><span class="sy0">&gt;</span> strace.out   
+ Makefile	  README.checker  mini-shell	mini-shell.o  parser	  tags
+ Makefile.checker  inputs	  mini-shell.c	outputs       strace.out  tmp
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw2">head</span> <span class="re5">-1</span> strace.out
+ <span class="kw2">read</span><span class="br0">(</span><span class="nu0">3</span>, <span class="st0">"\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0&gt;\0\1\0\0\0@#\0\0\0\0\0\0@"</span>..., <span class="nu0">832</span><span class="br0">)</span> = <span class="nu0">832</span>
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw3">pwd</span>; <span class="kw3">cd</span> ~; <span class="kw3">pwd</span>
+ <span class="sy0">/</span>home<span class="sy0">/</span>bogdan<span class="sy0">/</span>Documents<span class="sy0">/</span>SO<span class="sy0">/</span>Solutii
+ <span class="sy0">/</span>home<span class="sy0">/</span>bogdan
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="re2">LETTER</span>=alfa <span class="sy0">&amp;&amp;</span> <span class="kw3">echo</span> <span class="re1">$LETTER</span>
+ alfa
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw3">echo</span> a <span class="sy0">&gt;</span> <span class="kw3">test</span> ; <span class="kw3">echo</span> b <span class="sy0">&gt;&gt;</span> <span class="kw3">test</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">cat</span> <span class="kw3">test</span>
+ a
+ b
+&nbsp;
+ <span class="sy0">&gt;</span> <span class="kw3">exit</span></pre>
+
+</div>
+
+<h2 class="sectionedit4" id="precizari_windows">Precizări Windows</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Tema se va rezolva folosind doar funcții Win32. Se pot folosi, de asemenea, și funcțiile de formatare <code>printf</code>, <code>scanf</code>, funcțiile de alocare de memorie <code>malloc</code>, <code>free</code> și funcțiile de lucru cu șiruri de caractere (<code>strcat</code>, <code>strdup</code>, etc.)</div>
+</li>
+<li class="level1"><div class="li">Pentru partea de I/O și procese se vor folosi doar funcții Win32. De exemplu, funcțiile <code>open</code>, <code>read</code>, <code>write</code>, <code>close</code> nu trebuie folosite, în locul acestor trebuind să folosiți <code>CreateFile</code>, <code>ReadFile</code>, <code>WriteFile</code>, <code>CloseHandle</code>.</div>
+</li>
+<li class="level1"><div class="li">Pentru a permite transmiterea de caractere speciale în argumente (spre exemplu <code>echo “int main() { return 0; }”</code>) recomandăm să “îngrădiți” argumentele liniei de comandă a <code>CreateProcess</code> cu ghilimele.</div>
+</li>
+<li class="level1"><div class="li">Dacă folosiți Visual Studio dezactivați Unicode (clic dreapta pe proiect → Properties → Character Set → Not Set)</div>
+</li>
+<li class="level1"><div class="li"><strong>ATENȚIE:</strong> Pentru testarea temei cu testele publice se va folosi cygwin, compilarea sursei se face cu compilatorul specific Windows, cl (în Visual Studio console).</div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit5" id="instalare_cygwin">Instalare Cygwin</h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> Puteți descărca Cygwin de <a href="http://www.cygwin.com/" class="urlextern" title="http://www.cygwin.com/" rel="nofollow"> aici </a></div>
+</li>
+<li class="level1"><div class="li"> Asigurați-vă că la instalare ați selectat pachetele make și gcc</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit6" id="precizari_linux">Precizări Linux</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Tema se va rezolva folosind doar funcții POSIX. Se pot folosi de asemenea și funcțiile de formatare <code>printf</code>, <code>scanf</code>, funcțiile de alocare de memorie <code>malloc</code>, <code>free</code> și funcțiile de de lucru cu șiruri de caractere (<code>strcat</code>, <code>strdup</code>, etc.)</div>
+</li>
+<li class="level1"><div class="li">Pentru partea de I/O și procese se vor folosi doar funcții POSIX. De exemplu, funcțiile <code>fopen</code>, <code>fread</code>, <code>fwrite</code>, <code>fclose</code> nu trebuie folosite, în locul acestor trebuind să folosiți <code>open</code>, <code>read</code>, <code>write</code>, <code>close</code>.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit7" id="testare">Testare</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Pentru simplificarea procesului de corectare a temelor, dar și pentru a reduce greșelile temelor trimise, corectarea se va realiza automat cu ajutorul unor test publice disponibile in sectiunea de materiale ajutatoare.</div>
+</li>
+<li class="level1"><div class="li">Există 18 teste. Se pot obține maxim 9 puncte prin trecerea testelor. Se acordă 1 punct din oficiu.</div>
+</li>
+<li class="level1"><div class="li">Pentru a trece testul 18, este obligatoriu să respectați formatul mesajului de eroare impus. Mesajul de eroare trebuie scris la <code>stderr</code> și trebuie să fie identic cu cel așteptat de teste (vezi <code>test_18_ref.txt</code> din teste).</div>
+</li>
+<li class="level1"><div class="li">O temă care trece cele 18 teste automate va obține 10 puncte din 10 (daca nu trișează folosind <abbr title="Application Programming Interface">API</abbr> interzis, cum ar fi funcția <code>system()</code>, caz în care nu va fi punctată).</div>
+</li>
+<li class="level1"><div class="li">Din punctajul temei se vor scădea automat puncte pentru întârzieri și pentru warning-uri. La revizia temei, se poate scădea suplimentar pentru nerespectărea criteriilor scrise la secțiunea <a href="http://elf.cs.pub.ro/so/wiki/reguli-notare#reguli" class="urlextern" title="http://elf.cs.pub.ro/so/wiki/reguli-notare#reguli" rel="nofollow"> reguli</a>. Astfel:</div>
+<ul>
+<li class="level2"><div class="li"><code>-0.1</code> pentru fișier Makefile incorect (de exemplu compilează de fiecare dată totul)</div>
+</li>
+<li class="level2"><div class="li"><code>-0.2</code> pentru fișier README necorespunzator</div>
+</li>
+<li class="level2"><div class="li"><code>-0.2</code> surse necorespunzător comentate</div>
+</li>
+<li class="level2"><div class="li"><code>-0.3</code> neverificarea condițiilor de eroare sau/și neeliberarea de resurse</div>
+</li>
+<li class="level2"><div class="li"><code>-0.2</code> diverse alte probleme constatate în implementare</div>
+</li>
+</ul>
+</li>
+</ul>
+
+<p>
+În cazuri excepționale se poate scădea mai mult decât este menționat mai sus.
+</p>
+
+</div>
+
+<h3 class="sectionedit8" id="nota">Notă</h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li">La corectarea temei nu se va ține cont de warning-urile sau leak-urile cauzate de parser. De exemplu:</div>
+</li>
+</ul>
+<pre class="code bash">	cl <span class="sy0">/</span>nologo <span class="sy0">/</span>W3 <span class="sy0">/</span>EHsc <span class="sy0">/</span>Za <span class="sy0">/</span>c parser.yy.c
+parser.yy.c
+parser.yy.c<span class="br0">(</span><span class="nu0">1302</span><span class="br0">)</span> : warning C4018: <span class="st_h">'&lt;'</span> : signed<span class="sy0">/</span>unsigned mismatch</pre>
+
+</div>
+
+<h2 class="sectionedit9" id="materiale_ajutatoare">Materiale ajutatoare</h2>
+<div class="level2">
+
+<p>
+Cursuri utile:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-01" class="wikilink1" title="so:cursuri:curs-01"> Curs 1</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-02" class="wikilink1" title="so:cursuri:curs-02"> Curs 2</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-03" class="wikilink1" title="so:cursuri:curs-03"> Curs 3</a></div>
+</li>
+</ul>
+
+<p>
+Laboratoare utile:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-01" class="wikilink1" title="so:laboratoare:laborator-01"> Laborator 1</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-02" class="wikilink1" title="so:laboratoare:laborator-02"> Laborator 2</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-03" class="wikilink1" title="so:laboratoare:laborator-03"> Laborator 3</a></div>
+</li>
+</ul>
+
+<p>
+Arhiva cu parserul pentru comenzi:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="http://elf.cs.pub.ro/so/res/teme/tema2-util.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema2-util.zip" rel="nofollow"> Parser</a></div>
+</li>
+</ul>
+
+<p>
+Schelet de cod:
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/_media/so/teme/2-skel-linux.zip" class="media mediafile mf_zip" title="so:teme:2-skel-linux.zip (40.1 KB)">Schelet cod Linux</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/_media/so/teme/2-skel-windows.zip" class="media mediafile mf_zip" title="so:teme:2-skel-windows.zip (40.5 KB)">Schelet cod Windows</a></div>
+</li>
+</ul>
+
+<p>
+Teste:
+</p>
+<ul>
+<li class="level1"><div class="li">teste <a href="http://elf.cs.pub.ro/so/res/teme/tema2-checker-lin.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema2-checker-lin.zip" rel="nofollow"> Linux </a></div>
+</li>
+<li class="level1"><div class="li">teste <a href="http://elf.cs.pub.ro/so/res/teme/tema2-checker-win.zip" class="urlextern" title="http://elf.cs.pub.ro/so/res/teme/tema2-checker-win.zip" rel="nofollow"> Windows </a></div>
+</li>
+</ul>
+
+<p>
+Pagina de Upload:
+</p>
+<ul>
+<li class="level1"><div class="li"><a href="https://elf.cs.pub.ro/vmchecker/ui" class="urlextern" title="https://elf.cs.pub.ro/vmchecker/ui" rel="nofollow"> upload</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit10" id="faq">FAQ</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Cum pot să citesc arhivele listei de discuții?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> O variantă este cu Opera: File → Import and export → Import mail → Import generic mbox file → alegeți fișierele respective.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Am voie sa folosesc funcții POSIX pe Windows?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> La toate temele de SO pe Windows se va folosi Win32 <abbr title="Application Programming Interface">API</abbr>, nu POSIX. Oricum, <code>fork</code> și <code>exec</code> nu sunt suportate pe Windows XP decât după instalarea “Unix Services for Windows”.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> La temele de Windows trebuie să folosesc funcțiile de <abbr title="Application Programming Interface">API</abbr> în versiunea Unicode, ANSI, sau generică?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu este impus să folosiți o versiune anume. Aveți, totuși, grijă să folosiți corect funcțiile (acestea primesc parametri de tip CHAR pentru versiunea ANSI, WCHAR pentru Unicode și TCHAR în versiunea generică). Pentru detalii consultați <a href="http://msdn.microsoft.com/en-us/library/dd374089(VS.85).aspx" class="urlextern" title="http://msdn.microsoft.com/en-us/library/dd374089(VS.85).aspx" rel="nofollow"> Unicode in the Windows API</a>.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Ce fac dacă am intâlnit un caz limită al carui comportament nu este precizat în enunț?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> În general la temele de SO, pentru cazuri limită ce nu apar în testele publice sau în enunt, se acceptă orice comportament documentat în README. Un exemplu este comportamentul pentru “command | cd /something”. Daca nu sunteți siguri, întrebați pe lista de discuții.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Trebuie optimizat numărul de fork-uri? Spre exemplu, în cazul comenzii <code>a|b|c</code> trebuie sa am 3 forkuri sau pot să am 4 sau 5?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu este obligatoriu să optimizați numărul de fork-uri. Totuși, în general este bine să aveți în vedere eficientizarea consumului de resurse.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Shell-ul trebuie să se comporte ca un shell adevărat (sh, bash) în situația … ?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Funcționalitatea minimă necesară este cea din enunțul temei. Daca implementați ceva în plus, precizați în README. Exemple de funcționalitate care nu este cerută: updatarea unor variabile de mediu (gen <code>$OLDPWD</code> și <code>$PWD</code>), history, multe altele … (vezi <a href="http://linux.die.net/man/1/bash" class="urlextern" title="http://linux.die.net/man/1/bash" rel="nofollow"> man bash</a> pentru o idee despre funcționalitatea unui shell complet <img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/icon_smile.gif" class="icon" alt=":-)"> )</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Am voie să nu folosesc parserul din enunț dacă doresc să scriu eu altul echivalent?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Da.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Avem voie sa folosim: <pre class="code">const char *argv[] = {"/bin/bash", "-c", command, NULL};
+execv("/bin/bash", (char *const *)argv);</pre>
+</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu.</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"><strong>Q:</strong> Am voie să fac execv pe tema mea pentru a executa o parte din arbore independent?</div>
+<ul>
+<li class="level2"><div class="li"><strong>A:</strong> Nu.</div>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit11" id="lista_de_discutii">Lista de discuții</h2>
+<div class="level2">
+
+<p>
+Dacă aveți întrebări sau nelămuriri legate teme, laboratoare sau curs, puteți <a href="http://news.gmane.org/gmane.education.region.romania.operating-systems" class="urlextern" title="http://news.gmane.org/gmane.education.region.romania.operating-systems" rel="nofollow"> căuta</a>, <a href="http://cursuri.cs.pub.ro/pipermail/so" class="urlextern" title="http://cursuri.cs.pub.ro/pipermail/so" rel="nofollow"> consulta</a> sau <a href="mailto:mailto:so@cursuri.cs.pub.ro" class="mail" title="mailto:so@cursuri.cs.pub.ro"> trimite un mail</a> pe lista de discuții (trebuie să fiți <a href="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so" class="urlextern" title="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so" rel="nofollow"> înregistrați</a>).
+</p>
+
+</div>
+
+        </div>
+        <div class="right_sidebar">
+          <form action="http://ocw.cs.pub.ro/courses/start" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>          <div class="namespace_sidebar sidebar_box">
+
+
+
+<h1 class="sectionedit1" id="informatii_generale_so">Informații generale SO</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_87466371154e8f453f2611" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/documentatie" class="wikilink1" title="so:info:documentatie">Documentație și alte resurse</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/feed" class="wikilink1" title="so:info:feed">Feed-uri RSS</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/hall" class="wikilink1" title="so:info:hall">Hall of SO</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/lista-discutii" class="wikilink1" title="so:info:lista-discutii">Listă de discuții</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/mv" class="wikilink1" title="so:info:mv">Mașini virtuale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/info/trimitere-teme" class="wikilink1" title="so:info:trimitere-teme">Trimitere teme</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT1 SECTION "Informații generale SO" [12-175] -->
+<h1 class="sectionedit2" id="informatii_so_2013-2014">Informații SO 2013-2014</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_62431962454e8f453f337a" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen" class="indexmenu_idx_head">Examen</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2012-2013" class="wikilink1" title="so:meta:examen:2012-2013">Teste SO 2012-2013</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/examen/2013-2014" class="wikilink1" title="so:meta:examen:2013-2014">Lucrări SO 2013-2014</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare" class="indexmenu_idx_head">Reguli generale și notare</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-ca-cc" class="wikilink1" title="so:meta:notare:reguli-notare-ca-cc">Notare CA/CC</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/notare/reguli-notare-cb" class="wikilink1" title="so:meta:notare:reguli-notare-cb">Notare CB</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/anunturi" class="wikilink1" title="so:meta:anunturi">Anunțuri</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/calendar" class="wikilink1" title="so:meta:calendar">Calendar</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/catalog" class="wikilink1" title="so:meta:catalog">Catalog</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/echivalari" class="wikilink1" title="so:meta:echivalari">Echivalări teme 2014 - 2015</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/karma" class="wikilink1" title="so:meta:karma">Karma Awards</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/need-to-know" class="wikilink1" title="so:meta:need-to-know">SO Need to Know</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/meta/orar" class="wikilink1" title="so:meta:orar">Orar și împărțire pe semigrupe</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT2 SECTION "Informații SO 2013-2014" [176-243] -->
+<h1 class="sectionedit3" id="laboratoare">Laboratoare</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so/laboratoare-2013/start" class="wikilink1" title="so:laboratoare-2013:start"> Arhivă laboratoare 2012-2013</a></div>
+</li>
+</ul>
+
+<div><div id="nojs_indexmenu_9042230354e8f453f3ec5" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse" class="indexmenu_idx_head">Resurse</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/c_tips" class="wikilink1" title="so:laboratoare:resurse:c_tips">C/SO Tips</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/die" class="wikilink1" title="so:laboratoare:resurse:die">Macro-ul DIE</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/gdb" class="wikilink1" title="so:laboratoare:resurse:gdb">GDB</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/home" class="wikilink1" title="so:laboratoare:resurse:home">Resurse</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/injections" class="wikilink1" title="so:laboratoare:resurse:injections">Function Hooking and Windows Dll Injection</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/joc" class="wikilink1" title="so:laboratoare:resurse:joc">Desfășurare Joc</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/oprofile" class="wikilink1" title="so:laboratoare:resurse:oprofile">Oprofile</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/recapitulare" class="wikilink1" title="so:laboratoare:resurse:recapitulare">Recapitulare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/threaduri_extra" class="wikilink1" title="so:laboratoare:resurse:threaduri_extra">Thread-uri - Extra</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/vs_tips" class="wikilink1" title="so:laboratoare:resurse:vs_tips">Visual Studio Tips and Tricks</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/resurse/windows-video" class="wikilink1" title="so:laboratoare:resurse:windows-video">windows-video</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-01" class="wikilink1" title="so:laboratoare:laborator-01">Laborator 01 - Introducere</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-02" class="wikilink1" title="so:laboratoare:laborator-02">Laborator 02 - Operații I/O simple</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-03" class="wikilink1" title="so:laboratoare:laborator-03">Laborator 03 - Procese</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-04" class="wikilink1" title="so:laboratoare:laborator-04">Laborator 04 - Semnale</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-05" class="wikilink1" title="so:laboratoare:laborator-05">Laborator 05 - Gestiunea memoriei</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-06" class="wikilink1" title="so:laboratoare:laborator-06">Laborator 06 - Memoria virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-07" class="wikilink1" title="so:laboratoare:laborator-07">Laborator 07 - Profiling &amp; Debugging</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-08" class="wikilink1" title="so:laboratoare:laborator-08">Laborator 08 - Thread-uri Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-09" class="wikilink1" title="so:laboratoare:laborator-09">Laborator 09 - Thread-uri Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-10" class="wikilink1" title="so:laboratoare:laborator-10">Laborator 10 - Operații IO avansate - Windows</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-11" class="wikilink1" title="so:laboratoare:laborator-11">Laborator 11 - Operații IO avansate - Linux</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/laboratoare/laborator-12" class="wikilink1" title="so:laboratoare:laborator-12">Laborator 12 - Implementarea sistemelor de fișiere</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT3 SECTION "Laboratoare" [244-372] -->
+<h1 class="sectionedit4" id="cursuri">Cursuri</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_139648816154e8f453f4132" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-01" class="indexmenu_idx_head">Curs 01 - Introducere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-02" class="indexmenu_idx_head">Curs 02 - Sistemul de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-03" class="indexmenu_idx_head">Curs 03 - Procese</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-04" class="indexmenu_idx_head">Curs 04 - Planificarea execuției</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-05" class="indexmenu_idx_head">Curs 05 - Gestiunea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-06" class="indexmenu_idx_head">Curs 06 - Memoria virtuală</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-07" class="indexmenu_idx_head">Curs 07 - Securitatea memoriei</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-08" class="indexmenu_idx_head">Curs 08 - Fire de execuție</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-09" class="indexmenu_idx_head">Curs 09 - Sincronizare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-10" class="indexmenu_idx_head">Curs 10 - Dispozitive de intrare/ieșire</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-11" class="indexmenu_idx_head">Curs 11 - Networking in Sistemul de Operare</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-12" class="indexmenu_idx_head">Curs 12 - Implementarea sistemelor de fișiere</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-13" class="indexmenu_idx_head">Curs 13 - Securitatea sistemului</a></div></li>
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/quiz?idx=so:cursuri:quiz" class="indexmenu_idx">quiz</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-2" class="wikilink1" title="so:cursuri:curs-extra-2">Curs extra - Android</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra-3" class="wikilink1" title="so:cursuri:curs-extra-3">Curs extra - Virtualizare</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/curs-extra" class="wikilink1" title="so:cursuri:curs-extra">Curs extra - Sincronizarea proceselor</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/cursuri/note" class="wikilink1" title="so:cursuri:note">Note de curs</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT4 SECTION "Cursuri" [373-425] -->
+<h1 class="sectionedit5" id="teme">Teme</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_65699500454e8f45400213" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-asist" class="indexmenu_idx_head">Tema Asistenți - Guardian process</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/general" class="wikilink1" title="so:teme:general">Indicații generale teme</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-1" class="wikilink1" title="so:teme:tema-1">Tema 1 Multi-platform Development</a></div></li>
+<li class="level1"><div class="li"><span class="curid"><a href="./Tema 2 Mini-shell [CS Open CourseWare]_files/Tema 2 Mini-shell [CS Open CourseWare].html" class="wikilink1" title="so:teme:tema-2">Tema 2 Mini-shell</a></span></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-3" class="wikilink1" title="so:teme:tema-3">Tema 3 Memorie virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-4" class="wikilink1" title="so:teme:tema-4">Tema 4 Planificator de threaduri</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-5" class="wikilink1" title="so:teme:tema-5">Tema 5 Server web asincron</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT5 SECTION "Teme" [426-] -->
+</div>
+<div class="toc_sidebar sidebar_box">
+<!-- TOC START -->
+<div id="sb__right__dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#tema_2_mini-shell">Tema 2 Mini-shell</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#enunt">Enunț</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#precizari_generale">Precizări generale</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#precizari_windows">Precizări Windows</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#instalare_cygwin">Instalare Cygwin</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#precizari_linux">Precizări Linux</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#testare">Testare</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#nota">Notă</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#materiale_ajutatoare">Materiale ajutatoare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#faq">FAQ</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#lista_de_discutii">Lista de discuții</a></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+</div>
+        </div>
+      
+    
+      <div class="stylefoot">
+        <div class="meta">
+          <div class="user">
+                    </div>
+          <div class="doc">
+          so/teme/tema-2.txt · Last modified: 2014/03/17 23:21 by adrian.sendroiu          </div>
+        </div>
+      </div>
+
+    <div class="clearer"></div>
+
+    
+                <div class="bar" id="bar__bottom">
+      <div class="bar-left">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2?do=revisions" class="action revs" accesskey="o" rel="nofollow" title="Old revisions [O]">Old revisions</a>      </div>
+      <div class="bar-right">
+        <a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2?do=media&ns=so%3Ateme" class="action media" rel="nofollow" title="Media Manager">Media Manager</a><a href="http://ocw.cs.pub.ro/courses/so/teme/tema-2#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]">Back to top</a>      </div>
+    </div>
+    <div class="clearer"></div>
+            
+    <div align="center" class="footerinc">
+  <div class="license"><a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/cc-by-sa.png" alt="CC Attribution-Share Alike 3.0 Unported"></a></div>
+  <a target="_blank" href="http://www.chimeric.de/" title="www.chimeric.de"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-chimeric-de.png" width="80" height="15" alt="www.chimeric.de" border="0"></a>
+
+  <a target="_blank" href="http://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-css.png" width="80" height="15" alt="Valid CSS" border="0"></a>
+
+  <a target="_blank" href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" border="0"></a>
+
+  <a target="_blank" href="http://www.firefox-browser.de/" title="do yourself a favour and use a real browser - get firefox"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-firefox.png" width="80" height="15" alt="do yourself a favour and use a real browser - get firefox!!" border="0"></a>
+  
+  <a target="_blank" href="http://ocw.cs.pub.ro/courses/feed.php" title="Recent changes RSS feed"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" border="0"></a>
+
+  <a target="_blank" href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" border="0"></a>
+</div>
+
+  </div>
+</div>
+
+<div class="no"><img src="./Tema 2 Mini-shell [CS Open CourseWare]_files/indexer.php" width="2" height="1" alt=""></div>
+
+
+</body></html>
