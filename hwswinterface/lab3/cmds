@@ -1,0 +1,4 @@
+break getbuf
+break bang
+break *0x0000000000400e1a
+run -u 1561712 < exploit.txt
