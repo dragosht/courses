@@ -33,6 +33,7 @@ struct so2_cdev_devdata
 	dev_t		dev;
 	struct cdev	cdev;
 	atomic_t	opened;
+	char		buffer[BUFSIZ];
 };
 
 struct so2_cdev_data
@@ -51,10 +52,15 @@ static int so2_cdev_open(struct inode *inode, struct file *file)
 	dev = container_of(inode->i_cdev, struct so2_cdev_devdata, cdev);
 	file->private_data = dev;
 
-	if (atomic_cmpxchg(&dev->opened, 1, 1)) {
+	if (atomic_cmpxchg(&dev->opened, 0, 1)) {
 		printk(LOG_LEVEL "so2_cdev: device %d busy\n", MINOR(dev->dev));
 		return -EBUSY;
 	}
+
+	/*
+        set_current_state(TASK_INTERRUPTIBLE);
+        schedule_timeout(1000);
+	*/
 
 	printk(KERN_DEBUG "so2_cdev: open(): %d\n", MINOR(dev->dev));
 
@@ -69,13 +75,58 @@ static int so2_cdev_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+static ssize_t so2_cdev_read(struct file *file, char *buff, size_t n, loff_t *offset)
+{
+	int result = 0;
+	struct so2_cdev_devdata *dev = file->private_data;
+
+	if (*offset > BUFSIZ) {
+		goto out;
+	}
+	if (*offset + n > BUFSIZ) {
+		n = BUFSIZ - *offset;
+	}
+
+	if (copy_to_user(buff, &dev->buffer[0] + *offset, n)) {
+		printk(LOG_LEVEL "Unable to read device buffer\n");
+		return -EFAULT;
+	}
+	result = n;
+	*offset += n;
+out:
+	return result;
+}
+
+static ssize_t so2_cdev_write(struct file *file, const char *buff, size_t n, loff_t *offset)
+{
+	int result = 0;
+
+	struct so2_cdev_devdata *dev = file->private_data;
+
+	if (*offset > BUFSIZ) {
+		goto out;
+	}
+	if (*offset + n > BUFSIZ) {
+		n = BUFSIZ - *offset;
+	}
+
+	if (copy_from_user(&dev->buffer[0] + *offset, buff, n)) {
+		printk(LOG_LEVEL "Unable to write device buffer\n");
+		return -EFAULT;
+	}
+	result = n;
+	*offset += n;
+
+out:
+	return result;
+}
 
 struct file_operations so2_cdev_fops = {
 	owner:			THIS_MODULE,
 	open:			so2_cdev_open,
 	release:		so2_cdev_release,
-	read:			NULL,
-	write:			NULL,
+	read:			so2_cdev_read,
+	write:			so2_cdev_write,
 	llseek:			NULL,
 	unlocked_ioctl:		NULL,
 };
@@ -118,6 +169,10 @@ static int so2_cdev_init(void)
 	}
 
 	for (i = 0; i < NUM_MINORS; i++) {
+		atomic_set(&data.devdata[i].opened, 0);
+		memset(data.devdata[i].buffer, 0, BUFSIZ);
+		strcpy(data.devdata[i].buffer, MESSAGE);
+
 		cdev_init(&data.devdata[i].cdev, &so2_cdev_fops);
 		err = cdev_add(&data.devdata[i].cdev, data.devdata[i].dev, 1);
 		if (err) {
