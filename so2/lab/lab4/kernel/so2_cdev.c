@@ -30,10 +30,12 @@ MODULE_LICENSE("GPL");
 
 struct so2_cdev_devdata
 {
-	dev_t		dev;
-	struct cdev	cdev;
-	atomic_t	opened;
-	char		buffer[BUFSIZ];
+	dev_t			dev;
+	struct cdev		cdev;
+	atomic_t		opened;
+	char			buffer[BUFSIZ];
+	wait_queue_head_t	wqueue;
+	int			cond;
 };
 
 struct so2_cdev_data
@@ -52,10 +54,12 @@ static int so2_cdev_open(struct inode *inode, struct file *file)
 	dev = container_of(inode->i_cdev, struct so2_cdev_devdata, cdev);
 	file->private_data = dev;
 
+	/*
 	if (atomic_cmpxchg(&dev->opened, 0, 1)) {
 		printk(LOG_LEVEL "so2_cdev: device %d busy\n", MINOR(dev->dev));
 		return -EBUSY;
 	}
+	*/
 
 	/*
         set_current_state(TASK_INTERRUPTIBLE);
@@ -121,6 +125,43 @@ out:
 	return result;
 }
 
+long so2_cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+	long result = 0;
+	struct so2_cdev_devdata *dev = file->private_data;
+
+	switch (cmd) {
+	case MY_IOCTL_PRINT:
+		printk(LOG_LEVEL "%s\n", IOCTL_MESSAGE);
+		break;
+	case MY_IOCTL_SET_BUFFER:
+		if (copy_from_user(dev->buffer, (char*)arg, BUFFER_SIZE)) {
+			printk(LOG_LEVEL "so2_cdev (ioctl): Unable to set buffer\n");
+			return -EFAULT;
+		}
+		break;
+	case MY_IOCTL_GET_BUFFER:
+		if (copy_to_user((char*)arg, dev->buffer, BUFFER_SIZE)) {
+			printk(LOG_LEVEL "so2_cdev (ioctl): Unable to get buffer\n");
+			return -EFAULT;
+		}
+		break;
+	case MY_IOCTL_DOWN:
+		wait_event_interruptible(dev->wqueue, dev->cond != 0);
+		dev->cond = 0;
+		break;
+	case MY_IOCTL_UP:
+		dev->cond = 1;
+		wake_up_interruptible(&dev->wqueue);
+		break;
+	default:
+		return -EINVAL;
+		break;
+	}
+	return result;
+}
+
+
 struct file_operations so2_cdev_fops = {
 	owner:			THIS_MODULE,
 	open:			so2_cdev_open,
@@ -128,7 +169,7 @@ struct file_operations so2_cdev_fops = {
 	read:			so2_cdev_read,
 	write:			so2_cdev_write,
 	llseek:			NULL,
-	unlocked_ioctl:		NULL,
+	unlocked_ioctl:		so2_cdev_ioctl,
 };
 
 static int so2_cdev_init(void)
@@ -172,6 +213,8 @@ static int so2_cdev_init(void)
 		atomic_set(&data.devdata[i].opened, 0);
 		memset(data.devdata[i].buffer, 0, BUFSIZ);
 		strcpy(data.devdata[i].buffer, MESSAGE);
+		init_waitqueue_head(&data.devdata[i].wqueue);
+		data.devdata[i].cond = 0;
 
 		cdev_init(&data.devdata[i].cdev, &so2_cdev_fops);
 		err = cdev_add(&data.devdata[i].cdev, data.devdata[i].dev, 1);

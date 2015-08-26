@@ -45,6 +45,8 @@ static void usage(const char *argv0)
  *  ./so2_cdev_test u		; wait on wait_queue
  */
 
+char buffer[BUFFER_SIZE];
+
 int main(int argc, char **argv)
 {
 	int fd;
@@ -55,23 +57,32 @@ int main(int argc, char **argv)
 	if (strlen(argv[1]) != 1)
 		usage(argv[0]);
 
+	fd = open("/dev/so2_cdev0", O_RDWR);
+	if (fd < 0) {
+		fprintf(stderr, "Unable to open file\n");
+		exit(EXIT_FAILURE);
+	}
+
 	switch (argv[1][0]) {
 	case 'p':				/* print */
-
+		ioctl(fd, MY_IOCTL_PRINT);
 		break;
 	case 's':				/* set buffer */
 		if (argc < 3)
 			usage(argv[0]);
-
+		memset(buffer, 0, sizeof(buffer));
+		strcpy(buffer, argv[2]);
+		ioctl(fd, MY_IOCTL_SET_BUFFER, buffer);
 		break;
 	case 'g':				/* get buffer */
-
+		ioctl(fd, MY_IOCTL_GET_BUFFER, buffer);
+		printf("buffer: %s\n", buffer);
 		break;
 	case 'd':				/* down */
-
+		ioctl(fd, MY_IOCTL_DOWN);
 		break;
 	case 'u':				/* up */
-
+		ioctl(fd, MY_IOCTL_UP);
 		break;
 	default:
 		error("Wrong parameter");
