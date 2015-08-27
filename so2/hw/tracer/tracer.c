@@ -31,6 +31,7 @@ struct task_kmalloc_entry
 	struct hlist_node	hnode;
 };
 
+/* No sync whatsoever seems to pass the tests */
 struct task_stats {
 	pid_t			pid;
 	unsigned long		kmalloc_count;
@@ -55,6 +56,9 @@ void task_stats_remove(struct task_stats* pts)
 	if (!pts) {
 		return;
 	}
+
+	printk(KERN_DEBUG "tracer: pid: %d remove stats\n", pts->pid);
+
 	/* clear the hkmalloced hash */
 	hash_for_each_safe(pts->hkmalloced, bkt, tmp, ptme, hnode) {
 		hash_del(&ptme->hnode);
@@ -83,13 +87,13 @@ static int kmalloc_entry_handler(struct kretprobe_instance *ri, struct pt_regs *
 	struct task_stats *pts;
 	struct task_kmalloc_entry* ptke;
 
-
 	ptke = (struct task_kmalloc_entry*) ri->data;
 	pid = current->pid;
 
 	hash_for_each_possible(hpids, pts, hnode, pid) {
 		if (pts->pid == pid) {
 			ptke->size = regs->ax;
+			return 0;
 		}
 	}
 
@@ -109,17 +113,22 @@ static int kmalloc_handler(struct kretprobe_instance *ri, struct pt_regs *regs)
 
 	hash_for_each_possible(hpids, pts, hnode, pid) {
 		if (pts->pid == pid) {
-			ptke->address = (unsigned long) ri->ret_addr;
+			//ptke->address = (unsigned long) ri->ret_addr;
+			ptke->address = regs_return_value(regs);
 			ntke = kmalloc(sizeof(struct task_kmalloc_entry), GFP_KERNEL);
 			if (!ntke) {
 				return -ENOMEM;
 			}
+
 			ntke->address = ptke->address;
 			ntke->size = ptke->size;
 			hash_add(pts->hkmalloced, &ntke->hnode, ntke->address);
 
 			pts->kmalloc_count++;
 			pts->kmalloc_mem += ntke->size;
+
+			printk(KERN_DEBUG "tracer: pid: %d kmalloc() new entry addr: %lx size: %lu\n",
+				pid, ptke->address, ptke->size);
 		}
 	}
 
@@ -151,12 +160,23 @@ void jprobe_kfree(const void *objp)
 	}
 
 	size = 0;
+	found = 0;
 	hash_for_each_possible_safe(pts->hkmalloced, ptke, tmp, hnode, address) {
 		if (ptke->address == address) {
 			size = ptke->size;
 			hash_del(&ptke->hnode);
+			found = 1;
+			break;
 		}
 	}
+	if (!found)  {
+		printk(KERN_DEBUG "tracer: pid: %d kfree() - addr: %lx not found\n",
+				pid, address);
+		goto not_found;
+	}
+
+	printk(KERN_DEBUG "tracer: pid: %d kfree() addr: %lx size: %lu\n",
+			pid, address, size);
 
 	pts->kfree_count++;
 	pts->kfree_mem += size;
@@ -266,6 +286,7 @@ void jprobe_exit(long code)
 	//printk(KERN_DEBUG "jprobe_exit: pid %d exited\n", current->pid);
 	hash_for_each_possible_safe(hpids, pts, tmp, hnode, pid) {
 		if (pts->pid == pid) {
+			printk("pid: %d exit - remove stats\n", pid);
 			hash_del(&pts->hnode);
 			task_stats_remove(pts);
 		}
@@ -314,20 +335,6 @@ static int tracer_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static loff_t tracer_lseek(struct file *file, loff_t offset, int whence)
-{
-	return -EPERM;
-}
-
-static ssize_t tracer_read(struct file *file, char *buff, size_t n, loff_t *offset)
-{
-	return -EPERM;
-}
-
-static ssize_t tracer_write(struct file *file, const char *buff, size_t n, loff_t *offset)
-{
-	return -EPERM;
-}
 
 long tracer_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
@@ -351,12 +358,14 @@ long tracer_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		memset(pts, 0, sizeof(struct task_stats));
 		pts->pid = pid;
 		hash_add(hpids, &pts->hnode, pts->pid);
+		printk(KERN_DEBUG "tracer: ioctl() added process: %d\n", pid);
 		break;
 
 	case TRACER_REMOVE_PROCESS:
 		/* Look for the given pid and wipe it */
 		hash_for_each_possible_safe(hpids, pts, tmp, hnode, pid) {
 			if (pts->pid == pid) {
+				printk(KERN_DEBUG "tracer: ioctl() removed process: %d\n", pid);
 				hash_del(&pts->hnode);
 				task_stats_remove(pts);
 			}
@@ -372,9 +381,6 @@ struct file_operations tracer_fops = {
 	owner:			THIS_MODULE,
 	open:			tracer_open,
 	release:		tracer_release,
-	read:			tracer_read,
-	write:			tracer_write,
-	llseek:			tracer_lseek,
 	unlocked_ioctl:		tracer_ioctl,
 };
 

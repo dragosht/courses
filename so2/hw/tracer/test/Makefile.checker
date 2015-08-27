@@ -24,12 +24,17 @@ pack: clean
 	zip -r 1-tracer.zip _test/ _helper/ Makefile.checker\
 		_checker README
 
-deploy: pack
-	scp 1-tracer.zip so2@elf.cs.pub.ro:vmchecker-storer/tests/
-	scp 1-tracer.zip so2@elf.cs.pub.ro:res/current/teme/
+deploy: 
+	cp _checker ../../../qemu-vm/fsimg/root/
+	cp tracer_helper.ko ../../../qemu-vm/fsimg/root
+	cp tracer_test ../../../qemu-vm/fsimg/root
 
 clean: _test_subdir_clean _test_helper_clean
 	-rm -f tracer_test *~ tracer_helper.ko
+	rm -f ../../../qemu-vm/fsimg/root/_checker
+	rm -f ../../../qemu-vm/fsimg/root/tracer_helper.ko
+	rm -f ../../../qemu-vm/fsimg/root/tracer_test
+
 
 _test_subdir_clean:
 	make -C _test clean

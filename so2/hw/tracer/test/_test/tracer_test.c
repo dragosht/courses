@@ -27,7 +27,7 @@
 #include "helper.h"
 
 /* use this to enable stats debugging */
-#if 0
+#if 1
 #define DEBUG
 #endif
 
@@ -55,7 +55,7 @@ struct test_case {
 struct tracer_stats ts[MCOUNT];
 
 struct test_case tc[] = {
-	/* 0 */
+	
 	{
 		.test_name = "test_simple_kmalloc",
 		.test_params = {
@@ -66,7 +66,7 @@ struct test_case tc[] = {
 		},
 		.score = 5,
 	},
-	/* 1 */
+	
 	{
 		.test_name = "test_simple_kfree",
 		.test_params = {
@@ -78,7 +78,6 @@ struct test_case tc[] = {
 		},
 		.score = 5,
 	},
-	/* 2 */
 	{
 		.test_name = "test_simple_sched",
 		.test_params = {
@@ -88,7 +87,7 @@ struct test_case tc[] = {
 		},
 		.score = 4,
 	},
-	/* 3 */
+	
 	{
 		.test_name = "test_simple_up_down",
 		.test_params = {
@@ -99,7 +98,7 @@ struct test_case tc[] = {
 		},
 		.score = 4,
 	},
-	/* 4 */
+	
 	{
 		.test_name = "test_simple_lock_unlock",
 		.test_params = {
@@ -111,7 +110,6 @@ struct test_case tc[] = {
 		.score = 4,
 	},
 
-	/* 5 */
 	{
 		.test_name = "test_medium_kmalloc",
 		.test_params = {
@@ -123,7 +121,6 @@ struct test_case tc[] = {
 		.score = 5,
 	},
 
-	/* 6 */
 	{
 		.test_name = "test_medium_free",
 		.test_params = {
@@ -136,7 +133,6 @@ struct test_case tc[] = {
 		.score = 5,
 	},
 
-	/* 7 */
 	{
 		.test_name = "test_medium_sched",
 		.test_params = {
@@ -147,7 +143,6 @@ struct test_case tc[] = {
 		.score = 5,
 	},
 
-	/* 8 */
 	{
 		.test_name = "test_medium_up_down",
 		.test_params = {
@@ -158,7 +153,7 @@ struct test_case tc[] = {
 		},
 		.score = 4,
 	},
-	/* 9 */
+
 	{
 		.test_name = "test_medium_lock_unlock",
 		.test_params = {
@@ -169,7 +164,7 @@ struct test_case tc[] = {
 		},
 		.score = 4,
 	},
-	/* 10 */
+
 	{
 		.test_name = "test_medium_combined",
 		.test_params = {
@@ -462,7 +457,6 @@ static void test_single(void)
 	init_helper(&fdh);
 
 	for (i = 0; i < 11; i++) {
-		
 		prepare_helper(fdh, &tc[i].test_params, &tc[i].test_params.pid);
 		usleep(400 * MSECS);
 
@@ -475,7 +469,7 @@ static void test_single(void)
 		/* check proc for schedule stats */
 		tracer_proc_read_values(&ts[0], 1);
 		rc = tracer_proc_check_values(&ts[0], &tc[i], 1);
-		
+
 		memset(&ts[0], 0, sizeof(struct tracer_stats));
 
 		untrace_process(fd, tc[i].test_params.pid);
