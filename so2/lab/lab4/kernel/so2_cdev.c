@@ -34,6 +34,8 @@ struct so2_cdev_devdata
 	struct cdev		cdev;
 	atomic_t		opened;
 	char			buffer[BUFSIZ];
+	int			buffstart;
+	int			buffsize;
 	wait_queue_head_t	wqueue;
 	int			cond;
 };
@@ -79,7 +81,7 @@ static int so2_cdev_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static ssize_t so2_cdev_read(struct file *file, char *buff, size_t n, loff_t *offset)
+static ssize_t so2_cdev_read(struct file *file, char *buff, size_t count, loff_t *offset)
 {
 	int result = 0;
 	struct so2_cdev_devdata *dev = file->private_data;
@@ -87,21 +89,21 @@ static ssize_t so2_cdev_read(struct file *file, char *buff, size_t n, loff_t *of
 	if (*offset > BUFSIZ) {
 		goto out;
 	}
-	if (*offset + n > BUFSIZ) {
-		n = BUFSIZ - *offset;
+	if (*offset + count > BUFSIZ) {
+		count = BUFSIZ - *offset;
 	}
 
-	if (copy_to_user(buff, &dev->buffer[0] + *offset, n)) {
+	if (copy_to_user(buff, &dev->buffer[0] + *offset, count)) {
 		printk(LOG_LEVEL "Unable to read device buffer\n");
 		return -EFAULT;
 	}
-	result = n;
-	*offset += n;
+	result = count;
+	*offset += count;
 out:
 	return result;
 }
 
-static ssize_t so2_cdev_write(struct file *file, const char *buff, size_t n, loff_t *offset)
+static ssize_t so2_cdev_write(struct file *file, const char *buff, size_t count, loff_t *offset)
 {
 	int result = 0;
 
@@ -110,16 +112,16 @@ static ssize_t so2_cdev_write(struct file *file, const char *buff, size_t n, lof
 	if (*offset > BUFSIZ) {
 		goto out;
 	}
-	if (*offset + n > BUFSIZ) {
-		n = BUFSIZ - *offset;
+	if (*offset + count > BUFSIZ) {
+		count = BUFSIZ - *offset;
 	}
 
-	if (copy_from_user(&dev->buffer[0] + *offset, buff, n)) {
+	if (copy_from_user(&dev->buffer[0] + *offset, buff, count)) {
 		printk(LOG_LEVEL "Unable to write device buffer\n");
 		return -EFAULT;
 	}
-	result = n;
-	*offset += n;
+	result = count;
+	*offset += count;
 
 out:
 	return result;
@@ -139,6 +141,8 @@ long so2_cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			printk(LOG_LEVEL "so2_cdev (ioctl): Unable to set buffer\n");
 			return -EFAULT;
 		}
+		dev->buffstart = 0;
+		dev->buffsize = strlen(dev->buffer);
 		break;
 	case MY_IOCTL_GET_BUFFER:
 		if (copy_to_user((char*)arg, dev->buffer, BUFFER_SIZE)) {
@@ -212,7 +216,9 @@ static int so2_cdev_init(void)
 	for (i = 0; i < NUM_MINORS; i++) {
 		atomic_set(&data.devdata[i].opened, 0);
 		memset(data.devdata[i].buffer, 0, BUFSIZ);
-		strcpy(data.devdata[i].buffer, MESSAGE);
+		data.devdata[i].buffstart = 0;
+		data.devdata[i].buffsize = 0;
+		/* strcpy(data.devdata[i].buffer, MESSAGE); */
 		init_waitqueue_head(&data.devdata[i].wqueue);
 		data.devdata[i].cond = 0;
 

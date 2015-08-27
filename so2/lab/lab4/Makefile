@@ -11,7 +11,7 @@ deploy:
 clean:
 	cd kernel && make clean
 	cd user && make clean
-	rm ../../qemu-vm/fsimg/root/so2_cdev.ko
-	rm ../../qemu-vm/fsimg/root/mknodes.sh
-	rm ../../qemu-vm/fsimg/root/so2_cdev_test
+	rm -f ../../qemu-vm/fsimg/root/so2_cdev.ko
+	rm -f ../../qemu-vm/fsimg/root/mknodes.sh
+	rm -f ../../qemu-vm/fsimg/root/so2_cdev_test
 
