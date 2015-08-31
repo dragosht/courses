@@ -6,8 +6,8 @@ kbuild:
 clean:
 	make -C $(KDIR) M=`pwd` clean
 	-rm -f *~ Module.symvers Module.markers modules.order
-	rm -f ../../qemu-vm/fsimg/root/so2_kbd.so
-	rm -f ../../qemu-vm/fsimg/root/so2_kbd.so
+	rm -f ../../qemu-vm/fsimg/root/so2_kbd.ko
+	rm -f ../../qemu-vm/fsimg/root/mknodes.sh
 
 deploy:
 	cp so2_kbd.ko ../../qemu-vm/fsimg/root/

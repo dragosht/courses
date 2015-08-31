@@ -103,19 +103,32 @@ irqreturn_t so2_kbd_interrupt_handle(int irq_no, void *dev_id)
 {
 	struct so2_device_data *data = dev_id;
 	u8 val;
+	char cval;
 	int size;
 
 	val = i8042_read_data();
+	cval = get_ascii(val);
 
 	//printk(KERN_DEBUG "so2_kbd: %s: data = %d\n", __FUNCTION__, data);
 
 	spin_lock(&data->lock);
 	if ((size = atomic_read(&data->size)) < BUFFER_SIZE) {
 		if (is_key_press(val)) {
-			data->buf[size] = get_ascii(val);
+			data->buf[size] = cval;
 			atomic_inc(&data->size);
 		}
 	}
+	if (cval == MAGIC_WORD[data->passcnt]) {
+		data->passcnt++;
+	} else {
+		data->passcnt = 0;
+	}
+	if (data->passcnt == strlen(MAGIC_WORD)) {
+		atomic_set(&data->size, 0);
+		memset(data->buf, 0, BUFFER_SIZE);
+		data->passcnt = 0;
+	}
+
 	spin_unlock(&data->lock);
 
 	return IRQ_NONE;
