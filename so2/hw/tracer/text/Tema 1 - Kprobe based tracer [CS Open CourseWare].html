@@ -1,0 +1,599 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0043)http://ocw.cs.pub.ro/courses/so2/teme/tema1 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    Tema 1 - Kprobe based tracer    [CS Open CourseWare]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2015-05-07T20:42:42+0300">
+<meta name="keywords" content="so2,teme,tema1">
+<link rel="search" type="application/opensearchdescription+xml" href="http://ocw.cs.pub.ro/courses/lib/exe/opensearch.php" title="CS Open CourseWare">
+<link rel="start" href="http://ocw.cs.pub.ro/courses/">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://ocw.cs.pub.ro/courses/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://ocw.cs.pub.ro/courses/feed.php?mode=list&ns=so2:teme">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://ocw.cs.pub.ro/courses/_export/xhtml/so2/teme/tema1">
+<link rel="canonical" href="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/Tema 1 - Kprobe based tracer [CS Open CourseWare].html">
+<link rel="stylesheet" type="text/css" href="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/css.php">
+<script type="text/javascript">/*<![CDATA[*/var NS='so2:teme';var JSINFO = {"id":"so2:teme:tema1","namespace":"so2:teme","isadmin":0,"isauth":0};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/js.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		  
+/*!]]>*/</script><script src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var pageTracker = _gat._getTracker("UA-38383934-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+		  
+/*!]]>*/</script>
+<script type="text/x-mathjax-config;executed=true">/*<![CDATA[*/MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+        displayMath: [ ["$$","$$"], ["\\[","\\]"] ],
+        processEscapes: true
+    }
+});
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/MathJax.js"></script>
+
+  <link rel="shortcut icon" href="http://ocw.cs.pub.ro/courses/lib/tpl/arctic/images/favicon.ico">
+
+  
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXc-script {font-size: .8em}
+.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXc-bold {font-weight: bold}
+.MJXc-italic {font-style: italic}
+.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-largeop {font-size: 150%}
+.MJXc-largeop.MJXc-int {vertical-align: -.2em}
+.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXc-display {display: block; text-align: center; margin: 1em 0}
+.MJXc-math span {display: inline-block}
+.MJXc-box {display: block!important; text-align: center}
+.MJXc-box:after {content: " "}
+.MJXc-rule {display: block!important; margin-top: .1em}
+.MJXc-char {display: block!important}
+.MJXc-mo {margin: 0 .15em}
+.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXc-denom {display: inline-table!important; width: 100%}
+.MJXc-denom > * {display: table-row!important}
+.MJXc-surd {vertical-align: top}
+.MJXc-surd > * {display: block!important}
+.MJXc-script-box > *  {display: table!important; height: 50%}
+.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXc-script-box > *:last-child > * {vertical-align: bottom}
+.MJXc-script-box > * > * > * {display: block!important}
+.MJXc-mphantom {visibility: hidden}
+.MJXc-munderover {display: inline-table!important}
+.MJXc-over {display: inline-block!important; text-align: center}
+.MJXc-over > * {display: block!important}
+.MJXc-munderover > * {display: table-row!important}
+.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXc-mtr {display: table-row!important}
+.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-mlabeledtr {display: table-row!important}
+.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<div id="wrapper" class="show">
+  <div class="dokuwiki">
+
+    
+    <div class="stylehead">
+      <div class="header">
+        <div class="pagename">
+          <a href="http://ocw.cs.pub.ro/courses/so2/"><img height="70" src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/sigla_so2.png"> </a>        </div>
+        <div class="logo">
+          <a style="color: #AAA !important;" href="http://ocw.cs.pub.ro/courses/systems/"><img height="70" src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/systems.png" name="dokuwiki__top"></a>        </div>
+      </div>
+    
+       
+      <div class="breadcrumbs">
+              </div>
+      
+            </div>
+
+                  <div class="bar" id="bar__top">
+        <div class="bar-left">
+                  </div>
+        <div class="bar-right">
+          <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1?do=login&sectok=a3357a0399183034a02189021b1cf851" class="action login" rel="nofollow" title="Login">Login</a>        </div>
+    </div>
+        
+    
+    
+    
+              <div class="left_page">
+          
+<h1 class="sectionedit1" id="tema_1_-_kprobe_based_tracer">Tema 1 - Kprobe based tracer</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> Termen de predare: <strong>Joi, 26 Martie 2015, ora 23:00</strong></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit2" id="obiectivele_temei">Obiectivele temei</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> dobândirea de cunoştinţe legate de instrumentarea funcţiilor din nucleul Linux (mecanismul <code>kprobes</code>)</div>
+</li>
+<li class="level1"><div class="li"> obţinerea de cunoştinţe legate de interacţiunea cu sistemul de fişiere <code>/proc</code> din nucleul Linux.</div>
+</li>
+<li class="level1"><div class="li"> obținerea de deprinderi de lucru cu structurile de date specifice nucleului Linux (<code>hash</code>, <code>list</code>).</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3" id="enunt">Enunț</h2>
+<div class="level2">
+
+<p>
+Realizați un inspector de operații de kernel.
+</p>
+
+<p>
+Prin acest inspector ne propunem să interceptăm:
+</p>
+<ul>
+<li class="level1"><div class="li"> apelurile <code>kmalloc</code> și <code>kfree</code></div>
+</li>
+<li class="level1"><div class="li"> apelul <code>schedule</code></div>
+</li>
+<li class="level1"><div class="li"> apelurile <code>up</code> și <code>down_interruptible</code></div>
+</li>
+<li class="level1"><div class="li"> apelurile <code>mutex_lock</code> și <code>mutex_unlock</code></div>
+</li>
+</ul>
+
+<p>
+Inspectorul va reține, la nivel de proces, numărul de apeluri pentru fiecare dintre funcțiile de mai sus. În plus, pentru apelurile <code>kmalloc</code> şi <code>kfree</code> se afișează cantitatea totală de memorie alocată și eliberată.
+</p>
+
+<p>
+Inspectorul va fi implementat ca un modul de kernel cu numele <code>tracer.ko</code>.
+</p>
+
+</div>
+
+<h2 class="sectionedit4" id="detalii_de_implementare">Detalii de implementare</h2>
+<div class="level2">
+
+<p>
+Interceptarea se va face întregistrând câte o probă (<code>kprobe</code>) pentru fiecare din funcţiile de mai sus. Inspectorul va reține o listă/hash de procese monitorizate și va contabiliza informațiile de mai sus pentru aceste procese.
+</p>
+
+<p>
+Pentru controlul listei/hash-ului de procese monitorizate, se va folosi un char device denumit <code>/dev/tracer</code>, cu majorul <code>10</code> și minorul <code>42</code>. Acesta va expune o interfață ioctl cu două argumente:
+</p>
+<ul>
+<li class="level1"><div class="li"> primul argument reprezintă cererea către subsistemul de monitorizare.</div>
+<ul>
+<li class="level2"><div class="li"> <code>TRACER_ADD_PROCESS</code></div>
+</li>
+<li class="level2"><div class="li"> <code>TRACER_REMOVE_PROCESS</code></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> al doilea argument reprezintă PID-ul procesului pentru care se va executa cererea de monitorizare.</div>
+</li>
+</ul>
+
+<p>
+Pentru a putea crea un char device cu majorul <code>10</code> va trebui să folosiţi interfaţa <a href="http://lxr.linux.no/#linux+v3.8.3/include/linux/miscdevice.h#L52" class="urlextern" title="http://lxr.linux.no/#linux+v3.8.3/include/linux/miscdevice.h#L52" rel="nofollow"> miscdevice</a> din kernel. Definiţiile macro-urilor aferente se găsesc în <a href="http://elf.cs.pub.ro/so2/res/teme/tema1-util/tracer.h" class="urlextern" title="http://elf.cs.pub.ro/so2/res/teme/tema1-util/tracer.h" rel="nofollow"> header-ul tracer.h</a>
+</p>
+
+<p>
+Întrucât funcţia <code>kmalloc</code> este inline pentru instrumentarea cantităţii de memorie allocate se va inspecta funcţia <code>__kmalloc</code>, astfel:
+</p>
+<ul>
+<li class="level1"><div class="li"> se va folosi o probă de tip <code>kretprobe</code>, care va reţine cantitatea de memorie alocată şi adresa zonei de memorie alocată.</div>
+</li>
+<li class="level1"><div class="li"> se vor folosi câmpurile <code>.entry_handler</code> şi <code>.handler</code> din structura <code>kretprobe</code></div>
+</li>
+</ul>
+
+<p>
+Întrucât funcţia <code>kfree</code> primeşte doar adresa zonei de memorie ce urmează a fi eliberată, pentru a determina cantitatea totală de memorie eliberată va trebui pe baza adresei zonei să determinăm dimensiunea ei. Acest lucru este posibil întrucât există o asociere adresa - dimensiune făcută la inspectarea funcţiei <code>__kmalloc</code>. 
+</p>
+
+<p>
+Pentru toate celelalte funcţii se va folosi o probă de tipul <code>jprobe</code>. Kernel-ul din mașina virtuală are opțiunea <code>CONFIG_DEBUG_LOCK_ALLOC</code> activată unde simbolul <code>mutex_lock</code> este un macro care se expandează la <code>mutex_lock_nested</code>. Astfel, pentru a obține informații despre funcția <code>mutex_lock</code> va trebui să instrumentați funcția <code>mutex_lock_nested</code>.
+</p>
+
+<p>
+Procesele care au fost adăugate în listă/hash și care își încheie execuția vor fi eliminate din listă/hash. De asemenea un proces va fi eliminat din lista/hash în urma operaţiei TRACER_REMOVE_PROCESS.
+</p>
+
+<p>
+Informațiile reținute de inspector vor fi afișate prin intermediul sistemului de fișiere procfs, în fişierul <code>/proc/tracer</code>. Pentru fiecare proces monitorizat se creează o intrare în fişierul <code>/proc/tracer</code> având ca şi prim câmp PID-ul procesului. Intrarea va fi de tipul read-only, și o operație de citire pe aceasta va afișa rezultatele reținute. Un exemplu de afișare a conținutului intrării este:
+</p>
+<pre class="code">$cat /proc/tracer
+PID   kmalloc kfree kmalloc_mem kfree_mem  sched   up     down  lock   unlock
+42    12      12    2048        2048        124    2      2     9      9
+1099  0       0     0           0           1984   0      0     0      0
+1244  0       0     0           0           1221   100   1023   1023   1002
+1337  123     99    125952      101376      193821 992   81921  7421   6392</pre>
+
+</div>
+
+<h2 class="sectionedit5" id="testare">Testare</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Corectarea temelor se va realiza automat cu ajutorul unei <a href="http://elf.cs.pub.ro/so2/res/teme/1-tracer.zip" class="urlextern" title="http://elf.cs.pub.ro/so2/res/teme/1-tracer.zip" rel="nofollow"> suite de teste publice</a>.</div>
+</li>
+<li class="level1"><div class="li">Indicații despre utilizarea suitei de teste se găsesc în fișierul <code>README</code> din cadrul arhivei.</div>
+</li>
+<li class="level1"><div class="li">Pentru evaluare și corectare tema va fi uploadată folosind <a href="https://elf.cs.pub.ro/vmchecker/ui" class="urlextern" title="https://elf.cs.pub.ro/vmchecker/ui" rel="nofollow"> interfața vmchecker</a>.</div>
+</li>
+<li class="level1"><div class="li">Suita de teste conține un set de teste. Trecerea unui test conduce la obținerea punctajului aferent acestuia.</div>
+<ul>
+<li class="level2"><div class="li">În urma rulării testelor, se va acorda, în mod automat, un punctaj total. Punctajul total maxim este de 100 de puncte, pentru o temă care trece toate testele.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">Pot exista penalizări în caz de întârzieri sau pentru neajunsuri de implementare sau de stil.</div>
+</li>
+<li class="level1"><div class="li">Penalizările pentru neajunsuri de implementare pot constitui maxim 10 puncte din nota finală a temei.</div>
+<ul>
+<li class="level2"><div class="li">Pe lângă penalizările precizate în cadrul <a href="http://elf.cs.pub.ro/so2/wiki/teme/general" class="urlextern" title="http://elf.cs.pub.ro/so2/wiki/teme/general" rel="nofollow"> listei de depunctări</a>, se vor avea în vedere următoarele elemente:</div>
+<ul>
+<li class="level3"><div class="li"><strong>-2</strong>: omiterea eliminării corespunzătoare a resurselor (kprobes, intrări în <code>/proc</code>)</div>
+</li>
+<li class="level3"><div class="li"><strong>-2/-3</strong>: probleme de sincronizare la date folosite de mai multe instanțe de execuție (spre exemplu, lista/tabela de hash cu procese)</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit6" id="resurse_de_suport">Resurse de suport</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <code>Documentation/kprobes.txt</code> - descrierea subsystemului kprobes din sursele nucleului Linux.</div>
+</li>
+<li class="level1"><div class="li"> <code>samples/kprobes/</code> - câteva exemple de folosire a kprobes din sursele nucleului Linux.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit7" id="suport_intrebari_si_clarificari">Suport, întrebări și clarificări</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Pentru întrebări legate de temă puteți consulta <a href="http://news.gmane.org/gmane.education.region.romania.operating-systems-design" class="urlextern" title="http://news.gmane.org/gmane.education.region.romania.operating-systems-design" rel="nofollow"> arhivele</a> listei de discuții sau puteți trimite un <a href="mailto:so2@cursuri.cs.pub.ro" class="mail" title="so2@cursuri.cs.pub.ro">e-mail</a> (trebuie să fiți <a href="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so2" class="urlextern" title="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so2" rel="nofollow"> înregistrați</a>).</div>
+</li>
+<li class="level1"><div class="li">Vă rugăm să urmăriți și să respectați <a href="http://ocw.cs.pub.ro/courses/so2/resurse/lista-discutii#mailing-list-guidelines" class="urlextern" title="http://ocw.cs.pub.ro/courses/so2/resurse/lista-discutii#mailing-list-guidelines" rel="nofollow"> indicațiile de utilizare a listei</a>.</div>
+</li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="right_sidebar">
+          <form action="http://ocw.cs.pub.ro/courses/start" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>          <div class="namespace_sidebar sidebar_box">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/anunturi" class="wikilink1" title="so2:anunturi">Anunțuri</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/need-to-know" class="wikilink1" title="so2:need-to-know">SO2 Need to Know</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/reguli-notare" class="wikilink1" title="so2:reguli-notare">Reguli generale și notare</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/catalog" class="wikilink1" title="so2:catalog">Catalog</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/calendar" class="wikilink1" title="so2:calendar">Calendar</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/karma" class="wikilink1" title="so2:karma">Karma Awards</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/hall" class="wikilink1" title="so2:hall">Hall of SO2</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/impartire-laborator" class="wikilink1" title="so2:impartire-laborator">Împărțire ore laborator</a></div>
+</li>
+</ul>
+
+<h1 class="sectionedit1" id="resurse">Resurse</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_104139763855e6b6a41f4e9" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/documentatie" class="wikilink1" title="so2:resurse:documentatie">Documentație</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/feed" class="wikilink1" title="so2:resurse:feed">Feed-uri RSS</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/lista-discutii" class="wikilink1" title="so2:resurse:lista-discutii">Listă de discuții</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/masini-virtuale" class="wikilink1" title="so2:resurse:masini-virtuale">Mașina virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/sala-de-laborator" class="wikilink1" title="so2:resurse:sala-de-laborator">Sală de laborator</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/trimitere-teme" class="wikilink1" title="so2:resurse:trimitere-teme">Trimitere teme</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT1 SECTION "Resurse" [338-389] -->
+<h1 class="sectionedit2" id="laboratoare">Laboratoare</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab01" class="wikilink1" title="so2:laboratoare:lab01">Laborator 1 - Introducere</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab02" class="wikilink1" title="so2:laboratoare:lab02">Laborator 2 - Module de kernel. Debugging.</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab02/exercitii" class="wikilink1" title="so2:laboratoare:lab02:exercitii">Laborator 2: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab03" class="wikilink1" title="so2:laboratoare:lab03">Laborator 3 - Kernel API</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab03/exercitii" class="wikilink1" title="so2:laboratoare:lab03:exercitii">Laborator 3: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04" class="wikilink1" title="so2:laboratoare:lab04">Laborator 4 - Device drivere în Linux</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04/exercitii" class="wikilink1" title="so2:laboratoare:lab04:exercitii">Laborator 4: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab05" class="wikilink1" title="so2:laboratoare:lab05">Laborator 5 - Întreruperi</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab05/exercitii" class="wikilink1" title="so2:laboratoare:lab05:exercitii">Laborator 5: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab06" class="wikilink1" title="so2:laboratoare:lab06">Laborator 6 - Acțiuni amânabile</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab06/exercitii" class="wikilink1" title="so2:laboratoare:lab06:exercitii">Laborator 6: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab07" class="wikilink1" title="so2:laboratoare:lab07">Laborator 7 - Device drivere de tip bloc. Subsistemul de I/O.</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab07/exercitii" class="wikilink1" title="so2:laboratoare:lab07:exercitii">Laborator 7: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab08" class="wikilink1" title="so2:laboratoare:lab08">Laborator 8 - Drivere de sisteme de fișiere (partea 1)</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab08/exercitii" class="wikilink1" title="so2:laboratoare:lab08:exercitii">Laborator 8: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab09" class="wikilink1" title="so2:laboratoare:lab09">Laborator 9 - Drivere de sisteme de fișiere (partea a 2-a)</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab09/exercitii" class="wikilink1" title="so2:laboratoare:lab09:exercitii">Laborator 9: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab10" class="wikilink1" title="so2:laboratoare:lab10">Laborator 10 - Networking</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab10/exercitii" class="wikilink1" title="so2:laboratoare:lab10:exercitii">Laborator 10: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab11" class="wikilink1" title="so2:laboratoare:lab11">Laborator 11 - Maparea memoriei</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab11/exercitii" class="wikilink1" title="so2:laboratoare:lab11:exercitii">Laborator 11: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab12" class="wikilink1" title="so2:laboratoare:lab12">Laborator 12 - Linux Device Model</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab12/exercitii" class="wikilink1" title="so2:laboratoare:lab12:exercitii">Laborator 12: Exerciții</a> </div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab_compilare" class="wikilink1" title="so2:laboratoare:lab_compilare">Laborator Extra - Compilarea kernel-ului</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT2 SECTION "Laboratoare" [390-2085] -->
+<h1 class="sectionedit3" id="cursuri">Cursuri</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_195894830555e6b6a4205e7" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs01" class="indexmenu_idx_head">Cursul 1 - Introducere</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs01/test" class="wikilink1" title="so2:cursuri:curs01:test">Test Cursul 1</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs02" class="indexmenu_idx_head">Cursul 2 - Apeluri de sistem</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs02/test" class="wikilink1" title="so2:cursuri:curs02:test">Test Cursul 2</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs03" class="indexmenu_idx_head">Cursul 3 - Procese</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs03/test" class="wikilink1" title="so2:cursuri:curs03:test">Test Cursul 3</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs04" class="indexmenu_idx_head">Cursul 4 - Întreruperi</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs04/test" class="wikilink1" title="so2:cursuri:curs04:test">Test Cursul 4</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs05" class="indexmenu_idx_head">Cursul 5 - Sincronizare</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs05/test" class="wikilink1" title="so2:cursuri:curs05:test">Test Cursul 5</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs06" class="indexmenu_idx_head">Cursul 6 - Kernel debugging</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs06/test" class="wikilink1" title="so2:cursuri:curs06:test">Test Cursul 6</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs07" class="indexmenu_idx_head">Cursul 7 - Adresarea memoriei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs07/test" class="wikilink1" title="so2:cursuri:curs07:test">Test Cursul 7</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs08" class="indexmenu_idx_head">Cursul 8 - Gestiunea memoriei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs08/test" class="wikilink1" title="so2:cursuri:curs08:test">Test Cursul 8</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs09" class="indexmenu_idx_head">Cursul 9 - Gestiunea fisierelor</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs09/test" class="wikilink1" title="so2:cursuri:curs09:test">Test Cursul 9</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs10" class="indexmenu_idx_head">Cursul 10 - Gestiunea rețelei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs10/test" class="wikilink1" title="so2:cursuri:curs10:test">Test Cursul 10</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs11" class="wikilink1" title="so2:cursuri:curs11">Cursul 11 - Virtualizare</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs12" class="wikilink1" title="so2:cursuri:curs12">Curs Extra - Linux assembly</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs_modelul_dezvoltare_linux" class="wikilink1" title="so2:cursuri:curs_modelul_dezvoltare_linux">Curs Extra - Modelul de dezvoltare Linux</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT3 SECTION "Cursuri" [2086-2138] -->
+<h1 class="sectionedit4" id="teme">Teme</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/general" class="wikilink1" title="so2:teme:general">Indicații generale teme</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/challenge" class="wikilink1" title="so2:teme:challenge">Ixia Challenge - e100</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema-exemplu" class="wikilink1" title="so2:teme:tema-exemplu">Temă exemplu - Hello World</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema0" class="wikilink1" title="so2:teme:tema0">Tema 0 - Kernel API</a></div>
+</li>
+<li class="level1"><div class="li"> <span class="curid"><a href="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/Tema 1 - Kprobe based tracer [CS Open CourseWare].html" class="wikilink1" title="so2:teme:tema1">Tema 1 - Kprobe based tracer</a></span></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2" class="wikilink1" title="so2:teme:tema2">Tema 2 - Driver UART</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema3" class="wikilink1" title="so2:teme:tema3">Tema 3 - Software RAID</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema4" class="wikilink1" title="so2:teme:tema4">Tema 4 - Driver de sistem de fișiere</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema5" class="wikilink1" title="so2:teme:tema5">Tema 5 - SO2 Transport Protocol</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT4 SECTION "Teme" [2139-] -->
+</div>
+<div class="toc_sidebar sidebar_box">
+<!-- TOC START -->
+<div id="sb__right__dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#tema_1_-_kprobe_based_tracer">Tema 1 - Kprobe based tracer</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#obiectivele_temei">Obiectivele temei</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#enunt">Enunț</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#detalii_de_implementare">Detalii de implementare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#testare">Testare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#resurse_de_suport">Resurse de suport</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#suport_intrebari_si_clarificari">Suport, întrebări și clarificări</a></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+</div>
+        </div>
+      
+    
+      <div class="stylefoot">
+        <div class="meta">
+          <div class="user">
+                    </div>
+          <div class="doc">
+          so2/teme/tema1.txt · Last modified: 2015/05/07 20:42 by irina.presa          </div>
+        </div>
+      </div>
+
+    <div class="clearer"></div>
+
+    
+                <div class="bar" id="bar__bottom">
+      <div class="bar-left">
+              </div>
+      <div class="bar-right">
+        <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1?do=media&ns=so2%3Ateme" class="action media" rel="nofollow" title="Media Manager">Media Manager</a><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]">Back to top</a>      </div>
+    </div>
+    <div class="clearer"></div>
+            
+    <div align="center" class="footerinc">
+  <div class="license"><a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/cc-by-sa.png" alt="CC Attribution-Share Alike 3.0 Unported"></a></div>
+  <a target="_blank" href="http://www.chimeric.de/" title="www.chimeric.de"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-chimeric-de.png" width="80" height="15" alt="www.chimeric.de" border="0"></a>
+
+  <a target="_blank" href="http://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-css.png" width="80" height="15" alt="Valid CSS" border="0"></a>
+
+  <a target="_blank" href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" border="0"></a>
+
+  <a target="_blank" href="http://www.firefox-browser.de/" title="do yourself a favour and use a real browser - get firefox"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-firefox.png" width="80" height="15" alt="do yourself a favour and use a real browser - get firefox!!" border="0"></a>
+  
+  <a target="_blank" href="http://ocw.cs.pub.ro/courses/feed.php" title="Recent changes RSS feed"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" border="0"></a>
+
+  <a target="_blank" href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" border="0"></a>
+</div>
+
+  </div>
+</div>
+
+<div class="no"><img src="./Tema 1 - Kprobe based tracer [CS Open CourseWare]_files/indexer.php" width="2" height="1" alt=""></div>
+
+
+</body></html>

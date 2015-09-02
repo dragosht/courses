@@ -1,0 +1,626 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0043)http://ocw.cs.pub.ro/courses/so2/teme/tema2 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    Tema 2 - Driver UART    [CS Open CourseWare]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2015-04-13T18:22:18+0300">
+<meta name="keywords" content="so2,teme,tema2">
+<link rel="search" type="application/opensearchdescription+xml" href="http://ocw.cs.pub.ro/courses/lib/exe/opensearch.php" title="CS Open CourseWare">
+<link rel="start" href="http://ocw.cs.pub.ro/courses/">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://ocw.cs.pub.ro/courses/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://ocw.cs.pub.ro/courses/feed.php?mode=list&ns=so2:teme">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://ocw.cs.pub.ro/courses/_export/xhtml/so2/teme/tema2">
+<link rel="canonical" href="./Tema 2 - Driver UART [CS Open CourseWare]_files/Tema 2 - Driver UART [CS Open CourseWare].html">
+<link rel="stylesheet" type="text/css" href="./Tema 2 - Driver UART [CS Open CourseWare]_files/css.php">
+<script type="text/javascript">/*<![CDATA[*/var NS='so2:teme';var JSINFO = {"id":"so2:teme:tema2","namespace":"so2:teme","isadmin":0,"isauth":0};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 2 - Driver UART [CS Open CourseWare]_files/js.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		  
+/*!]]>*/</script><script src="./Tema 2 - Driver UART [CS Open CourseWare]_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">/*<![CDATA[*/
+var pageTracker = _gat._getTracker("UA-38383934-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+		  
+/*!]]>*/</script>
+<script type="text/x-mathjax-config;executed=true">/*<![CDATA[*/MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+        displayMath: [ ["$$","$$"], ["\\[","\\]"] ],
+        processEscapes: true
+    }
+});
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="./Tema 2 - Driver UART [CS Open CourseWare]_files/MathJax.js"></script>
+
+  <link rel="shortcut icon" href="http://ocw.cs.pub.ro/courses/lib/tpl/arctic/images/favicon.ico">
+
+  
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXc-script {font-size: .8em}
+.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXc-bold {font-weight: bold}
+.MJXc-italic {font-style: italic}
+.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXc-largeop {font-size: 150%}
+.MJXc-largeop.MJXc-int {vertical-align: -.2em}
+.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXc-display {display: block; text-align: center; margin: 1em 0}
+.MJXc-math span {display: inline-block}
+.MJXc-box {display: block!important; text-align: center}
+.MJXc-box:after {content: " "}
+.MJXc-rule {display: block!important; margin-top: .1em}
+.MJXc-char {display: block!important}
+.MJXc-mo {margin: 0 .15em}
+.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXc-denom {display: inline-table!important; width: 100%}
+.MJXc-denom > * {display: table-row!important}
+.MJXc-surd {vertical-align: top}
+.MJXc-surd > * {display: block!important}
+.MJXc-script-box > *  {display: table!important; height: 50%}
+.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXc-script-box > *:last-child > * {vertical-align: bottom}
+.MJXc-script-box > * > * > * {display: block!important}
+.MJXc-mphantom {visibility: hidden}
+.MJXc-munderover {display: inline-table!important}
+.MJXc-over {display: inline-block!important; text-align: center}
+.MJXc-over > * {display: block!important}
+.MJXc-munderover > * {display: table-row!important}
+.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXc-mtr {display: table-row!important}
+.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-mlabeledtr {display: table-row!important}
+.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
+.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
+.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<div id="wrapper" class="show">
+  <div class="dokuwiki">
+
+    
+    <div class="stylehead">
+      <div class="header">
+        <div class="pagename">
+          <a href="http://ocw.cs.pub.ro/courses/so2/"><img height="70" src="./Tema 2 - Driver UART [CS Open CourseWare]_files/sigla_so2.png"> </a>        </div>
+        <div class="logo">
+          <a style="color: #AAA !important;" href="http://ocw.cs.pub.ro/courses/systems/"><img height="70" src="./Tema 2 - Driver UART [CS Open CourseWare]_files/systems.png" name="dokuwiki__top"></a>        </div>
+      </div>
+    
+       
+      <div class="breadcrumbs">
+              </div>
+      
+            </div>
+
+                  <div class="bar" id="bar__top">
+        <div class="bar-left">
+                  </div>
+        <div class="bar-right">
+          <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2?do=login&sectok=a3357a0399183034a02189021b1cf851" class="action login" rel="nofollow" title="Login">Login</a>        </div>
+    </div>
+        
+    
+    
+    
+              <div class="left_page">
+          
+<h1 class="sectionedit1" id="tema_2_-_driver_uart">Tema 2 - Driver UART</h1>
+<div class="level1">
+
+<p>
+Termen de predare: Miercuri, 8 Aprilie 2015, ora 23:00
+</p>
+
+</div>
+
+<h2 class="sectionedit2" id="obiectivele_temei">Obiectivele temei</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">Consolidarea noțiunii de device driver;</div>
+</li>
+<li class="level1"><div class="li">Citire documentație hardware. Urmărirea funcționalității dorite în documentație;</div>
+</li>
+<li class="level1"><div class="li">Lucrul cu întreruperi. Folosire funcții neblocante în context întrerupere(L)/funcții la nivele IRQL corespunzătoare(W);</div>
+</li>
+<li class="level1"><div class="li">Folosirea buffer-elor, sincronizare;</div>
+</li>
+<li class="level1"><div class="li">Module cu parametri;</div>
+</li>
+<li class="level1"><div class="li">DPC-uri.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3" id="enunt">Enunț</h2>
+<div class="level2">
+
+<p>
+Să se scrie un modul de kernel care să implementeze un driver pentru portul serial (<code>UART16550</code>). Device driver-ul trebuie să suporte cele două porturi seriale standard dintr-un PC, <code>COM1</code> şi <code>COM2</code> (<code>0x3f8</code>, <code>0x2f8</code>). În afară de rutinele standard care trebuie implementate (<code>open</code>, <code>read</code>, <code>write</code>, <code>close</code>), driver-ul trebuie să aibă suport și pentru schimbarea parametrilor de comunicație cu ajutorul unei operaţii <code>ioctl</code> (<code>UART16550_IOCTL_SET_LINE</code>). 
+</p>
+
+<p>
+Driverul trebuie să folosească înteruperi atât pentru recepție cât și pentru transmisie, pentru a reduce latența și timpul de utilizare a procesorului. De asemenea, apelurile <code>read</code> și <code>write</code> trebuie să fie blocante. Temele care nu respectă aceste cerințe nu se iau în considerare. Este indicat să folosiţi în cadrul driver-ului un buffer de citire și un buffer de scriere pentru fiecare port serial.
+</p>
+
+<p>
+Un apel read blocant înseamnă că rutina de read apelată din user-space se va bloca până la citirea a <strong>cel puţin</strong> un octet (buffer-ul de read din kernel este gol și nu se pot citi date). Un apel write blocant înseamnă că rutina de write apelată din user-space se va bloca până la scrierea a <strong>cel puţin</strong> un octet (buffer-ul de write din kernel este plin și nu se pot scrie date).
+</p>
+
+</div>
+
+<h2 class="sectionedit4" id="precizari_generale">Precizări generale</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">documentație despre portul serial găsiți <a href="http://retired.beyondlogic.org/serial/serial.htm" class="urlextern" title="http://retired.beyondlogic.org/serial/serial.htm" rel="nofollow"> aici</a></div>
+</li>
+<li class="level1"><div class="li">sau pe <a href="http://tldp.org/HOWTO/Serial-HOWTO-19.html" class="urlextern" title="http://tldp.org/HOWTO/Serial-HOWTO-19.html" rel="nofollow"> tldp</a></div>
+</li>
+<li class="level1"><div class="li">aici mai aveți o <a href="http://www.byterunner.com/16550.html" class="urlextern" title="http://www.byterunner.com/16550.html" rel="nofollow"> tabela cu registre</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://www.ti.com/lit/ds/symlink/pc16550d.pdf" class="urlextern" title="http://www.ti.com/lit/ds/symlink/pc16550d.pdf" rel="nofollow"> datasheet 16550</a></div>
+</li>
+<li class="level1"><div class="li"><a href="http://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming" class="urlextern" title="http://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming" rel="nofollow"> documentaţie alternativă</a></div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit5" id="schema_buffer-e">Schemă buffer-e</h3>
+<div class="level3">
+
+<p>
+<a href="http://ocw.cs.pub.ro/courses/_detail/so2/teme/tema2/buffers3.png?id=so2%3Ateme%3Atema2" class="media" title="so2:teme:tema2:buffers3.png"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/buffers3.png" class="media" alt="" width="500"></a>
+</p>
+
+<p>
+Transferul de date între diversele buffere reprezintă o problemă de tipul <a href="http://en.wikipedia.org/wiki/Producer-consumer_problem" class="urlextern" title="http://en.wikipedia.org/wiki/Producer-consumer_problem" rel="nofollow"> Producător-Consumator</a>. Exemple:
+</p>
+<ul>
+<li class="level1"><div class="li">dacă se scrie dintr-un proces în dispozitiv, procesul este producător și dispozitivul consumator; procesul se va bloca până există loc în buffer-ul consumatorului;</div>
+</li>
+<li class="level1"><div class="li">dacă se citește dintr-un proces de la dispozitiv, procesul este consumator și dispozitivul producător; procesul se va bloca până există cel puțin un element în buffer-ul producătorului.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit6" id="precizari_linux">Precizări Linux</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li">driverul va fi accesat ca un device driver de tip caracter, cu funcționări diferite în funcție de parametrii transmiși modulului la încărcare:</div>
+<ul>
+<li class="level2"><div class="li">parametrul <code>major</code> va specifica majorul cu care trebuie înregistrat dispozitivul;</div>
+</li>
+<li class="level2"><div class="li">parametrul <code>option</code> va specifica modul de funcționare:</div>
+<ul>
+<li class="level3"><div class="li">OPTION_BOTH: va înregistra și COM1 și COM2, cu majorul dat de parametrul <code>major</code> și minorii 0 (pentru COM1) și 1 (pentru COM2);</div>
+</li>
+<li class="level3"><div class="li">OPTION_COM1: va înregistra doar COM1, cu majorul <code>major</code> și minorul 0;</div>
+</li>
+<li class="level3"><div class="li">OPTION_COM2: va înregistra doar COM2, cu majorul <code>major</code> și minorul 1;</div>
+</li>
+</ul>
+</li>
+<li class="level2"><div class="li">pentru a afla cum se pot pasa parametri în Linux, consultați Laboratorul 2 sau linkul de <a href="http://tldp.org/LDP/lkmpg/2.6/html/x323.html" class="urlextern" title="http://tldp.org/LDP/lkmpg/2.6/html/x323.html" rel="nofollow"> aici</a></div>
+</li>
+<li class="level2"><div class="li"><strong>valorile implicite</strong> sunt <code>major=42</code> și <code>option=OPTION_BOTH</code>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">numărul întreruperii asociate cu COM1 este 4 (<code>IRQ_COM1</code>), numărul întreruperii asociate cu COM2 este 3 (<code>IRQ_COM2</code>)</div>
+</li>
+<li class="level1"><div class="li">header-ul cu definițiile necesare pentru operațiile speciale îl găsiți <a href="http://elf.cs.pub.ro/so2/2011-2012/_media/teme/tema2/uart16550.h" class="urlextern" title="http://elf.cs.pub.ro/so2/2011-2012/_media/teme/tema2/uart16550.h" rel="nofollow"> aici</a>;</div>
+</li>
+<li class="level1"><div class="li">un bun punct de pornire în implementarea rutinelor de read/write este <a href="http://elf.cs.pub.ro/so2/wiki/_media/laboratoare/lab04/exmodullincase.zip" class="urlextern" title="http://elf.cs.pub.ro/so2/wiki/_media/laboratoare/lab04/exmodullincase.zip" rel="nofollow"> exemplul</a> de character device driver de conversie upper-case; singura diferență este că trebuie să folosiți două buffere, unul pentru read și altul pentru write;</div>
+</li>
+<li class="level1"><div class="li">pentru citirea/scrierea datelor în/din porturi nu trebuie să folosiți funcții amânabile (puteți să faceți totul din întrerupere);</div>
+</li>
+<li class="level1"><div class="li">va trebui să sincronizați rutinele de read/write cu rutina de tratare a întreruperii pentru ca rutinele sa fie blocante; este recomandat să folosiți <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04?&#sincronizare_-_cozi_de_asteptare" class="urlextern" title="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04?&amp;#sincronizare_-_cozi_de_asteptare" rel="nofollow">sincronizare cozi de așteptare</a>; </div>
+</li>
+<li class="level1"><div class="li">pentru ca tema să poată funcționa este nevoie ca driver-ul implicit <code>serial</code> să fie dezactivat:</div>
+<ul>
+<li class="level2"><div class="li"><code>cat /proc/ioports | grep serial</code> va detecta prezența driver-ului implicit pe regiunile unde sunt definite COM1 și COM2;</div>
+</li>
+<li class="level2"><div class="li">pentru a-l dezactiva trebuie recompilat kernel-ul, fie punând driver-ul <code>serial</code> ca modul, fie dezactivându-l cu totul (pe mașina virtuală este deja făcuta această modificare);</div>
+<ul>
+<li class="level3"><div class="li"><code>Device Drivers –&gt; Character devices –&gt; Serial driver –&gt; 8250/16550 and compatible serial support</code>.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li">puteți folosi <a href="http://lwn.net/Articles/347619/" class="urlextern" title="http://lwn.net/Articles/347619/" rel="nofollow">kfifo</a> pentru buffere.</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit7" id="testare">Testare</h2>
+<div class="level2">
+
+<p>
+Pentru simplificarea procesului de corectare a temelor, dar și pentru a reduce greșelile temelor trimise, corectarea temelor se va face automat cu ajutorul unor teste publice (<a href="http://elf.cs.pub.ro/so2/res/teme/2-uart.zip" class="urlextern" title="http://elf.cs.pub.ro/so2/res/teme/2-uart.zip" rel="nofollow">Linux</a>). Testele presupun că numele modului de kernel este <code>uart16550</code>.
+</p>
+
+<p>
+Depunctări pentru probleme constatate in implementarea temei:
+</p>
+<ul>
+<li class="level1"><div class="li">-0.5 funcționalitate incompletă</div>
+</li>
+<li class="level1"><div class="li">-0.3 utilizare incorectă a device-ului</div>
+</li>
+<li class="level1"><div class="li">-0.1 lock și posibilitate de pierdere unlock</div>
+</li>
+<li class="level1"><div class="li">-0.1 down și posibilitate de pierdere up</div>
+</li>
+<li class="level1"><div class="li">-0.1 disable și posibilitate de pierdere enable</div>
+</li>
+<li class="level1"><div class="li">-0.1 utilizare funcții la niveluri IRQL necorespunzătoare</div>
+</li>
+<li class="level1"><div class="li">-0.0 observații</div>
+</li>
+<li class="level1"><div class="li">-1 pentru fiecare test eșuat pe linux</div>
+</li>
+</ul>
+
+<p>
+De asemenea, consultați <a href="http://ocw.cs.pub.ro/courses/so2/teme/general" class="wikilink1" title="so2:teme:general">sfaturile și depunctările generale</a>.
+</p>
+
+<p>
+În cazuri excepționale (tema trece testele prin nerespectarea cerințelor) se poate scădea mai mult decât este menționat mai sus.
+</p>
+
+</div>
+
+<h2 class="sectionedit8" id="intrebari">Întrebări</h2>
+<div class="level2">
+
+<p>
+Pentru întrebări legate de temă puteți consulta <a href="http://news.gmane.org/gmane.education.region.romania.operating-systems-design" class="urlextern" title="http://news.gmane.org/gmane.education.region.romania.operating-systems-design" rel="nofollow"> arhivele</a> listei de discuții sau puteți trimite un <a href="mailto:so2@cursuri.cs.pub.ro" class="mail" title="so2@cursuri.cs.pub.ro">e-mail</a> (trebuie să fiți <a href="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so2" class="urlextern" title="http://cursuri.cs.pub.ro/cgi-bin/mailman/listinfo/so2" rel="nofollow"> înregistrați</a>).
+</p>
+
+<p>
+Înainte să puneți o întrebare verificați că:
+</p>
+<ul>
+<li class="level1"><div class="li"> ați citit bine enunțul temei</div>
+</li>
+<li class="level1"><div class="li"> nu este deja prezentată întrebarea pe pagina de <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2/faq" class="wikilink1" title="so2:teme:tema2:faq"> FAQ</a></div>
+</li>
+<li class="level1"><div class="li"> nu se poate găsi răspunsul în <a href="http://cursuri.cs.pub.ro/lurker/list/pso.en.html" class="urlextern" title="http://cursuri.cs.pub.ro/lurker/list/pso.en.html" rel="nofollow"> arhivele</a>  listei de discuții</div>
+</li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="right_sidebar">
+          <form action="http://ocw.cs.pub.ro/courses/start" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup" style="display: none;"></div></div></form>          <div class="namespace_sidebar sidebar_box">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/anunturi" class="wikilink1" title="so2:anunturi">Anunțuri</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/need-to-know" class="wikilink1" title="so2:need-to-know">SO2 Need to Know</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/reguli-notare" class="wikilink1" title="so2:reguli-notare">Reguli generale și notare</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/catalog" class="wikilink1" title="so2:catalog">Catalog</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/calendar" class="wikilink1" title="so2:calendar">Calendar</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/karma" class="wikilink1" title="so2:karma">Karma Awards</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/hall" class="wikilink1" title="so2:hall">Hall of SO2</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/impartire-laborator" class="wikilink1" title="so2:impartire-laborator">Împărțire ore laborator</a></div>
+</li>
+</ul>
+
+<h1 class="sectionedit1" id="resurse">Resurse</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_183931880655e6b5da5bfbe" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/documentatie" class="wikilink1" title="so2:resurse:documentatie">Documentație</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/feed" class="wikilink1" title="so2:resurse:feed">Feed-uri RSS</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/lista-discutii" class="wikilink1" title="so2:resurse:lista-discutii">Listă de discuții</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/masini-virtuale" class="wikilink1" title="so2:resurse:masini-virtuale">Mașina virtuală</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/sala-de-laborator" class="wikilink1" title="so2:resurse:sala-de-laborator">Sală de laborator</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/resurse/trimitere-teme" class="wikilink1" title="so2:resurse:trimitere-teme">Trimitere teme</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT1 SECTION "Resurse" [338-389] -->
+<h1 class="sectionedit2" id="laboratoare">Laboratoare</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab01" class="wikilink1" title="so2:laboratoare:lab01">Laborator 1 - Introducere</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab02" class="wikilink1" title="so2:laboratoare:lab02">Laborator 2 - Module de kernel. Debugging.</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab02/exercitii" class="wikilink1" title="so2:laboratoare:lab02:exercitii">Laborator 2: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab03" class="wikilink1" title="so2:laboratoare:lab03">Laborator 3 - Kernel API</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab03/exercitii" class="wikilink1" title="so2:laboratoare:lab03:exercitii">Laborator 3: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04" class="wikilink1" title="so2:laboratoare:lab04">Laborator 4 - Device drivere în Linux</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab04/exercitii" class="wikilink1" title="so2:laboratoare:lab04:exercitii">Laborator 4: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab05" class="wikilink1" title="so2:laboratoare:lab05">Laborator 5 - Întreruperi</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab05/exercitii" class="wikilink1" title="so2:laboratoare:lab05:exercitii">Laborator 5: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab06" class="wikilink1" title="so2:laboratoare:lab06">Laborator 6 - Acțiuni amânabile</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab06/exercitii" class="wikilink1" title="so2:laboratoare:lab06:exercitii">Laborator 6: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab07" class="wikilink1" title="so2:laboratoare:lab07">Laborator 7 - Device drivere de tip bloc. Subsistemul de I/O.</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab07/exercitii" class="wikilink1" title="so2:laboratoare:lab07:exercitii">Laborator 7: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab08" class="wikilink1" title="so2:laboratoare:lab08">Laborator 8 - Drivere de sisteme de fișiere (partea 1)</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab08/exercitii" class="wikilink1" title="so2:laboratoare:lab08:exercitii">Laborator 8: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab09" class="wikilink1" title="so2:laboratoare:lab09">Laborator 9 - Drivere de sisteme de fișiere (partea a 2-a)</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab09/exercitii" class="wikilink1" title="so2:laboratoare:lab09:exercitii">Laborator 9: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab10" class="wikilink1" title="so2:laboratoare:lab10">Laborator 10 - Networking</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab10/exercitii" class="wikilink1" title="so2:laboratoare:lab10:exercitii">Laborator 10: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab11" class="wikilink1" title="so2:laboratoare:lab11">Laborator 11 - Maparea memoriei</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab11/exercitii" class="wikilink1" title="so2:laboratoare:lab11:exercitii">Laborator 11: Exerciții</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab12" class="wikilink1" title="so2:laboratoare:lab12">Laborator 12 - Linux Device Model</a></div>
+<ul>
+<li class="level2"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab12/exercitii" class="wikilink1" title="so2:laboratoare:lab12:exercitii">Laborator 12: Exerciții</a> </div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/laboratoare/lab_compilare" class="wikilink1" title="so2:laboratoare:lab_compilare">Laborator Extra - Compilarea kernel-ului</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT2 SECTION "Laboratoare" [390-2085] -->
+<h1 class="sectionedit3" id="cursuri">Cursuri</h1>
+<div class="level1">
+
+<div><div id="nojs_indexmenu_87077128255e6b5da5d0a7" data-jsajax="" class="indexmenu_nojs">
+
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs01" class="indexmenu_idx_head">Cursul 1 - Introducere</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs01/test" class="wikilink1" title="so2:cursuri:curs01:test">Test Cursul 1</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs02" class="indexmenu_idx_head">Cursul 2 - Apeluri de sistem</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs02/test" class="wikilink1" title="so2:cursuri:curs02:test">Test Cursul 2</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs03" class="indexmenu_idx_head">Cursul 3 - Procese</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs03/test" class="wikilink1" title="so2:cursuri:curs03:test">Test Cursul 3</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs04" class="indexmenu_idx_head">Cursul 4 - Întreruperi</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs04/test" class="wikilink1" title="so2:cursuri:curs04:test">Test Cursul 4</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs05" class="indexmenu_idx_head">Cursul 5 - Sincronizare</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs05/test" class="wikilink1" title="so2:cursuri:curs05:test">Test Cursul 5</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs06" class="indexmenu_idx_head">Cursul 6 - Kernel debugging</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs06/test" class="wikilink1" title="so2:cursuri:curs06:test">Test Cursul 6</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs07" class="indexmenu_idx_head">Cursul 7 - Adresarea memoriei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs07/test" class="wikilink1" title="so2:cursuri:curs07:test">Test Cursul 7</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs08" class="indexmenu_idx_head">Cursul 8 - Gestiunea memoriei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs08/test" class="wikilink1" title="so2:cursuri:curs08:test">Test Cursul 8</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs09" class="indexmenu_idx_head">Cursul 9 - Gestiunea fisierelor</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs09/test" class="wikilink1" title="so2:cursuri:curs09:test">Test Cursul 9</a></div></li>
+</ul>
+</li>
+<li class="open"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs10" class="indexmenu_idx_head">Cursul 10 - Gestiunea rețelei</a></div>
+<ul class="idx">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs10/test" class="wikilink1" title="so2:cursuri:curs10:test">Test Cursul 10</a></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs11" class="wikilink1" title="so2:cursuri:curs11">Cursul 11 - Virtualizare</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs12" class="wikilink1" title="so2:cursuri:curs12">Curs Extra - Linux assembly</a></div></li>
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/cursuri/curs_modelul_dezvoltare_linux" class="wikilink1" title="so2:cursuri:curs_modelul_dezvoltare_linux">Curs Extra - Modelul de dezvoltare Linux</a></div></li>
+</ul>
+</div></div>
+
+</div>
+<!-- EDIT3 SECTION "Cursuri" [2086-2138] -->
+<h1 class="sectionedit4" id="teme">Teme</h1>
+<div class="level1">
+<ul>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/general" class="wikilink1" title="so2:teme:general">Indicații generale teme</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/challenge" class="wikilink1" title="so2:teme:challenge">Ixia Challenge - e100</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema-exemplu" class="wikilink1" title="so2:teme:tema-exemplu">Temă exemplu - Hello World</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema0" class="wikilink1" title="so2:teme:tema0">Tema 0 - Kernel API</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema1" class="wikilink1" title="so2:teme:tema1">Tema 1 - Kprobe based tracer</a></div>
+</li>
+<li class="level1"><div class="li"> <span class="curid"><a href="./Tema 2 - Driver UART [CS Open CourseWare]_files/Tema 2 - Driver UART [CS Open CourseWare].html" class="wikilink1" title="so2:teme:tema2">Tema 2 - Driver UART</a></span></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema3" class="wikilink1" title="so2:teme:tema3">Tema 3 - Software RAID</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema4" class="wikilink1" title="so2:teme:tema4">Tema 4 - Driver de sistem de fișiere</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema5" class="wikilink1" title="so2:teme:tema5">Tema 5 - SO2 Transport Protocol</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT4 SECTION "Teme" [2139-] -->
+</div>
+<div class="toc_sidebar sidebar_box">
+<!-- TOC START -->
+<div id="sb__right__dw__toc">
+<h3 class="toggle">Table of Contents</h3>
+<div>
+
+<ul class="toc">
+<li class="level1"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#tema_2_-_driver_uart">Tema 2 - Driver UART</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#obiectivele_temei">Obiectivele temei</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#enunt">Enunț</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#precizari_generale">Precizări generale</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#schema_buffer-e">Schemă buffer-e</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#precizari_linux">Precizări Linux</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#testare">Testare</a></div></li>
+<li class="level2"><div class="li"><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#intrebari">Întrebări</a></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+</div>
+        </div>
+      
+    
+      <div class="stylefoot">
+        <div class="meta">
+          <div class="user">
+                    </div>
+          <div class="doc">
+          so2/teme/tema2.txt · Last modified: 2015/04/13 18:22 by catalin.vasile3004          </div>
+        </div>
+      </div>
+
+    <div class="clearer"></div>
+
+    
+                <div class="bar" id="bar__bottom">
+      <div class="bar-left">
+              </div>
+      <div class="bar-right">
+        <a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2?do=media&ns=so2%3Ateme" class="action media" rel="nofollow" title="Media Manager">Media Manager</a><a href="http://ocw.cs.pub.ro/courses/so2/teme/tema2#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]">Back to top</a>      </div>
+    </div>
+    <div class="clearer"></div>
+            
+    <div align="center" class="footerinc">
+  <div class="license"><a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/cc-by-sa.png" alt="CC Attribution-Share Alike 3.0 Unported"></a></div>
+  <a target="_blank" href="http://www.chimeric.de/" title="www.chimeric.de"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-chimeric-de.png" width="80" height="15" alt="www.chimeric.de" border="0"></a>
+
+  <a target="_blank" href="http://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-css.png" width="80" height="15" alt="Valid CSS" border="0"></a>
+
+  <a target="_blank" href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" border="0"></a>
+
+  <a target="_blank" href="http://www.firefox-browser.de/" title="do yourself a favour and use a real browser - get firefox"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-firefox.png" width="80" height="15" alt="do yourself a favour and use a real browser - get firefox!!" border="0"></a>
+  
+  <a target="_blank" href="http://ocw.cs.pub.ro/courses/feed.php" title="Recent changes RSS feed"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" border="0"></a>
+
+  <a target="_blank" href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" border="0"></a>
+</div>
+
+  </div>
+</div>
+
+<div class="no"><img src="./Tema 2 - Driver UART [CS Open CourseWare]_files/indexer.php" width="2" height="1" alt=""></div>
+
+
+</body></html>
