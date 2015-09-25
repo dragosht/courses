@@ -9,6 +9,9 @@ build-pre: test solutie.ko
 test: _test/test.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+_test/solutie.ko:
+	unzip -n 2-uart.zip
+
 solutie.ko: _test/solutie.ko
 	ln -s $< $@
 
