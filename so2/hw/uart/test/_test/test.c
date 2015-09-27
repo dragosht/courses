@@ -484,12 +484,15 @@ main(void)
 
 	make_nodes();
 
+	/*
 	if (test1() == 0)
 		num_passed++;
 	if (test2() == 0)
 		num_passed++;
+		*/
 	if (test3() == 0)
 		num_passed++;
+	/*
 	if (test4() == 0)
 		num_passed++;
 	if (test5() == 0)
@@ -502,6 +505,7 @@ main(void)
 		num_passed++;
 	if (test9() == 0)
 		num_passed++;
+		*/
 
 	remove_nodes();
 	unlink(INFILE);

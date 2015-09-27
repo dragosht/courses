@@ -58,15 +58,27 @@ MODULE_PARM_DESC(option, "COM ports registration option");
 
 struct uart16550_devdata
 {
-	struct cdev     cdev;
-	char		rdbuf[BUFFER_SIZE];
-	char		wrbuf[BUFFER_SIZE];
+	struct cdev		cdev;
+	long			addr;
+	char			rdbuf[BUFFER_SIZE];
+	int			rdget;
+	int			rdput;
+	atomic_t		rdfull;
+	wait_queue_head_t	rdwq;
+	char			wrbuf[BUFFER_SIZE];
+	int			wrget;
+	int			wrput;
+	atomic_t		wrfull;
+	wait_queue_head_t	wrwq;
 };
 
 struct uart16550_devdata devs[MAX_NUMBER_DEVICES];
 
 static int uart16550_open(struct inode *inode, struct file *file)
 {
+	struct uart16550_devdata *data = container_of(inode->i_cdev,
+			struct uart16550_devdata, cdev);
+	file->private_data = data;
 	return 0;
 }
 
@@ -85,14 +97,49 @@ static ssize_t uart16550_write(struct file *file, const char __user *buff, size_
 	return 0;
 }
 
+static void uart16550_set_line(struct uart16550_devdata *data, struct uart16550_line_info *uli)
+{
+	unsigned char lcr;
+	unsigned short rate;
+
+	lcr = inb(data->addr + REG_LCR_OFFSET);
+	rate = uli->baud;
+
+	/* Set Word Length, parity and stop bits */
+	lcr = (lcr & 0xC0) | uli->len | uli->par | uli->stop;
+
+	/* Disable interrupts */
+	outb(0x00, data->addr + REG_IER_OFFSET);
+
+	/* Set DLAB */
+	outb(lcr | 0x80, data->addr + REG_LCR_OFFSET);
+
+	outb(rate >> 8, data->addr + REG_DLH_OFFSET);
+	outb(rate & 0xFF, data->addr + REG_DLL_OFFSET);
+
+	/* Clear DLAB */
+	outb(lcr & 0x7F, data->addr + REG_LCR_OFFSET);
+
+	/* FIFO Control Register */
+	//outb(0xC7, data->addr + REG_FCR_OFFSET);
+
+	/* Turn on DTR, RTS and out2 */
+	outb(0x0B, data->addr + REG_MCR_OFFSET);
+
+	/* Enable interrupts */
+	outb(0x03, data->addr + REG_IER_OFFSET);
+}
+
 static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
+	struct uart16550_devdata *data = (struct uart16550_devdata*) file->private_data;
 	struct uart16550_line_info uli;
 	if (cmd == UART16550_IOCTL_SET_LINE) {
 		if (copy_from_user(&uli, (void*) arg,
 			sizeof(struct uart16550_line_info))) {
 			return -EFAULT;
 		}
+		uart16550_set_line(data, &uli);
 	} else {
 		return -EINVAL;
 	}
@@ -101,6 +148,7 @@ static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long a
 
 irqreturn_t uart16550_interrupt_handle(int irq_no, void *dev_id)
 {
+	printk(KERN_DEBUG "[uart16550] in interrupt irq: %d\n", irq_no);
 	return IRQ_NONE;
 }
 
@@ -148,6 +196,8 @@ static int uart16550_init(void)
 		return -EINVAL;
 	}
 
+	printk(KERN_DEBUG "[uart16550:%s] major=%d option=%d\n", __FUNCTION__, major, option);
+
 	err = register_chrdev_region(first, devcnt, MODULE_NAME);
 	if (err) {
 		printk(KERN_ALERT "Unable to register char device region\n");
@@ -155,6 +205,7 @@ static int uart16550_init(void)
 	}
 
 	if (option & UART16550_COM1_SELECTED) {
+		devs[0].addr = COM1_BASE_ADDR;
 		request_region(COM1_BASE_ADDR, NPORTS, MODULE_NAME);
 		request_irq(IRQ_COM1, uart16550_interrupt_handle, IRQF_SHARED,
 				MODULE_NAME, &devs[0]);
@@ -163,6 +214,7 @@ static int uart16550_init(void)
 	}
 
 	if (option & UART16550_COM2_SELECTED) {
+		devs[1].addr = COM2_BASE_ADDR;
 		request_region(COM2_BASE_ADDR, NPORTS, MODULE_NAME);
 		request_irq(IRQ_COM2, uart16550_interrupt_handle, IRQF_SHARED,
 				MODULE_NAME, &devs[1]);
