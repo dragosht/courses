@@ -33,13 +33,13 @@ MODULE_LICENSE("GPL");
 #define COM2_BASE_ADDR 0x2f8
 #define NPORTS 8
 
-#define REG_THR_OFFSET 0 /* Transmit Holding Register */
-#define REG_RHR_OFFSET 0 /* Receive Holding Register */
+#define REG_THR_OFFSET 0 /* Transmit Holding Buffer Register */
+#define REG_RBR_OFFSET 0 /* Receiver Buffer Register */
 #define REG_DLL_OFFSET 0 /* Divisor Latch Low */
 #define REG_IER_OFFSET 1 /* Interrupt Enable Register */
 #define REG_DLH_OFFSET 1 /* Divisor Latch High */
 #define REG_FCR_OFFSET 2 /* FIFO control Register */
-#define REG_ISR_OFFSET 2 /* Interrupt Status Register */
+#define REG_IIR_OFFSET 2 /* Interrupt Identification Register */
 #define REG_LCR_OFFSET 3 /* Line Control Register */
 #define REG_MCR_OFFSET 4 /* Modem Control Register */
 #define REG_LSR_OFFSET 5 /* Line Status Register */
@@ -63,12 +63,14 @@ struct uart16550_devdata
 	char			rdbuf[BUFFER_SIZE];
 	int			rdget;
 	int			rdput;
-	atomic_t		rdfull;
+	atomic_t		rdsize;
+	spinlock_t		rdlock;
 	wait_queue_head_t	rdwq;
 	char			wrbuf[BUFFER_SIZE];
 	int			wrget;
 	int			wrput;
-	atomic_t		wrfull;
+	atomic_t		wrsize;
+	spinlock_t		wrlock;
 	wait_queue_head_t	wrwq;
 };
 
@@ -89,12 +91,53 @@ static int uart16550_release(struct inode *inode, struct file *file)
 
 static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count, loff_t *offset)
 {
-	return 0;
+	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
+	int i = 0;
+
+	if (wait_event_interruptible(dev->rdwq, atomic_read(&dev->rdsize) > 0)) {
+		return -ERESTARTSYS;
+	}
+
+	while (atomic_read(&dev->rdsize) > 0 && count) {
+		if (put_user(dev->rdbuf[dev->rdget], &buff[i]))
+			return -EFAULT;
+		dev->rdget = (dev->rdget + 1) % BUFFER_SIZE;
+		i++;
+		count--;
+		atomic_dec(&dev->rdsize);
+	}
+
+	return i;
 }
 
 static ssize_t uart16550_write(struct file *file, const char __user *buff, size_t count, loff_t *offset)
 {
-	return 0;
+	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
+
+	char val;
+	int i = 0;
+
+	if (wait_event_interruptible(dev->wrwq, atomic_read(&dev->wrsize) < BUFFER_SIZE)) {
+		return -ERESTARTSYS;
+	}
+
+	while (atomic_read(&dev->wrsize) < BUFFER_SIZE && count > 0) {
+		if (get_user(val, &buff[i])) {
+			return -EFAULT;
+		}
+		dev->wrbuf[dev->wrput] = val;
+		dev->wrput = (dev->wrput + 1) % BUFFER_SIZE;
+		count--;
+		i++;
+		atomic_inc(&dev->wrsize);
+	}
+
+	if (i > 0) {
+		outb(0x00, dev->addr + REG_IER_OFFSET);
+		outb(0x03, dev->addr + REG_IER_OFFSET);
+	}
+
+	return i;
 }
 
 static void uart16550_set_line(struct uart16550_devdata *data, struct uart16550_line_info *uli)
@@ -148,7 +191,43 @@ static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long a
 
 irqreturn_t uart16550_interrupt_handle(int irq_no, void *dev_id)
 {
-	printk(KERN_DEBUG "[uart16550] in interrupt irq: %d\n", irq_no);
+	struct uart16550_devdata *dev;
+	unsigned char iir;
+	unsigned char event;
+	unsigned char val;
+
+	if (dev_id != &devs[0] && dev_id != &devs[1]) {
+		return IRQ_NONE;
+	}
+
+	dev = (struct uart16550_devdata*) dev_id;
+	iir = inb(dev->addr + REG_IIR_OFFSET);
+	event = (iir >> 1) & 0x7;
+
+	//printk("[uart16550] IIR: %d event: %d\n", iir, event);
+
+	if (event == 1) { /* Transmitter Holding Register Empty Interrupt */
+		if (atomic_read(&dev->wrsize) > 0) {
+			val = dev->wrbuf[dev->wrget];
+			//printk(KERN_DEBUG "[uart16550] writing char: %d:%c\n", val, val);
+			outb(val, dev->addr + REG_THR_OFFSET);
+			dev->wrget = (dev->wrget + 1) % BUFFER_SIZE;
+			atomic_dec(&dev->wrsize);
+			wake_up(&dev->wrwq);
+			return IRQ_HANDLED;
+		}
+	} else if (event == 2) { /* Received Data Available Interrupt */
+		if (atomic_read(&dev->rdsize) < BUFFER_SIZE) {
+			val = inb(dev->addr + REG_RBR_OFFSET);
+			//printk(KERN_DEBUG "[uart16550] read char: %d:%c\n", b, (char)b);
+			dev->rdbuf[dev->rdput] = val;
+			dev->rdput = (dev->rdput + 1) % BUFFER_SIZE;
+			atomic_inc(&dev->rdsize);
+			wake_up(&dev->rdwq);
+			return IRQ_HANDLED;
+		}
+	}
+
 	return IRQ_NONE;
 }
 
@@ -206,6 +285,16 @@ static int uart16550_init(void)
 
 	if (option & UART16550_COM1_SELECTED) {
 		devs[0].addr = COM1_BASE_ADDR;
+		atomic_set(&devs[0].rdsize, 0);
+		atomic_set(&devs[0].wrsize, 0);
+		spin_lock_init(&devs[0].rdlock);
+		spin_lock_init(&devs[0].wrlock);
+		init_waitqueue_head(&devs[0].rdwq);
+		init_waitqueue_head(&devs[0].wrwq);
+		memset(&devs[0].rdbuf, 0, sizeof(devs[0].rdbuf));
+		memset(&devs[0].wrbuf, 0, sizeof(devs[0].wrbuf));
+		devs[0].rdget = devs[0].rdput = 0;
+		devs[0].wrget = devs[0].wrput = 0;
 		request_region(COM1_BASE_ADDR, NPORTS, MODULE_NAME);
 		request_irq(IRQ_COM1, uart16550_interrupt_handle, IRQF_SHARED,
 				MODULE_NAME, &devs[0]);
@@ -215,6 +304,14 @@ static int uart16550_init(void)
 
 	if (option & UART16550_COM2_SELECTED) {
 		devs[1].addr = COM2_BASE_ADDR;
+		atomic_set(&devs[1].rdsize, 0);
+		atomic_set(&devs[1].wrsize, 0);
+		spin_lock_init(&devs[1].rdlock);
+		spin_lock_init(&devs[1].wrlock);
+		init_waitqueue_head(&devs[1].rdwq);
+		init_waitqueue_head(&devs[1].wrwq);
+		devs[1].rdget = devs[1].rdput = 0;
+		devs[1].wrget = devs[1].wrput = 0;
 		request_region(COM2_BASE_ADDR, NPORTS, MODULE_NAME);
 		request_irq(IRQ_COM2, uart16550_interrupt_handle, IRQF_SHARED,
 				MODULE_NAME, &devs[1]);
