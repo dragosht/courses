@@ -63,13 +63,13 @@ struct uart16550_devdata
 	char			rdbuf[BUFFER_SIZE];
 	int			rdget;
 	int			rdput;
-	atomic_t		rdsize;
+	atomic_t		rdavail;
 	spinlock_t		rdlock;
 	wait_queue_head_t	rdwq;
 	char			wrbuf[BUFFER_SIZE];
 	int			wrget;
 	int			wrput;
-	atomic_t		wrsize;
+	atomic_t		wravail;
 	spinlock_t		wrlock;
 	wait_queue_head_t	wrwq;
 };
@@ -92,52 +92,96 @@ static int uart16550_release(struct inode *inode, struct file *file)
 static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count, loff_t *offset)
 {
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
+	unsigned long flags;
+	char *tmp;
+	int size;
+	int result;
 	int i = 0;
+	int get = 0;
 
-	if (wait_event_interruptible(dev->rdwq, atomic_read(&dev->rdsize) > 0)) {
+	if (wait_event_interruptible(dev->rdwq, atomic_read(&dev->rdavail) < BUFFER_SIZE)) {
 		return -ERESTARTSYS;
 	}
 
-	while (atomic_read(&dev->rdsize) > 0 && count) {
-		if (put_user(dev->rdbuf[dev->rdget], &buff[i]))
-			return -EFAULT;
-		dev->rdget = (dev->rdget + 1) % BUFFER_SIZE;
-		i++;
-		count--;
-		atomic_dec(&dev->rdsize);
+	size = min((size_t) BUFFER_SIZE, count);
+	if (size <= 0) {
+		return 0;
 	}
 
-	return i;
+	tmp = kmalloc(size, GFP_KERNEL);
+	if (!tmp) {
+		return -ENOMEM;
+	}
+
+	get = dev->rdget;
+	while (atomic_read(&dev->rdavail) < BUFFER_SIZE && size) {
+		tmp[i++] = dev->rdbuf[get];
+		get = (get + 1) % BUFFER_SIZE;
+		atomic_inc(&dev->rdavail);
+		size--;
+	}
+
+	spin_lock_irqsave(&dev->rdlock, flags);
+	if (copy_to_user(buff, tmp, i)) {
+		result = -EFAULT;
+		goto out;
+	}
+	dev->rdget = (dev->rdget + i) % BUFFER_SIZE;
+	spin_unlock_irqrestore(&dev->rdlock, flags);
+	result = i;
+
+out:
+	kfree(tmp);
+	return result;
 }
 
 static ssize_t uart16550_write(struct file *file, const char __user *buff, size_t count, loff_t *offset)
 {
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
-
-	char val;
+	unsigned long flags;
+	char *tmp;
+	int size;
+	int result;
 	int i = 0;
 
-	if (wait_event_interruptible(dev->wrwq, atomic_read(&dev->wrsize) < BUFFER_SIZE)) {
+	if (wait_event_interruptible(dev->wrwq, atomic_read(&dev->wravail) > 0)) {
 		return -ERESTARTSYS;
 	}
 
-	while (atomic_read(&dev->wrsize) < BUFFER_SIZE && count > 0) {
-		if (get_user(val, &buff[i])) {
-			return -EFAULT;
-		}
-		dev->wrbuf[dev->wrput] = val;
-		dev->wrput = (dev->wrput + 1) % BUFFER_SIZE;
-		count--;
-		i++;
-		atomic_inc(&dev->wrsize);
+	size = min((size_t) BUFFER_SIZE, count);
+	if (size <= 0) {
+		return 0;
 	}
 
-	if (i > 0) {
+	tmp = kmalloc(size, GFP_KERNEL);
+	if (!tmp) {
+		return -ENOMEM;
+	}
+
+	if (copy_from_user(tmp, buff, size)) {
+		result = -EFAULT;
+		goto out;
+	}
+
+	spin_lock_irqsave(&dev->wrlock, flags);
+	while (atomic_read(&dev->wravail) > 0 && size > 0) {
+		dev->wrbuf[dev->wrput] = tmp[i++];
+		dev->wrput = (dev->wrput + 1) % BUFFER_SIZE;
+		atomic_dec(&dev->wravail);
+		size--;
+	}
+	spin_unlock_irqrestore(&dev->wrlock, flags);
+
+	result = i;
+
+	if (result > 0) {
 		outb(0x00, dev->addr + REG_IER_OFFSET);
 		outb(0x03, dev->addr + REG_IER_OFFSET);
 	}
 
-	return i;
+out:
+	kfree(tmp);
+	return result;
 }
 
 static void uart16550_set_line(struct uart16550_devdata *data, struct uart16550_line_info *uli)
@@ -180,6 +224,7 @@ static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long a
 	if (cmd == UART16550_IOCTL_SET_LINE) {
 		if (copy_from_user(&uli, (void*) arg,
 			sizeof(struct uart16550_line_info))) {
+			printk(KERN_ALERT "[uart16550] Unable to set line parameters\n");
 			return -EFAULT;
 		}
 		uart16550_set_line(data, &uli);
@@ -189,12 +234,17 @@ static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long a
 	return 0;
 }
 
+#define ETHR(lsr) ((lsr >> 5) & 0x01)
+#define DREADY(lsr) (lsr & 0x01)
+
 irqreturn_t uart16550_interrupt_handle(int irq_no, void *dev_id)
 {
 	struct uart16550_devdata *dev;
+	unsigned char lsr;
 	unsigned char iir;
 	unsigned char event;
 	unsigned char val;
+	int count = 0;
 
 	if (dev_id != &devs[0] && dev_id != &devs[1]) {
 		return IRQ_NONE;
@@ -203,32 +253,37 @@ irqreturn_t uart16550_interrupt_handle(int irq_no, void *dev_id)
 	dev = (struct uart16550_devdata*) dev_id;
 	iir = inb(dev->addr + REG_IIR_OFFSET);
 	event = (iir >> 1) & 0x7;
+	lsr = inb(dev->addr + REG_LSR_OFFSET);
 
 	//printk("[uart16550] IIR: %d event: %d\n", iir, event);
 
-	if (event == 1) { /* Transmitter Holding Register Empty Interrupt */
-		if (atomic_read(&dev->wrsize) > 0) {
+	if (event == 0x01) { /* Transmitter Holding Register Empty Interrupt */
+		if (atomic_read(&dev->wravail) < BUFFER_SIZE) {
+			spin_lock(&dev->wrlock);
 			val = dev->wrbuf[dev->wrget];
-			//printk(KERN_DEBUG "[uart16550] writing char: %d:%c\n", val, val);
+			//printk(KERN_DEBUG "[uart16550] writing char: %d:%c wravail: %d\n",
+			//		val, val, atomic_read(&dev->wravail));
 			outb(val, dev->addr + REG_THR_OFFSET);
 			dev->wrget = (dev->wrget + 1) % BUFFER_SIZE;
-			atomic_dec(&dev->wrsize);
-			wake_up(&dev->wrwq);
-			return IRQ_HANDLED;
+			atomic_inc(&dev->wravail);
+			spin_unlock(&dev->wrlock);
+			wake_up_interruptible(&dev->wrwq);
 		}
-	} else if (event == 2) { /* Received Data Available Interrupt */
-		if (atomic_read(&dev->rdsize) < BUFFER_SIZE) {
+	} else if (event == 0x02) { /* Received Data Available Interrupt */
+		if (atomic_read(&dev->rdavail) > 0) {
+			spin_lock(&dev->rdlock);
 			val = inb(dev->addr + REG_RBR_OFFSET);
-			//printk(KERN_DEBUG "[uart16550] read char: %d:%c\n", b, (char)b);
+			//printk(KERN_DEBUG "[uart16550] read char: %d:%c rdavail: %d \n",
+			//		val, (char)val, atomic_read(&dev->rdavail));
 			dev->rdbuf[dev->rdput] = val;
 			dev->rdput = (dev->rdput + 1) % BUFFER_SIZE;
-			atomic_inc(&dev->rdsize);
-			wake_up(&dev->rdwq);
-			return IRQ_HANDLED;
+			atomic_dec(&dev->rdavail);
+			spin_unlock(&dev->rdlock);
+			wake_up_interruptible(&dev->rdwq);
 		}
 	}
 
-	return IRQ_NONE;
+	return IRQ_HANDLED;
 }
 
 
@@ -285,8 +340,8 @@ static int uart16550_init(void)
 
 	if (option & UART16550_COM1_SELECTED) {
 		devs[0].addr = COM1_BASE_ADDR;
-		atomic_set(&devs[0].rdsize, 0);
-		atomic_set(&devs[0].wrsize, 0);
+		atomic_set(&devs[0].rdavail, BUFFER_SIZE);
+		atomic_set(&devs[0].wravail, BUFFER_SIZE);
 		spin_lock_init(&devs[0].rdlock);
 		spin_lock_init(&devs[0].wrlock);
 		init_waitqueue_head(&devs[0].rdwq);
@@ -304,8 +359,8 @@ static int uart16550_init(void)
 
 	if (option & UART16550_COM2_SELECTED) {
 		devs[1].addr = COM2_BASE_ADDR;
-		atomic_set(&devs[1].rdsize, 0);
-		atomic_set(&devs[1].wrsize, 0);
+		atomic_set(&devs[1].rdavail, BUFFER_SIZE);
+		atomic_set(&devs[1].wravail, BUFFER_SIZE);
 		spin_lock_init(&devs[1].rdlock);
 		spin_lock_init(&devs[1].wrlock);
 		init_waitqueue_head(&devs[1].rdwq);
@@ -327,8 +382,6 @@ err_register_chrdev:
 
 static void uart16550_exit(void)
 {
-	int i;
-
 	if (option & UART16550_COM1_SELECTED) {
 		cdev_del(&devs[0].cdev);
 		free_irq(IRQ_COM1, &devs[0]);

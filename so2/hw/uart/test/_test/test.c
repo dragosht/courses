@@ -502,7 +502,6 @@ main(void)
 		num_passed++;
 	if (test9() == 0)
 		num_passed++;
-
 	remove_nodes();
 	unlink(INFILE);
 	unlink(OUTFILE);
