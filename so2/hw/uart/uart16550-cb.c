@@ -93,21 +93,19 @@ static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
 	unsigned long flags;
 	char *tmp;
-	int size;
 	int result;
 	int i = 0;
-	int get = 0;
 
 	if (wait_event_interruptible(dev->rdwq, atomic_read(&dev->rdsize) > 0)) {
 		return -ERESTARTSYS;
 	}
 
-	size = min((size_t) atomic_read(&dev->rdsize), count);
-	if (size <= 0) {
-		return -EFAULT;
+	count = min((size_t) atomic_read(&dev->rdsize), count);
+	if (count <= 0) {
+		return 0;
 	}
 
-	tmp = kmalloc(size, GFP_KERNEL);
+	tmp = kmalloc(count, GFP_KERNEL);
 	if (!tmp) {
 		return -ENOMEM;
 	}
@@ -118,8 +116,7 @@ static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count
 	 * altered.
 	 */
 	spin_lock_irqsave(&dev->rdlock, flags);
-	get = dev->rdget;
-	while (i < size) {
+	while (i < count) {
 		tmp[i] = dev->rdbuf[dev->rdget];
 		dev->rdget = (dev->rdget + 1) % BUFFER_SIZE;
 		atomic_dec(&dev->rdsize);
@@ -128,11 +125,11 @@ static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count
 	spin_unlock_irqrestore(&dev->rdlock, flags);
 
 	/* Do not do this while the spinlock is aquired! */
-	if (copy_to_user(buff, tmp, size)) {
+	if (copy_to_user(buff, tmp, count)) {
 		result = -EFAULT;
 		goto out;
 	}
-	result = size;
+	result = count;
 out:
 	kfree(tmp);
 	return result;
@@ -143,7 +140,6 @@ static ssize_t uart16550_write(struct file *file, const char __user *buff, size_
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
 	unsigned long flags;
 	char *tmp;
-	int size;
 	int result;
 	int i;
 
@@ -151,30 +147,30 @@ static ssize_t uart16550_write(struct file *file, const char __user *buff, size_
 		return -ERESTARTSYS;
 	}
 
-	size = min((size_t) (BUFFER_SIZE - atomic_read(&dev->wrsize)), count);
-	if (size <= 0) {
-		return -EFAULT;
+	count = min((size_t) (BUFFER_SIZE - atomic_read(&dev->wrsize)), count);
+	if (count <= 0) {
+		return 0;
 	}
 
-	tmp = kmalloc(size, GFP_KERNEL);
+	tmp = kmalloc(count, GFP_KERNEL);
 	if (!tmp) {
 		return -ENOMEM;
 	}
 
-	if (copy_from_user(tmp, buff, size)) {
+	if (copy_from_user(tmp, buff, count)) {
 		result = -EFAULT;
 		goto out;
 	}
 
 	spin_lock_irqsave(&dev->wrlock, flags);
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < count; i++) {
 		dev->wrbuf[dev->wrput] = tmp[i];
 		dev->wrput = (dev->wrput + 1) % BUFFER_SIZE;
 		atomic_inc(&dev->wrsize);
 	}
 	spin_unlock_irqrestore(&dev->wrlock, flags);
 
-	result = size;
+	result = count;
 
 	outb(0x00, dev->addr + REG_IER_OFFSET);
 	outb(0x03, dev->addr + REG_IER_OFFSET);

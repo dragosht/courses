@@ -62,6 +62,8 @@ struct uart16550_devdata
 	long			addr;
 	struct kfifo		rdfifo;
 	struct kfifo		wrfifo;
+	spinlock_t		rdlock;
+	spinlock_t		wrlock;
 	wait_queue_head_t	rdwq;
 	wait_queue_head_t	wrwq;
 };
@@ -84,16 +86,42 @@ static int uart16550_release(struct inode *inode, struct file *file)
 static ssize_t uart16550_read(struct file *file, char __user *buff, size_t count, loff_t *offset)
 {
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
+	int result = 0;
 
+	if (wait_event_interruptible(dev->rdwq, kfifo_len(&dev->rdfifo) > 0)) {
+		return -ERESTARTSYS;
+	}
 
+	count = min((size_t) kfifo_len(&dev->rdfifo), count);
+	if (count <= 0) {
+		return 0;
+	}
 
-	return 0;
+	kfifo_to_user(&dev->rdfifo, buff,  count, &result);
+
+	return result;
 }
 
 static ssize_t uart16550_write(struct file *file, const char __user *buff, size_t count, loff_t *offset)
 {
 	struct uart16550_devdata *dev = (struct uart16550_devdata*) file->private_data;
-	return 0;
+	int result = 0;
+
+	if (wait_event_interruptible(dev->wrwq, kfifo_len(&dev->wrfifo) < BUFFER_SIZE)) {
+		return -ERESTARTSYS;
+	}
+
+	count = min((size_t) (BUFFER_SIZE - kfifo_len(&dev->wrfifo)), count);
+	if (count <= 0) {
+		return 0;
+	}
+
+	kfifo_from_user(&dev->wrfifo, buff, count, &result);
+
+	outb(0x00, dev->addr + REG_IER_OFFSET);
+	outb(0x03, dev->addr + REG_IER_OFFSET);
+
+	return result;
 }
 
 static void uart16550_set_line(struct uart16550_devdata *data, struct uart16550_line_info *uli)
@@ -134,10 +162,28 @@ static long uart16550_ioctl(struct file *file, unsigned int cmd, unsigned long a
 
 irqreturn_t uart16550_interrupt_handle(int irq_no, void *dev_id)
 {
-	struct uart16550_devdata *dev;
+	struct uart16550_devdata *dev = (struct uart16550_devdata*) dev_id;
+	unsigned char iir;
+	unsigned char val;
 
-	if (dev_id != &devs[0] && dev_id != &devs[1]) {
+	if (dev != &devs[0] && dev != &devs[1]) {
 		return IRQ_NONE;
+	}
+
+	iir = inb(dev->addr + REG_IIR_OFFSET);
+
+	if (THREI(iir)) {
+		if (kfifo_len(&dev->wrfifo) > 0) {
+			kfifo_out(&dev->wrfifo, &val, 1);
+			outb(val, dev->addr + REG_THR_OFFSET);
+			wake_up_interruptible(&dev->wrwq);
+		}
+	} else if (RDAI(iir)) {
+		if (kfifo_len(&dev->rdfifo) < BUFFER_SIZE) {
+			val = inb(dev->addr + REG_RBR_OFFSET);
+			kfifo_in(&dev->rdfifo, &val, 1);
+			wake_up_interruptible(&dev->rdwq);
+		}
 	}
 
 	return IRQ_HANDLED;
@@ -217,6 +263,8 @@ static int uart16550_init(void)
 		devs[i].addr = ports[i].addr;
 		kfifo_alloc(&devs[i].rdfifo, BUFFER_SIZE, 0);
 		kfifo_alloc(&devs[i].wrfifo, BUFFER_SIZE, 0);
+		spin_lock_init(&devs[i].rdlock);
+		spin_lock_init(&devs[i].wrlock);
 		init_waitqueue_head(&devs[i].rdwq);
 		init_waitqueue_head(&devs[i].wrwq);
 		/* TBD: What to do if only one device registration fails? */
@@ -256,6 +304,8 @@ static void uart16550_exit(void)
 		cdev_del(&devs[i].cdev);
 		free_irq(ports[i].irq, &devs[i]);
 		release_region(ports[i].addr, NPORTS);
+		kfifo_free(&devs[i].rdfifo);
+		kfifo_free(&devs[i].wrfifo);
 	}
 	unregister_chrdev_region(first, devcnt);
 }
