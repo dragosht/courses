@@ -18,6 +18,10 @@
 /* physical partition size - 95 MB (more than this results in error) */
 #define LOGICAL_DISK_NAME		"/dev/ssr"
 #define LOGICAL_DISK_SIZE		(95 * 1024 * 1024)
+
+/* 194560 sectors */
+/* 778240 bytes for CRC */
+
 #define LOGICAL_DISK_SECTORS		((LOGICAL_DISK_SIZE) / (KERNEL_SECTOR_SIZE))
 
 /* sync data */
