@@ -1,11 +1,11 @@
 KDIR=/usr/src/linux-so2
 
-all: kbuild test
+all: kbuild testbuild
 
 kbuild:
 	make -C $(KDIR) M=`pwd`
 
-test:
+testbuild:
 	cd test && make -f Makefile.checker
 
 clean:

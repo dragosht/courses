@@ -23,6 +23,7 @@ struct ssr_device
 	struct work_struct ws;
 	struct bio *cur_bio;
 	struct bio *crc_bios[NDISKS];
+	struct page *crc_pages[NDISKS];
 	struct bio *data_bios[NDISKS];
 	struct gendisk *gd;
 	spinlock_t lock;
@@ -61,14 +62,12 @@ static const struct block_device_operations ssr_ops = {
 static void crc_complete(struct bio *bio, int error)
 {
 	/* This one runs in interrupt context */
-	printk(KERN_DEBUG "CRC read completed\n");
 	complete((struct completion*)bio->bi_private);
 }
 
 static void bi_complete(struct bio *bio, int error)
 {
 	/* This one runs in interrupt context */
-	printk(KERN_DEBUG "Read completed\n");
 	complete((struct completion*)bio->bi_private);
 }
 
@@ -109,10 +108,11 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	submit_bio(0, bio);
 	wait_for_completion(&event);
 
+	dev->crc_bios[diskno] = bio;
+	dev->crc_pages[diskno] = page;
+
 	//bio_put(bio);
 	//__free_page(page);
-
-	dev->crc_bios[diskno] = bio;
 }
 
 void ssr_relay_data(struct ssr_device *dev)
@@ -125,10 +125,12 @@ void ssr_relay_data(struct ssr_device *dev)
 		bio = bio_clone(dev->cur_bio, GFP_NOIO);
 		bio->bi_bdev = dev->disks[i];
 		init_completion(&event);
-		bio->bi_private = bi_complete;
-		submit_bio(0, bio);
+		bio->bi_private = &event;
+		bio->bi_end_io = bi_complete;
+		submit_bio(bio->bi_rw, bio);
 		wait_for_completion(&event);
 		dev->data_bios[i] = bio;
+		//bio_put(bio);
 	}
 }
 
@@ -144,6 +146,7 @@ void ssr_write_sector(struct ssr_device *dev, int diskno, sector_t sect,
 	bio->bi_sector = sect;
 	bio->bi_rw = WRITE;
 	init_completion(&event);
+	bio->bi_private = &event;
 	bio->bi_end_io = bi_complete;
 
 	page = alloc_page(GFP_NOIO);
@@ -174,6 +177,7 @@ void ssr_write_crc(struct ssr_device *dev, int diskno, sector_t sect, int nsect,
 	bio->bi_sector = sect;
 	bio->bi_rw = WRITE;
 	init_completion(&event);
+	bio->bi_private = &event;
 	bio->bi_end_io = bi_complete;
 
 	page = alloc_page(GFP_NOIO);
@@ -203,10 +207,12 @@ int ssr_check_data(struct ssr_device *dev)
 	int num_crc_sectors = NSECTORS(first_sector, first_sector + num_sectors);
 	int i;
 
-	char *buf1 = __bio_kmap_atomic(dev->data_bios[0]);
-	char *buf2 = __bio_kmap_atomic(dev->data_bios[1]);
-	u32 *crcbuf1 = __bio_kmap_atomic(dev->crc_bios[0]);
-	u32 *crcbuf2 = __bio_kmap_atomic(dev->crc_bios[1]);
+	char *buf1 = __bio_kmap_atomic(dev->data_bios[0], 0);
+	char *buf2 = __bio_kmap_atomic(dev->data_bios[1], 0);
+	u32 *crcbuf1 = __bio_kmap_atomic(dev->crc_bios[0], 0);
+	u32 *crcbuf2 = __bio_kmap_atomic(dev->crc_bios[1], 0);
+
+	/* Ok ... this needs to be rewritten ... */
 
 	int crcndx = first_sector % CRCS_PER_SECTOR;
 
@@ -215,8 +221,11 @@ int ssr_check_data(struct ssr_device *dev)
 			KERNEL_SECTOR_SIZE);
 		u32 crc2 = crc32(0, buf2 + i * KERNEL_SECTOR_SIZE,
 			KERNEL_SECTOR_SIZE);
+
 		if (crc1 != crcbuf1[crcndx + i] && crc2 != crcbuf2[crcndx + i]) {
 			err = 1;
+			printk(KERN_ERR "Unable to recover corrupt sector at: %llu\n",
+				(first_sector + i));
 			break;
 		}
 
@@ -225,18 +234,22 @@ int ssr_check_data(struct ssr_device *dev)
 			 * Recover from disk 2 - write sector i from disk 2
 			 * and the appropriate CRC field.
 			 */
-			ssr_write_sector(dev, 1, first_sector + i, buff2, i);
+			printk(KERN_WARNING)
+			ssr_write_sector(dev, 1, first_sector + i, buf2, i);
 			crcbuf1[crcndx + i] = crc2;
 			ssr_write_crc(dev, 1, first_crc_sector,
-				num_crc_sectors, crcbuf1);
+				num_crc_sectors, (char*) crcbuf1);
 		}
 
 		if (crc2 != crcbuf2[crcndx + i]) {
-			/* Recover from disk 1 */
-			ssr_write_sector(dev, 0, first_sector + i, buff1, i);
+			/*
+			 * Recover from disk 1 - write sector i from disk 1
+			 * and the appropriate CRC field.
+			 */
+			ssr_write_sector(dev, 0, first_sector + i, buf1, i);
 			crcbuf2[crcndx + i] = crc1;
 			ssr_write_crc(dev, 0, first_crc_sector,
-				num_crc_sectors, crcbuf2);
+				num_crc_sectors, (char*) crcbuf2);
 		}
 
 	}
@@ -249,11 +262,50 @@ int ssr_check_data(struct ssr_device *dev)
 	return err;
 }
 
+void ssr_update_crcs(struct ssr_device *dev)
+{
+	struct bio *cur_bio = dev->cur_bio;
+	sector_t first_sector = cur_bio->bi_sector;
+	int num_sectors = bio_sectors(cur_bio);
+	sector_t first_crc_sector = CRCSECT(first_sector);
+	int num_crc_sectors = NSECTORS(first_sector, first_sector + num_sectors);
+	int crcndx = first_sector % CRCS_PER_SECTOR;
+
+	u32 *crcbuf;
+	char *buf;
+	int s, i;
+
+	for (i = 0; i < NDISKS; i++) {
+		buf = __bio_kmap_atomic(dev->data_bios[0], 0);
+		crcbuf = __bio_kmap_atomic(dev->crc_bios[0], 0);
+
+		for (s = 0; s < num_sectors; i++) {
+			u32 crc = crc32(0, buf + s * KERNEL_SECTOR_SIZE,
+				KERNEL_SECTOR_SIZE);
+			crcbuf[crcndx + s] = crc;
+		}
+
+		ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors,
+			(char*) crcbuf);
+		__bio_kunmap_atomic(buf);
+		__bio_kunmap_atomic(crcbuf);
+	}
+}
+
+static void ssr_cleanup(struct ssr_device *dev)
+{
+	int i;
+	for (i = 0; i < NDISKS; i++) {
+		bio_put(dev->crc_bios[i]);
+		__free_page(dev->crc_pages[i]);
+		bio_put(dev->data_bios[i]);
+	}
+}
+
 static void ssr_work_handler(struct work_struct *work)
 {
 	struct ssr_device *dev = container_of(work, struct ssr_device, ws);
 	struct bio *cur_bio = dev->cur_bio;
-	struct completion event;
 	int i;
 
 	if (!cur_bio) {
@@ -263,16 +315,19 @@ static void ssr_work_handler(struct work_struct *work)
 	for (i = 0; i < NDISKS; i++) {
 		ssr_read_crcs(dev, i);
 	}
+	printk(KERN_DEBUG "Finished reading CRC values\n");
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
-		ssr_relay_data(dev);
-		ssr_update_crcs(dev);
+		//ssr_relay_data(dev);
+		//ssr_update_crcs(dev);
 	} else {
 		/* Propagate reads and check errors */
 		ssr_relay_data(dev);
 		ssr_check_data(dev);
 	}
+
+	//ssr_cleanup(dev);
 }
 
 static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
@@ -289,10 +344,8 @@ static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 static void ssr_make_request(struct request_queue *queue, struct bio *bio)
 {
 	struct ssr_device *dev = queue->queuedata;
-	struct bio_vec *bvec;
-	int i;
 
-	printk(KERN_DEBUG "bio: %8p dir: %d sector: %llu sectors: %d\n",
+	printk(KERN_DEBUG "bio: %8p dir: %lu sector: %llu sectors: %d\n",
 		bio, bio_data_dir(bio), bio->bi_sector, bio_sectors(bio));
 
 	ssr_do_bio(dev, bio);
@@ -304,16 +357,16 @@ static int open_disks(struct ssr_device *dev)
 {
 	int err = 0;
 
-	dev->phys_bdev1 = blkdev_get_by_path(PHYSICAL_DISK1_NAME,
+	dev->disks[0] = blkdev_get_by_path(PHYSICAL_DISK1_NAME,
 		FMODE_READ | FMODE_WRITE | FMODE_EXCL, THIS_MODULE);
-	if (dev->phys_bdev1 == NULL) {
+	if (dev->disks[0] == NULL) {
 		printk(KERN_ERR PHYSICAL_DISK1_NAME "No such device\n");
 		return -EINVAL;
 	}
 
-	dev->phys_bdev2 = blkdev_get_by_path(PHYSICAL_DISK2_NAME,
+	dev->disks[1] = blkdev_get_by_path(PHYSICAL_DISK2_NAME,
 		FMODE_READ | FMODE_WRITE | FMODE_EXCL, THIS_MODULE);
-	if (dev->phys_bdev2 == NULL) {
+	if (dev->disks[1] == NULL) {
 		printk(KERN_ERR PHYSICAL_DISK2_NAME "No such device\n");
 		err = -EINVAL;
 		goto err_disk;
@@ -321,15 +374,15 @@ static int open_disks(struct ssr_device *dev)
 
 	return err;
 err_disk:
-	blkdev_put(dev->phys_bdev1, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+	blkdev_put(dev->disks[0], FMODE_READ | FMODE_WRITE | FMODE_EXCL);
 	return err;
 
 }
 
 static void close_disks(struct ssr_device *dev)
 {
-	blkdev_put(dev->phys_bdev1, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
-	blkdev_put(dev->phys_bdev2, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+	blkdev_put(dev->disks[0], FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+	blkdev_put(dev->disks[1], FMODE_READ | FMODE_WRITE | FMODE_EXCL);
 }
 
 static int ssr_create_device(struct ssr_device* dev)
