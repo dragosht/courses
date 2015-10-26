@@ -1,0 +1,9 @@
+Windows:
+- Install RubyInstaller from: http://railsinstaller.org/en
+Then in cmd: gem install rails -v 4.2.3
+- Install phantomjs from: http://phantomjs.org/download.html
+... And add it to path
+- Install sublime text editor
+- Test installation, in cmd: rails new test_install
+... And when it's all done: rails server
+
