@@ -7,3 +7,14 @@ Then in cmd: gem install rails -v 4.2.3
 - Test installation, in cmd: rails new test_install
 ... And when it's all done: rails server
 
+Linux:
+https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-14-04
+- sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+- sudo apt get install git gitk git-gui
+- sudo apt-get install gcc build-essential libpq-dev libssl-dev libreadline-dev libsqlite3-dev zlib1g-dev
+- git clone git://github.com/sstephenson/rbenv.git
+- export PATH=$PATH:/home/dragosh/utils/rbenv/bin:$PATH
+- echo 'eval "$(rbenv init .)"' >> ~/.bashrc
+- git clone git://github.com/sstephenson/ruby-build.git ~/utils/rbenv/plugins/ruby-build
+- export PATH=$PATH:/home/dragosht/utils/rbenv/plugins/ruby-build/bin
+- rbenv install -v 2.2.2
