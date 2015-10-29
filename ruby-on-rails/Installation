@@ -13,8 +13,29 @@ https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-wi
 - sudo apt get install git gitk git-gui
 - sudo apt-get install gcc build-essential libpq-dev libssl-dev libreadline-dev libsqlite3-dev zlib1g-dev
 - git clone git://github.com/sstephenson/rbenv.git
+  or https://github.com/sstephenson/rbenv.git
 - export PATH=$PATH:/home/dragosh/utils/rbenv/bin:$PATH
-- echo 'eval "$(rbenv init .)"' >> ~/.bashrc
+- echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 - git clone git://github.com/sstephenson/ruby-build.git ~/utils/rbenv/plugins/ruby-build
-- export PATH=$PATH:/home/dragosht/utils/rbenv/plugins/ruby-build/bin
-- rbenv install -v 2.2.2
+- export PATH=$PATH:/home/dragosh/utils/rbenv/plugins/ruby-build/bin
+- rbenv-install -v 2.2.2
+- rbenv global 2.2.2
+- Don't get documentation for gems
+  echo "gem: --no-document" > ~/.gemrc
+- gem install bundler
+- gem install rails -v 4.2.3
+- rbenv rehash
+- sudo apt-get install software-properties-common python-software-properties
+- sudo add-apt-repository ppa:chris-lea/node.js (?)
+- sudo apt-get install nodejs
+- sudo apt-get install bzip2
+- export PHANTOM_JS="phantomjs-1.9.8-linux-x86_64"
+  Download it from: https://bitbucket.org/ariya/phantomjs/downloads/
+  And extract ...
+  Or even better: download 2.0.0 source and compile!
+
+  sudo mv $PHANTOM_JS /usr/local/share
+  sudo ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+
+- Download sublime text ...
+
