@@ -75,23 +75,27 @@ void ssr_relay_data(struct ssr_device *dev)
 	}
 }
 
+static void dump_crcs(struct bio *bio, int nsect) __attribute__((unused));
+
 static void dump_crcs(struct bio *bio, int nsect)
 {
 	int i;
 	u32 *crcbuf = __bio_kmap_atomic(bio, 0);
 
-	printk(KERN_DEBUG "CRCS: ");
+	printk("CRCS: ");
 	for (i = 0; i < nsect; i++) {
-		printk(KERN_DEBUG "%d\n", crcbuf[i]);
+		printk("%x ", crcbuf[i]);
 	}
+	printk("\n");
 
 	__bio_kunmap_atomic(crcbuf);
 }
 
 #define CRCS_PER_SECTOR (KERNEL_SECTOR_SIZE / sizeof(u32))
 #define CRCSTART (LOGICAL_DISK_SECTORS)
+
 #define CRCSECT(sect) (CRCSTART + ((sect) / CRCS_PER_SECTOR))
-#define NSECTORS(first, last) (CRCSECT((first)) - CRCSECT((last)) + 1)
+#define NSECTORS(first, last) (CRCSECT((last)) - CRCSECT((first)) + 1)
 
 
 static void ssr_read_crcs(struct ssr_device *dev, int diskno)
@@ -105,14 +109,18 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	sector_t first_crc_sector;
 	int num_crc_sectors;
 	char* crcbuf;
-	int i;
-
-	printk("Reading CRCs disk: %d", diskno);
 
 	num_sectors  = bio_sectors(cur_bio);
 	first_sector = cur_bio->bi_sector;
 	first_crc_sector = CRCSECT(first_sector);
 	num_crc_sectors = NSECTORS(first_sector, first_sector + num_sectors);
+
+	/*
+	printk("Reading CRCs disk: %d\n", diskno);
+	printk("first_sector: %llu num_sectors: %d\n", first_sector, num_sectors);
+	printk("first crc sector: %llu num_crc_sectors: %d\n",
+		first_crc_sector, num_crc_sectors);
+	*/
 
 	bio->bi_bdev = dev->disks[diskno];
 	bio->bi_sector = first_crc_sector;
@@ -134,7 +142,7 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	memcpy(dev->req.crcs[diskno], crcbuf, num_sectors * sizeof(u32));
 	__bio_kunmap_atomic(crcbuf);
 
-	dump_crcs(bio, num_sectors);
+	//dump_crcs(bio, num_sectors);
 
 	bio_put(bio);
 	__free_page(page);
@@ -180,95 +188,33 @@ void ssr_update_crcs(struct ssr_device *dev)
 			first_sector + num_sectors);
 	int crcndx = first_sector % CRCS_PER_SECTOR;
 
-	printk("Updating crcs after write\n");
-
 	u32 *crcbuf;
-	char *cbuf = kmalloc(num_sectors * sizeof(u32), GFP_KERNEL);
 	char *buf;
 	int s, i;
 
 	for (i = 0; i < NDISKS; i++) {
 		crcbuf = dev->req.crcs[i];
 		buf = __bio_kmap_atomic(dev->req.bio, 0);
-		memcpy(cbuf, buf, num_sectors * sizeof(u32));
-		__bio_kunmap_atomic(buf);
 
+		/*
+		printk("Write CRCs\n");
+		*/
 		for (s = 0; s < num_sectors; s++) {
-			u32 crc = crc32(0, cbuf + s * KERNEL_SECTOR_SIZE,
+			u32 crc = crc32(0, buf + s * KERNEL_SECTOR_SIZE,
 				KERNEL_SECTOR_SIZE);
 			crcbuf[crcndx + s] = crc;
-		}
-
-		//ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors, (char*) crcbuf);
-	}
-
-	kfree(cbuf);
-}
-
-int ssr_check_data(struct ssr_device *dev)
-{
-	int err = 0;
-	struct bio *cur_bio = dev->req.bio;
-
-	sector_t first_sector = cur_bio->bi_sector;
-	int num_sectors = bio_sectors(cur_bio);
-	sector_t first_crc_sector = CRCSECT(first_sector);
-	int num_crc_sectors = NSECTORS(first_sector,
-			first_sector + num_sectors);
-	int i;
-
-	char *buf1 = __bio_kmap_atomic(dev->data_bios[0], 0);
-	char *buf2 = __bio_kmap_atomic(dev->data_bios[1], 0);
-	u32 *crcbuf1 = __bio_kmap_atomic(dev->crc_bios[0], 0);
-	u32 *crcbuf2 = __bio_kmap_atomic(dev->crc_bios[1], 0);
-
-	/* Ok ... this needs to be rewritten ... */
-
-	int crcndx = first_sector % CRCS_PER_SECTOR;
-
-	for (i = 0; i < num_sectors; i++) {
-		u32 crc1 = crc32(0, buf1 + i * KERNEL_SECTOR_SIZE,
-			KERNEL_SECTOR_SIZE);
-		u32 crc2 = crc32(0, buf2 + i * KERNEL_SECTOR_SIZE,
-			KERNEL_SECTOR_SIZE);
-
-		if (crc1 != crcbuf1[crcndx + i] && crc2 != crcbuf2[crcndx + i]) {
-			err = 1;
-			printk(KERN_ERR "Unable to recover corrupt sector at: %llu\n",
-				(first_sector + i));
-			break;
-		}
-
-		if (crc1 != crcbuf1[crcndx + i]) {
 			/*
-			 * Recover from disk 2 - write sector i from disk 2
-			 * and the appropriate CRC field.
-			 */
-			ssr_write_sector(dev, 1, first_sector + i, buf2, i);
-			crcbuf1[crcndx + i] = crc2;
-			ssr_write_crc(dev, 1, first_crc_sector,
-				num_crc_sectors, (char*) crcbuf1);
+			printk("%x ", crc);
+			*/
 		}
 
-		if (crc2 != crcbuf2[crcndx + i]) {
-			/*
-			 * Recover from disk 1 - write sector i from disk 1
-			 * and the appropriate CRC field.
-			 */
-			ssr_write_sector(dev, 0, first_sector + i, buf1, i);
-			crcbuf2[crcndx + i] = crc1;
-			ssr_write_crc(dev, 0, first_crc_sector,
-				num_crc_sectors, (char*) crcbuf2);
-		}
+		__bio_kunmap_atomic(buf);
+		/*
+		printk("\n");
+		*/
 
+		ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors, (char*) crcbuf);
 	}
-
-	__bio_kunmap_atomic(buf1);
-	__bio_kunmap_atomic(buf2);
-	__bio_kunmap_atomic(crcbuf1);
-	__bio_kunmap_atomic(crcbuf2);
-
-	return err;
 }
 
 void ssr_cleanup(struct ssr_device *dev)
@@ -291,7 +237,10 @@ static void ssr_work_handler(struct work_struct *work)
 	for (i = 0; i < NDISKS; i++)
 		ssr_read_crcs(dev, i);
 
+	/*
 	printk(KERN_DEBUG "Finished reading CRC values\n");
+	printk("cur_bio: %d sectors\n", bio_sectors(cur_bio));
+	*/
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
@@ -308,7 +257,6 @@ static void ssr_work_handler(struct work_struct *work)
 
 static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
-	int i;
 	dev->req.bio = bio;
 
 	queue_work(dev->wq, &dev->ws);
@@ -320,8 +268,10 @@ static void ssr_make_request(struct request_queue *queue, struct bio *bio)
 {
 	struct ssr_device *dev = queue->queuedata;
 
+	/*
 	printk(KERN_DEBUG "bio: %8p dir: %lu sector: %llu sectors: %d\n",
 		bio, bio_data_dir(bio), bio->bi_sector, bio_sectors(bio));
+	*/
 
 	ssr_do_bio(dev, bio);
 
@@ -365,7 +315,7 @@ static int ssr_create_device(struct ssr_device* dev)
 	int err = 0;
         memset(dev, 0, sizeof(struct ssr_device));
 
-	dev->wq = create_singlethread_workqueue("ssr_workqueue");
+	dev->wq = create_workqueue("ssr_workqueue");
 	INIT_WORK(&dev->ws, ssr_work_handler);
 
 	err = open_disks(dev);
@@ -390,7 +340,7 @@ static int ssr_create_device(struct ssr_device* dev)
             goto err_alloc_disk;
         }
 
-        dev->gd->major = SSR_MAJOR;
+	dev->gd->major = SSR_MAJOR;
         dev->gd->first_minor = SSR_FIRST_MINOR;
         dev->gd->fops = &ssr_ops;
         dev->gd->queue = dev->queue;
