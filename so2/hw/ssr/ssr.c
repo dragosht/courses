@@ -16,15 +16,20 @@ MODULE_LICENSE("GPL");
 
 #define NDISKS 2
 
+
+struct ssr_request
+{
+	struct bio *bio;
+	u32 *crcs[NDISKS];
+};
+
 struct ssr_device
 {
 	struct block_device *disks[NDISKS];
 	struct request_queue *queue;
+	struct workqueue_struct *wq;
 	struct work_struct ws;
-	struct bio *cur_bio;
-	struct bio *crc_bios[NDISKS];
-	struct page *crc_pages[NDISKS];
-	struct bio *data_bios[NDISKS];
+	struct ssr_request req;
 	struct gendisk *gd;
 	spinlock_t lock;
 };
@@ -46,29 +51,41 @@ static const struct block_device_operations ssr_ops = {
     .release = ssr_release
 };
 
-
-
-/*
- * CRCs are between:
- * start = LOGICAL_DISK_SECTORS
- * stop = start + sizeof(u32) * LOGICAL_DISK_SECTORS
- *
- * There are (KERNEL_SECTOR_SIZE / sizeof(u32)) CRCs in each sector (= 128)
- *
- * for sector s the CRC is in sector: start + s / (KERNEL_SECTOR_SIZE / sizeof(u32))
- *
- */
-
-static void crc_complete(struct bio *bio, int error)
+static void bi_complete(struct bio *bio, int error)
 {
 	/* This one runs in interrupt context */
 	complete((struct completion*)bio->bi_private);
 }
 
-static void bi_complete(struct bio *bio, int error)
+void ssr_relay_data(struct ssr_device *dev)
 {
-	/* This one runs in interrupt context */
-	complete((struct completion*)bio->bi_private);
+	struct bio *bio;
+	struct completion event;
+	int i;
+
+	for (i = 0; i < NDISKS; i++) {
+		bio = bio_clone(dev->req.bio, GFP_NOIO);
+		bio->bi_bdev = dev->disks[i];
+		init_completion(&event);
+		bio->bi_private = &event;
+		bio->bi_end_io = bi_complete;
+		submit_bio(bio->bi_rw, bio);
+		wait_for_completion(&event);
+		bio_put(bio);
+	}
+}
+
+static void dump_crcs(struct bio *bio, int nsect)
+{
+	int i;
+	u32 *crcbuf = __bio_kmap_atomic(bio, 0);
+
+	printk(KERN_DEBUG "CRCS: ");
+	for (i = 0; i < nsect; i++) {
+		printk(KERN_DEBUG "%d\n", crcbuf[i]);
+	}
+
+	__bio_kunmap_atomic(crcbuf);
 }
 
 #define CRCS_PER_SECTOR (KERNEL_SECTOR_SIZE / sizeof(u32))
@@ -80,13 +97,17 @@ static void bi_complete(struct bio *bio, int error)
 static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 {
 	struct bio *bio = bio_alloc(GFP_NOIO, 1);
-	struct bio *cur_bio = dev->cur_bio;
+	struct bio *cur_bio = dev->req.bio;
 	struct completion event;
 	struct page *page;
 	sector_t first_sector;
 	int num_sectors;
 	sector_t first_crc_sector;
 	int num_crc_sectors;
+	char* crcbuf;
+	int i;
+
+	printk("Reading CRCs disk: %d", diskno);
 
 	num_sectors  = bio_sectors(cur_bio);
 	first_sector = cur_bio->bi_sector;
@@ -98,7 +119,7 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	bio->bi_rw = 0;
 	init_completion(&event);
 	bio->bi_private = &event;
-	bio->bi_end_io = crc_complete;
+	bio->bi_end_io = bi_complete;
 
 	page = alloc_page(GFP_NOIO);
 	bio_add_page(bio, page, num_crc_sectors * KERNEL_SECTOR_SIZE, 0);
@@ -108,59 +129,12 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	submit_bio(0, bio);
 	wait_for_completion(&event);
 
-	dev->crc_bios[diskno] = bio;
-	dev->crc_pages[diskno] = page;
+	dev->req.crcs[diskno] = kmalloc(num_sectors * sizeof(u32), GFP_KERNEL);
+	crcbuf = __bio_kmap_atomic(bio, 0);
+	memcpy(dev->req.crcs[diskno], crcbuf, num_sectors * sizeof(u32));
+	__bio_kunmap_atomic(crcbuf);
 
-	//bio_put(bio);
-	//__free_page(page);
-}
-
-void ssr_relay_data(struct ssr_device *dev)
-{
-	struct bio *bio;
-	struct completion event;
-	int i;
-
-	for (i = 0; i < NDISKS; i++) {
-		bio = bio_clone(dev->cur_bio, GFP_NOIO);
-		bio->bi_bdev = dev->disks[i];
-		init_completion(&event);
-		bio->bi_private = &event;
-		bio->bi_end_io = bi_complete;
-		submit_bio(bio->bi_rw, bio);
-		wait_for_completion(&event);
-		dev->data_bios[i] = bio;
-		//bio_put(bio);
-	}
-}
-
-void ssr_write_sector(struct ssr_device *dev, int diskno, sector_t sect,
-	char *buffer, int offset)
-{
-	struct bio *bio = bio_alloc(GFP_NOIO, 1);
-	struct completion event;
-	struct page *page;
-	char *biobuf;
-
-	bio->bi_bdev = dev->disks[diskno];
-	bio->bi_sector = sect;
-	bio->bi_rw = WRITE;
-	init_completion(&event);
-	bio->bi_private = &event;
-	bio->bi_end_io = bi_complete;
-
-	page = alloc_page(GFP_NOIO);
-	bio_add_page(bio, page, KERNEL_SECTOR_SIZE, 0);
-	bio->bi_vcnt = 1;
-	bio->bi_idx = 0;
-
-	biobuf = __bio_kmap_atomic(bio, 0);
-	memcpy(biobuf, buffer + offset * KERNEL_SECTOR_SIZE,
-		KERNEL_SECTOR_SIZE);
-	__bio_kunmap_atomic(biobuf);
-
-	submit_bio(0, bio);
-	wait_for_completion(&event);
+	dump_crcs(bio, num_sectors);
 
 	bio_put(bio);
 	__free_page(page);
@@ -196,15 +170,51 @@ void ssr_write_crc(struct ssr_device *dev, int diskno, sector_t sect, int nsect,
 	__free_page(page);
 }
 
+void ssr_update_crcs(struct ssr_device *dev)
+{
+	struct bio *cur_bio = dev->req.bio;
+	sector_t first_sector = cur_bio->bi_sector;
+	int num_sectors = bio_sectors(cur_bio);
+	sector_t first_crc_sector = CRCSECT(first_sector);
+	int num_crc_sectors = NSECTORS(first_sector,
+			first_sector + num_sectors);
+	int crcndx = first_sector % CRCS_PER_SECTOR;
+
+	printk("Updating crcs after write\n");
+
+	u32 *crcbuf;
+	char *cbuf = kmalloc(num_sectors * sizeof(u32), GFP_KERNEL);
+	char *buf;
+	int s, i;
+
+	for (i = 0; i < NDISKS; i++) {
+		crcbuf = dev->req.crcs[i];
+		buf = __bio_kmap_atomic(dev->req.bio, 0);
+		memcpy(cbuf, buf, num_sectors * sizeof(u32));
+		__bio_kunmap_atomic(buf);
+
+		for (s = 0; s < num_sectors; s++) {
+			u32 crc = crc32(0, cbuf + s * KERNEL_SECTOR_SIZE,
+				KERNEL_SECTOR_SIZE);
+			crcbuf[crcndx + s] = crc;
+		}
+
+		//ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors, (char*) crcbuf);
+	}
+
+	kfree(cbuf);
+}
+
 int ssr_check_data(struct ssr_device *dev)
 {
 	int err = 0;
-	struct bio *cur_bio = dev->cur_bio;
+	struct bio *cur_bio = dev->req.bio;
 
 	sector_t first_sector = cur_bio->bi_sector;
 	int num_sectors = bio_sectors(cur_bio);
 	sector_t first_crc_sector = CRCSECT(first_sector);
-	int num_crc_sectors = NSECTORS(first_sector, first_sector + num_sectors);
+	int num_crc_sectors = NSECTORS(first_sector,
+			first_sector + num_sectors);
 	int i;
 
 	char *buf1 = __bio_kmap_atomic(dev->data_bios[0], 0);
@@ -234,7 +244,6 @@ int ssr_check_data(struct ssr_device *dev)
 			 * Recover from disk 2 - write sector i from disk 2
 			 * and the appropriate CRC field.
 			 */
-			printk(KERN_WARNING)
 			ssr_write_sector(dev, 1, first_sector + i, buf2, i);
 			crcbuf1[crcndx + i] = crc2;
 			ssr_write_crc(dev, 1, first_crc_sector,
@@ -262,83 +271,49 @@ int ssr_check_data(struct ssr_device *dev)
 	return err;
 }
 
-void ssr_update_crcs(struct ssr_device *dev)
-{
-	struct bio *cur_bio = dev->cur_bio;
-	sector_t first_sector = cur_bio->bi_sector;
-	int num_sectors = bio_sectors(cur_bio);
-	sector_t first_crc_sector = CRCSECT(first_sector);
-	int num_crc_sectors = NSECTORS(first_sector, first_sector + num_sectors);
-	int crcndx = first_sector % CRCS_PER_SECTOR;
-
-	u32 *crcbuf;
-	char *buf;
-	int s, i;
-
-	for (i = 0; i < NDISKS; i++) {
-		buf = __bio_kmap_atomic(dev->data_bios[0], 0);
-		crcbuf = __bio_kmap_atomic(dev->crc_bios[0], 0);
-
-		for (s = 0; s < num_sectors; i++) {
-			u32 crc = crc32(0, buf + s * KERNEL_SECTOR_SIZE,
-				KERNEL_SECTOR_SIZE);
-			crcbuf[crcndx + s] = crc;
-		}
-
-		ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors,
-			(char*) crcbuf);
-		__bio_kunmap_atomic(buf);
-		__bio_kunmap_atomic(crcbuf);
-	}
-}
-
-static void ssr_cleanup(struct ssr_device *dev)
+void ssr_cleanup(struct ssr_device *dev)
 {
 	int i;
-	for (i = 0; i < NDISKS; i++) {
-		bio_put(dev->crc_bios[i]);
-		__free_page(dev->crc_pages[i]);
-		bio_put(dev->data_bios[i]);
-	}
+	for (i = 0; i < NDISKS; i++)
+		kfree(dev->req.crcs[i]);
 }
 
 static void ssr_work_handler(struct work_struct *work)
 {
 	struct ssr_device *dev = container_of(work, struct ssr_device, ws);
-	struct bio *cur_bio = dev->cur_bio;
+	struct bio *cur_bio = dev->req.bio;
 	int i;
 
 	if (!cur_bio) {
 		return;
 	}
 
-	for (i = 0; i < NDISKS; i++) {
+	for (i = 0; i < NDISKS; i++)
 		ssr_read_crcs(dev, i);
-	}
+
 	printk(KERN_DEBUG "Finished reading CRC values\n");
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
-		//ssr_relay_data(dev);
-		//ssr_update_crcs(dev);
+		ssr_relay_data(dev);
+		ssr_update_crcs(dev);
 	} else {
 		/* Propagate reads and check errors */
 		ssr_relay_data(dev);
-		ssr_check_data(dev);
+		//ssr_check_data(dev);
 	}
 
-	//ssr_cleanup(dev);
+	ssr_cleanup(dev);
 }
 
 static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
 	int i;
-	dev->cur_bio = bio;
-	for (i = 0; i < NDISKS; i++) {
-		dev->crc_bios[i] = NULL;
-	}
+	dev->req.bio = bio;
+
+	queue_work(dev->wq, &dev->ws);
 	schedule_work(&dev->ws);
-	flush_scheduled_work();
+	flush_workqueue(dev->wq);
 }
 
 static void ssr_make_request(struct request_queue *queue, struct bio *bio)
@@ -390,6 +365,7 @@ static int ssr_create_device(struct ssr_device* dev)
 	int err = 0;
         memset(dev, 0, sizeof(struct ssr_device));
 
+	dev->wq = create_singlethread_workqueue("ssr_workqueue");
 	INIT_WORK(&dev->ws, ssr_work_handler);
 
 	err = open_disks(dev);
@@ -446,6 +422,9 @@ static void ssr_delete_device(struct ssr_device *dev)
 		blk_cleanup_queue(dev->queue);
 	}
 	close_disks(dev);
+
+	flush_workqueue(dev->wq);
+	destroy_workqueue(dev->wq);
 }
 
 static int __init ssr_init(void)
