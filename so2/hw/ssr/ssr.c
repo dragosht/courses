@@ -21,6 +21,8 @@ struct ssr_request
 {
 	struct bio *bio;
 	u32 *crcs[NDISKS];
+	char* data[NDISKS];
+	int status;
 };
 
 struct ssr_device
@@ -57,7 +59,7 @@ static void bi_complete(struct bio *bio, int error)
 	complete((struct completion*)bio->bi_private);
 }
 
-void ssr_relay_data(struct ssr_device *dev)
+void ssr_relay_write(struct ssr_device *dev)
 {
 	struct bio *bio;
 	struct completion event;
@@ -72,6 +74,47 @@ void ssr_relay_data(struct ssr_device *dev)
 		submit_bio(bio->bi_rw, bio);
 		wait_for_completion(&event);
 		bio_put(bio);
+	}
+}
+
+void ssr_relay_read(struct ssr_device *dev)
+{
+	struct bio *bio;
+	struct page *page;
+	char *buf;
+	struct completion event;
+	int nsect;
+	int i;
+
+	for (i = 0; i < NDISKS; i++) {
+		bio = bio_alloc(GFP_NOIO, 1);
+		bio->bi_bdev = dev->disks[i];
+		bio->bi_sector = dev->req.bio->bi_sector;
+		bio->bi_rw = 0;
+		init_completion(&event);
+		bio->bi_private = &event;
+		bio->bi_end_io = bi_complete;
+
+		page = alloc_page(GFP_NOIO);
+		nsect = bio_sectors(dev->req.bio);
+		bio_add_page(bio, page, nsect * KERNEL_SECTOR_SIZE, 0);
+		bio->bi_vcnt = 1;
+		bio->bi_idx = 0;
+
+		submit_bio(0, bio);
+		wait_for_completion(&event);
+
+		dev->req.crcs[i] = kmalloc(nsect * KERNEL_SECTOR_SIZE,
+					GFP_KERNEL);
+		if (!dev->req.crcs[i])
+			printk(KERN_ALERT "Unable to allocate CRC memory\n");
+
+		buf = __bio_kmap_atomic(bio, 0);
+		memcpy(dev->req.data[i], buf, nsect * KERNEL_SECTOR_SIZE);
+		__bio_kunmap_atomic(buf);
+
+		bio_put(bio);
+		__free_page(page);
 	}
 }
 
@@ -137,9 +180,13 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	submit_bio(0, bio);
 	wait_for_completion(&event);
 
-	dev->req.crcs[diskno] = kmalloc(num_sectors * sizeof(u32), GFP_KERNEL);
+	dev->req.crcs[diskno] = kmalloc(num_crc_sectors * KERNEL_SECTOR_SIZE,
+					GFP_KERNEL);
+	if (!dev->req.crcs[diskno])
+		printk(KERN_ALERT "Unable to allocate CRC memory\n");
+
 	crcbuf = __bio_kmap_atomic(bio, 0);
-	memcpy(dev->req.crcs[diskno], crcbuf, num_sectors * sizeof(u32));
+	memcpy(dev->req.crcs[diskno], crcbuf, num_crc_sectors * KERNEL_SECTOR_SIZE);
 	__bio_kunmap_atomic(crcbuf);
 
 	//dump_crcs(bio, num_sectors);
@@ -217,11 +264,76 @@ void ssr_update_crcs(struct ssr_device *dev)
 	}
 }
 
+int ssr_check_data(struct ssr_device *dev)
+{
+	int err = 0;
+	struct bio *cur_bio = dev->req.bio;
+
+	sector_t first_sector = cur_bio->bi_sector;
+	int num_sectors = bio_sectors(cur_bio);
+	sector_t first_crc_sector = CRCSECT(first_sector);
+	int num_crc_sectors = NSECTORS(first_sector,
+			first_sector + num_sectors);
+
+	int i;
+
+	char *buf1 = dev->req.data[0];
+	char *buf2 = dev->req.data[1];
+	u32 *crcbuf1 = dev->req.crcs[0];
+	u32 *crcbuf2 = dev->req.crcs[1];
+
+	int crc1changed = 0;
+	int crc2changed = 0;
+
+	int crcndx = first_sector % CRCS_PER_SECTOR;
+
+	for (i = 0; i < num_sectors; i++) {
+		u32 crc1 = crc32(0, buf1 + i * KERNEL_SECTOR_SIZE,
+			KERNEL_SECTOR_SIZE);
+		u32 crc2 = crc32(0, buf2 + i * KERNEL_SECTOR_SIZE,
+			KERNEL_SECTOR_SIZE);
+
+		if (crc1 != crcbuf1[crcndx + i] && crc2 != crcbuf2[crcndx + i]) {
+			err = 1;
+			printk(KERN_ERR "Unable to recover corrupt sector at: %llu\n",
+				(first_sector + i));
+			break;
+		}
+
+		if (crc1 != crcbuf1[crcndx + i]) {
+			/* Recover from disk 2 */
+			crcbuf1[crcndx + i] = crc2;
+			crc1changed = 1;
+		}
+
+		if (crc2 != crcbuf2[crcndx + i]) {
+			/* Recover from disk 1 */
+			crcbuf2[crcndx + i] = crc1;
+			crc2changed = 1;
+		}
+	}
+
+	if (!err) {
+		if (crc1changed)
+			ssr_write_crc(dev, 0, first_crc_sector,
+					num_crc_sectors, (char*) crcbuf1);
+
+		if (crc2changed)
+			ssr_write_crc(dev, 1, first_crc_sector,
+					num_crc_sectors, (char*) crcbuf2);
+	}
+
+	return err;
+}
+
+
 void ssr_cleanup(struct ssr_device *dev)
 {
 	int i;
-	for (i = 0; i < NDISKS; i++)
+	for (i = 0; i < NDISKS; i++) {
+		kfree(dev->req.data[i]);
 		kfree(dev->req.crcs[i]);
+	}
 }
 
 static void ssr_work_handler(struct work_struct *work)
@@ -244,21 +356,20 @@ static void ssr_work_handler(struct work_struct *work)
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
-		ssr_relay_data(dev);
+		ssr_relay_write(dev);
 		ssr_update_crcs(dev);
 	} else {
 		/* Propagate reads and check errors */
-		ssr_relay_data(dev);
+		ssr_relay_read(dev);
+		printk("Read data relayed - checking data\n");
 		//ssr_check_data(dev);
 	}
-
 	ssr_cleanup(dev);
 }
 
 static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
 	dev->req.bio = bio;
-
 	queue_work(dev->wq, &dev->ws);
 	schedule_work(&dev->ws);
 	flush_workqueue(dev->wq);
