@@ -7,6 +7,7 @@
 #include <linux/blkdev.h>
 #include <linux/workqueue.h>
 #include <linux/crc32.h>
+#include <linux/mutex.h>
 
 #include "ssr.h"
 
@@ -25,6 +26,31 @@ struct ssr_request
 	int status;
 };
 
+static void ssr_req_init(struct ssr_request *req)
+{
+	int i;
+	for (i = 0; i < NDISKS; i++) {
+		req->data[i] = NULL;
+		req->crcs[i] = NULL;
+	}
+	req->status = 0;
+}
+
+void ssr_req_cleanup(struct ssr_request *req)
+{
+	int i;
+	for (i = 0; i < NDISKS; i++) {
+		if (req->data[i]) {
+			kfree(req->data[i]);
+			req->data[i] = NULL;
+		}
+		if (req->crcs[i]) {
+			kfree(req->crcs[i]);
+			req->crcs[i] = NULL;
+		}
+	}
+}
+
 struct ssr_device
 {
 	struct block_device *disks[NDISKS];
@@ -33,6 +59,7 @@ struct ssr_device
 	struct work_struct ws;
 	struct ssr_request req;
 	struct gendisk *gd;
+	struct mutex mutex;
 	spinlock_t lock;
 };
 
@@ -104,10 +131,9 @@ void ssr_relay_read(struct ssr_device *dev)
 		submit_bio(0, bio);
 		wait_for_completion(&event);
 
-		dev->req.crcs[i] = kmalloc(nsect * KERNEL_SECTOR_SIZE,
-					GFP_KERNEL);
-		if (!dev->req.crcs[i])
-			printk(KERN_ALERT "Unable to allocate CRC memory\n");
+		dev->req.data[i] = kmalloc(nsect * KERNEL_SECTOR_SIZE, GFP_KERNEL);
+		if (!dev->req.data[i])
+			printk(KERN_ALERT "Unable to allocate data memory\n");
 
 		buf = __bio_kmap_atomic(bio, 0);
 		memcpy(dev->req.data[i], buf, nsect * KERNEL_SECTOR_SIZE);
@@ -164,6 +190,10 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	printk("first crc sector: %llu num_crc_sectors: %d\n",
 		first_crc_sector, num_crc_sectors);
 	*/
+
+	if (num_crc_sectors == 0) {
+		printk("NO CRC SECTORS!\n");
+	}
 
 	bio->bi_bdev = dev->disks[diskno];
 	bio->bi_sector = first_crc_sector;
@@ -241,6 +271,10 @@ void ssr_update_crcs(struct ssr_device *dev)
 
 	for (i = 0; i < NDISKS; i++) {
 		crcbuf = dev->req.crcs[i];
+		if (crcbuf == 0) {
+			printk("BUG HERE!\n");
+			return;
+		}
 		buf = __bio_kmap_atomic(dev->req.bio, 0);
 
 		/*
@@ -294,7 +328,7 @@ int ssr_check_data(struct ssr_device *dev)
 			KERNEL_SECTOR_SIZE);
 
 		if (crc1 != crcbuf1[crcndx + i] && crc2 != crcbuf2[crcndx + i]) {
-			err = 1;
+			err = -EIO;
 			printk(KERN_ERR "Unable to recover corrupt sector at: %llu\n",
 				(first_sector + i));
 			break;
@@ -314,27 +348,24 @@ int ssr_check_data(struct ssr_device *dev)
 	}
 
 	if (!err) {
-		if (crc1changed)
+		if (crc1changed) {
+			printk(KERN_DEBUG "Corrupt disk1 sectors found - correcting\n");
 			ssr_write_crc(dev, 0, first_crc_sector,
 					num_crc_sectors, (char*) crcbuf1);
+		}
 
-		if (crc2changed)
+		if (crc2changed) {
+			printk(KERN_DEBUG "Corrupt disk2 sectors found - correcting\n");
 			ssr_write_crc(dev, 1, first_crc_sector,
 					num_crc_sectors, (char*) crcbuf2);
+		}
 	}
 
 	return err;
 }
 
 
-void ssr_cleanup(struct ssr_device *dev)
-{
-	int i;
-	for (i = 0; i < NDISKS; i++) {
-		kfree(dev->req.data[i]);
-		kfree(dev->req.crcs[i]);
-	}
-}
+
 
 static void ssr_work_handler(struct work_struct *work)
 {
@@ -343,11 +374,19 @@ static void ssr_work_handler(struct work_struct *work)
 	int i;
 
 	if (!cur_bio) {
+		printk("Should not happen!\n");
 		return;
 	}
 
-	for (i = 0; i < NDISKS; i++)
+	//mutex_lock(&dev->mutex);
+
+	for (i = 0; i < NDISKS; i++) {
 		ssr_read_crcs(dev, i);
+
+		if (dev->req.crcs[i] == 0) {
+			printk("BIG BUG HERE\n");
+		}
+	}
 
 	/*
 	printk(KERN_DEBUG "Finished reading CRC values\n");
@@ -356,23 +395,38 @@ static void ssr_work_handler(struct work_struct *work)
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
+		if (dev->req.crcs[0] == 0 || dev->req.crcs[1] == 0) {
+			printk("What the?! ...\n");
+		}
 		ssr_relay_write(dev);
+		if (dev->req.crcs[0] == 0 || dev->req.crcs[1] == 0) {
+			printk("BUUUUUG\n");
+		}
 		ssr_update_crcs(dev);
 	} else {
 		/* Propagate reads and check errors */
 		ssr_relay_read(dev);
-		printk("Read data relayed - checking data\n");
-		//ssr_check_data(dev);
+		ssr_check_data(dev);
 	}
-	ssr_cleanup(dev);
+
+	//ssr_req_cleanup(&dev->req);
+	//mutex_unlock(&dev->mutex);
 }
 
-static void ssr_do_bio(struct ssr_device *dev, struct bio *bio)
+
+
+static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
+	ssr_req_init(&dev->req);
 	dev->req.bio = bio;
+
 	queue_work(dev->wq, &dev->ws);
 	schedule_work(&dev->ws);
 	flush_workqueue(dev->wq);
+
+	ssr_req_cleanup(&dev->req);
+
+	return dev->req.status;
 }
 
 static void ssr_make_request(struct request_queue *queue, struct bio *bio)
@@ -386,7 +440,7 @@ static void ssr_make_request(struct request_queue *queue, struct bio *bio)
 
 	ssr_do_bio(dev, bio);
 
-	bio_endio(bio, 0);
+	bio_endio(bio, dev->req.status);
 }
 
 static int open_disks(struct ssr_device *dev)
@@ -425,6 +479,8 @@ static int ssr_create_device(struct ssr_device* dev)
 {
 	int err = 0;
         memset(dev, 0, sizeof(struct ssr_device));
+
+	mutex_init(&dev->mutex);
 
 	dev->wq = create_workqueue("ssr_workqueue");
 	INIT_WORK(&dev->ws, ssr_work_handler);
@@ -486,6 +542,8 @@ static void ssr_delete_device(struct ssr_device *dev)
 
 	flush_workqueue(dev->wq);
 	destroy_workqueue(dev->wq);
+
+	mutex_destroy(&dev->mutex);
 }
 
 static int __init ssr_init(void)

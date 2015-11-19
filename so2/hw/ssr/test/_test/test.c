@@ -377,64 +377,89 @@ static ssize_t phys2_write_end(size_t len)
 }
 #endif
 
+static int xmemcmp(const unsigned char *buf1, const unsigned char *buf2, size_t len, const char* msg)
+{
+	size_t i;
+	int result = memcmp(buf1, buf2, len);
+	if (result) {
+		printf("%s failed\n", msg);
+	}
+#if LOGDIFF
+	if (result) {
+		printf("Buffer1: ");
+		for (i = 0; i < len; i++) {
+			printf("%x", buf1[i]);
+		}
+		printf("\n");
+
+		printf("Buffer2: ");
+		for (i = 0; i < len; i++) {
+			printf("%x", buf2[i]);
+		}
+		printf("\n");
+	}
+#endif
+	return result;
+}
+
 static int cmp_data_log_rd_phys1_wr(size_t len)
 {
-	return memcmp(log_rd_buf, phys1_wr_buf, len);
+	return xmemcmp(log_rd_buf, phys1_wr_buf, len, __FUNCTION__);
 }
 
 static int cmp_data_log_rd_phys2_wr(size_t len)
 {
-	return memcmp(log_rd_buf, phys2_wr_buf, len);
+	return xmemcmp(log_rd_buf, phys2_wr_buf, len, __FUNCTION__);
 }
 
 static int cmp_data_log_rd_phys1_rd(size_t len)
 {
-	return memcmp(log_rd_buf, phys1_rd_buf, len);
+	return xmemcmp(log_rd_buf, phys1_rd_buf, len, __FUNCTION__);
 }
 
 static int cmp_data_log_rd_phys2_rd(size_t len)
 {
-	return memcmp(log_rd_buf, phys2_rd_buf, len);
+	return xmemcmp(log_rd_buf, phys2_rd_buf, len, __FUNCTION__);
 }
 
 static int cmp_data_log_wr_phys1_rd(size_t len)
 {
-	return memcmp(log_wr_buf, phys1_rd_buf, len);
+	return xmemcmp(log_wr_buf, phys1_rd_buf, len, __FUNCTION__);
 }
 
 static int cmp_data_log_wr_phys2_rd(size_t len)
 {
-	return memcmp(log_wr_buf, phys2_rd_buf, len);
+	return xmemcmp(log_wr_buf, phys2_rd_buf, len, __FUNCTION__);
 }
 
 static int cmp_crc_log_rd_phys1_wr(size_t data_len)
 {
-	return memcmp(log_rd_crc, phys1_wr_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_rd_crc, phys1_wr_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static int cmp_crc_log_rd_phys2_wr(size_t data_len)
 {
-	return memcmp(log_rd_crc, phys2_wr_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_rd_crc, phys2_wr_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static int cmp_crc_log_rd_phys1_rd(size_t data_len)
 {
-	return memcmp(log_rd_crc, phys1_rd_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_rd_crc, phys1_rd_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static int cmp_crc_log_rd_phys2_rd(size_t data_len)
 {
-	return memcmp(log_rd_crc, phys2_rd_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_rd_crc, phys2_rd_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static int cmp_crc_log_wr_phys1_rd(size_t data_len)
 {
-	return memcmp(log_wr_crc, phys1_rd_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_wr_crc, phys1_rd_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static int cmp_crc_log_wr_phys2_rd(size_t data_len)
 {
-	return memcmp(log_wr_crc, phys2_rd_crc, data_len / ONE_SECTOR * CRC_SIZE);
+	return xmemcmp(log_wr_crc, phys2_rd_crc, data_len / ONE_SECTOR * CRC_SIZE, __FUNCTION__);
 }
 
 static void drop_caches(void)
@@ -1756,6 +1781,8 @@ struct run_test_t test_array[] = {
 	{ recover_ten_page_in_one_meg_disk2, "recover ten pages error in 1MB from disk2", 18 },
 	{ recover_one_meg_disk2, "recover 1MB filled with errors from disk2", 18 },
 	{ dual_error, "signal error when both physical disks are corrupted", 12 },
+
+
 };
 size_t max_points = 900;
 
