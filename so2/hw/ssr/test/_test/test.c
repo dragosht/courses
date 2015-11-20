@@ -384,7 +384,8 @@ static int xmemcmp(const unsigned char *buf1, const unsigned char *buf2, size_t 
 	if (result) {
 		printf("%s failed\n", msg);
 	}
-#if LOGDIFF
+#define LOGDIFF
+#ifdef LOGDIFF
 	if (result) {
 		printf("Buffer1: ");
 		for (i = 0; i < len; i++) {
@@ -1703,6 +1704,7 @@ static void dual_error(void)
 }
 
 struct run_test_t test_array[] = {
+	/*
 	{ open_logical, "open(" LOGICAL_DISK_NAME ")", 4 },
 	{ close_logical, "close(" LOGICAL_DISK_NAME ")", 4 },
 	{ use_after_close_invalid, "use after close is invalid", 4 },
@@ -1781,7 +1783,9 @@ struct run_test_t test_array[] = {
 	{ recover_ten_page_in_one_meg_disk2, "recover ten pages error in 1MB from disk2", 18 },
 	{ recover_one_meg_disk2, "recover 1MB filled with errors from disk2", 18 },
 	{ dual_error, "signal error when both physical disks are corrupted", 12 },
+	*/
 
+	{ read_one_sector_after_write, "read one sector after physical write (correct CRC)", 16 },
 
 };
 size_t max_points = 900;

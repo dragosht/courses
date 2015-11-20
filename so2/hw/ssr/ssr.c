@@ -92,6 +92,7 @@ void ssr_relay_write(struct ssr_device *dev)
 	struct completion event;
 	int i;
 
+
 	for (i = 0; i < NDISKS; i++) {
 		bio = bio_clone(dev->req.bio, GFP_NOIO);
 		bio->bi_bdev = dev->disks[i];
@@ -101,6 +102,39 @@ void ssr_relay_write(struct ssr_device *dev)
 		submit_bio(bio->bi_rw, bio);
 		wait_for_completion(&event);
 		bio_put(bio);
+
+		/*
+		char *buf;
+		char *bbuf;
+		int nsect;
+		struct page *page;
+
+		bio = bio_alloc(GFP_NOIO, 1);
+		bio->bi_bdev = dev->disks[i];
+		bio->bi_sector = dev->req.bio->bi_sector;
+		bio->bi_rw = 0;
+		init_completion(&event);
+		bio->bi_private = &event;
+		bio->bi_end_io = bi_complete;
+
+		page = alloc_page(GFP_NOIO);
+		nsect = bio_sectors(dev->req.bio);
+		bio_add_page(bio, page, nsect * KERNEL_SECTOR_SIZE, 0);
+		bio->bi_vcnt = 1;
+		bio->bi_idx = 0;
+
+		bbuf = __bio_kmap_atomic(dev->req.bio, 0);
+		buf = __bio_kmap_atomic(bio, 0);
+		memcpy(buf, bbuf, nsect * KERNEL_SECTOR_SIZE);
+		__bio_kunmap_atomic(buf);
+		__bio_kunmap_atomic(bbuf);
+
+		submit_bio(0, bio);
+		wait_for_completion(&event);
+
+		bio_put(bio);
+		__free_page(page);
+		*/
 	}
 }
 
@@ -271,10 +305,6 @@ void ssr_update_crcs(struct ssr_device *dev)
 
 	for (i = 0; i < NDISKS; i++) {
 		crcbuf = dev->req.crcs[i];
-		if (crcbuf == 0) {
-			printk("BUG HERE!\n");
-			return;
-		}
 		buf = __bio_kmap_atomic(dev->req.bio, 0);
 
 		/*
@@ -374,18 +404,11 @@ static void ssr_work_handler(struct work_struct *work)
 	int i;
 
 	if (!cur_bio) {
-		printk("Should not happen!\n");
 		return;
 	}
 
-	//mutex_lock(&dev->mutex);
-
 	for (i = 0; i < NDISKS; i++) {
 		ssr_read_crcs(dev, i);
-
-		if (dev->req.crcs[i] == 0) {
-			printk("BIG BUG HERE\n");
-		}
 	}
 
 	/*
@@ -408,15 +431,16 @@ static void ssr_work_handler(struct work_struct *work)
 		ssr_relay_read(dev);
 		ssr_check_data(dev);
 	}
-
-	//ssr_req_cleanup(&dev->req);
-	//mutex_unlock(&dev->mutex);
 }
 
 
 
 static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
+	int status;
+
+	mutex_lock(&dev->mutex);
+
 	ssr_req_init(&dev->req);
 	dev->req.bio = bio;
 
@@ -425,8 +449,11 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 	flush_workqueue(dev->wq);
 
 	ssr_req_cleanup(&dev->req);
+	status = dev->req.status;
 
-	return dev->req.status;
+	mutex_unlock(&dev->mutex);
+
+	return status;
 }
 
 static void ssr_make_request(struct request_queue *queue, struct bio *bio)
