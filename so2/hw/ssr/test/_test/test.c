@@ -384,18 +384,18 @@ static int xmemcmp(const unsigned char *buf1, const unsigned char *buf2, size_t 
 	if (result) {
 		printf("%s failed\n", msg);
 	}
-#define LOGDIFF
+//#define LOGDIFF
 #ifdef LOGDIFF
 	if (result) {
-		printf("Buffer1: ");
+		printf("Buffer1: %s\n");
 		for (i = 0; i < len; i++) {
-			printf("%x", buf1[i]);
+			printf("%c", buf1[i]);
 		}
 		printf("\n");
 
 		printf("Buffer2: ");
 		for (i = 0; i < len; i++) {
-			printf("%x", buf2[i]);
+			printf("%c", buf2[i]);
 		}
 		printf("\n");
 	}
@@ -1703,6 +1703,25 @@ static void dual_error(void)
 	cleanup_test();
 }
 
+static void my_test(void)
+{
+	int rc;
+	size_t len = ONE_SECTOR;
+
+	init_test();
+	phys_fill_buffer(len);
+	/* writes Ps to both physical drives */
+	phys1_write_start(len);
+	phys2_write_start(len);
+	flush_disk_buffers();
+	/* then read from the logical drive */
+	log_read_start(len);
+
+	rc = cmp_data_log_rd_phys1_wr(len);
+	basic_test(rc == 0);
+	cleanup_test();
+}
+
 struct run_test_t test_array[] = {
 	/*
 	{ open_logical, "open(" LOGICAL_DISK_NAME ")", 4 },
@@ -1784,8 +1803,9 @@ struct run_test_t test_array[] = {
 	{ recover_one_meg_disk2, "recover 1MB filled with errors from disk2", 18 },
 	{ dual_error, "signal error when both physical disks are corrupted", 12 },
 	*/
+	{ dual_error, "signal error when both physical disks are corrupted", 12 },
 
-	{ read_one_sector_after_write, "read one sector after physical write (correct CRC)", 16 },
+	//{ my_test, "read one sector after physical write (my test)", 16 },
 
 };
 size_t max_points = 900;

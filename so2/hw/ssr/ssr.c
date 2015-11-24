@@ -176,6 +176,15 @@ void ssr_relay_read(struct ssr_device *dev)
 		bio_put(bio);
 		__free_page(page);
 	}
+
+	//printk("disk1 read: %s \n", dev->req.data[0]);
+	//printk("disk2 read: %s \n", dev->req.data[1]);
+
+	/*
+	if (!memcmp(dev->req.data[0], dev->req.data[1], nsect * KERNEL_SECTOR_SIZE)) {
+		printk("Something is fishy!\n");
+	}
+	*/
 }
 
 static void dump_crcs(struct bio *bio, int nsect) __attribute__((unused));
@@ -259,6 +268,7 @@ static void ssr_read_crcs(struct ssr_device *dev, int diskno)
 	__free_page(page);
 }
 
+
 void ssr_write_crc(struct ssr_device *dev, int diskno, sector_t sect, int nsect, char *buffer)
 {
 	struct bio *bio = bio_alloc(GFP_NOIO, 1);
@@ -328,6 +338,36 @@ void ssr_update_crcs(struct ssr_device *dev)
 	}
 }
 
+void ssr_write_sector(struct ssr_device *dev, int diskno, sector_t sector, char *buffer)
+{
+	struct bio *bio = bio_alloc(GFP_NOIO, 1);
+	struct completion event;
+	struct page *page;
+	char *biobuf;
+
+	bio->bi_bdev = dev->disks[diskno];
+	bio->bi_sector = sector;
+	bio->bi_rw = WRITE;
+	init_completion(&event);
+	bio->bi_private = &event;
+	bio->bi_end_io = bi_complete;
+
+	page = alloc_page(GFP_NOIO);
+	bio_add_page(bio, page, KERNEL_SECTOR_SIZE, 0);
+	bio->bi_vcnt = 1;
+	bio->bi_idx = 0;
+
+	biobuf = __bio_kmap_atomic(bio, 0);
+	memcpy(biobuf, buffer, KERNEL_SECTOR_SIZE);
+	__bio_kunmap_atomic(biobuf);
+
+	submit_bio(0, bio);
+	wait_for_completion(&event);
+
+	bio_put(bio);
+	__free_page(page);
+}
+
 int ssr_check_data(struct ssr_device *dev)
 {
 	int err = 0;
@@ -351,6 +391,8 @@ int ssr_check_data(struct ssr_device *dev)
 
 	int crcndx = first_sector % CRCS_PER_SECTOR;
 
+	//printk("Checking data: num_sectors: %d\n", num_sectors);
+
 	for (i = 0; i < num_sectors; i++) {
 		u32 crc1 = crc32(0, buf1 + i * KERNEL_SECTOR_SIZE,
 			KERNEL_SECTOR_SIZE);
@@ -361,35 +403,45 @@ int ssr_check_data(struct ssr_device *dev)
 			err = -EIO;
 			printk(KERN_ERR "Unable to recover corrupt sector at: %llu\n",
 				(first_sector + i));
-			break;
 		}
 
 		if (crc1 != crcbuf1[crcndx + i]) {
-			/* Recover from disk 2 */
+			/* Recover from disk 2: */
+			/* Write the i-th sector from disk2 to disk 1 */
+			memcpy(dev->req.data[0] + i * KERNEL_SECTOR_SIZE,
+				dev->req.data[1] + i * KERNEL_SECTOR_SIZE,
+				KERNEL_SECTOR_SIZE);
+			ssr_write_sector(dev, 0, first_sector + i,
+					dev->req.data[0] + i * KERNEL_SECTOR_SIZE);
 			crcbuf1[crcndx + i] = crc2;
 			crc1changed = 1;
 		}
 
 		if (crc2 != crcbuf2[crcndx + i]) {
 			/* Recover from disk 1 */
+			memcpy(dev->req.data[1] + i * KERNEL_SECTOR_SIZE,
+				dev->req.data[0] + i * KERNEL_SECTOR_SIZE,
+				KERNEL_SECTOR_SIZE);
+			ssr_write_sector(dev, 1, first_sector + i,
+					 dev->req.data[1] + i * KERNEL_SECTOR_SIZE);
 			crcbuf2[crcndx + i] = crc1;
 			crc2changed = 1;
 		}
 	}
 
-	if (!err) {
+	//if (!err) {
 		if (crc1changed) {
-			printk(KERN_DEBUG "Corrupt disk1 sectors found - correcting\n");
+			//printk(KERN_DEBUG "Corrupt disk1 sectors found - correcting\n");
 			ssr_write_crc(dev, 0, first_crc_sector,
 					num_crc_sectors, (char*) crcbuf1);
 		}
 
 		if (crc2changed) {
-			printk(KERN_DEBUG "Corrupt disk2 sectors found - correcting\n");
+			//printk(KERN_DEBUG "Corrupt disk2 sectors found - correcting\n");
 			ssr_write_crc(dev, 1, first_crc_sector,
 					num_crc_sectors, (char*) crcbuf2);
 		}
-	}
+	//}
 
 	return err;
 }
@@ -410,11 +462,7 @@ static void ssr_work_handler(struct work_struct *work)
 	for (i = 0; i < NDISKS; i++) {
 		ssr_read_crcs(dev, i);
 	}
-
-	/*
-	printk(KERN_DEBUG "Finished reading CRC values\n");
-	printk("cur_bio: %d sectors\n", bio_sectors(cur_bio));
-	*/
+	//printk(KERN_DEBUG "Finished reading CRC values\n");
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
@@ -429,7 +477,14 @@ static void ssr_work_handler(struct work_struct *work)
 	} else {
 		/* Propagate reads and check errors */
 		ssr_relay_read(dev);
-		ssr_check_data(dev);
+		dev->req.status = ssr_check_data(dev);
+		if (dev->req.status == 0)
+		{
+			char *biobuf = __bio_kmap_atomic(cur_bio, 0);
+			int nsect = bio_sectors(cur_bio);
+			memcpy(biobuf, dev->req.data[0], nsect * KERNEL_SECTOR_SIZE);
+			__bio_kunmap_atomic(cur_bio);
+		}
 	}
 }
 
@@ -439,7 +494,7 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
 	int status;
 
-	mutex_lock(&dev->mutex);
+	//mutex_lock(&dev->mutex);
 
 	ssr_req_init(&dev->req);
 	dev->req.bio = bio;
@@ -448,10 +503,10 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 	schedule_work(&dev->ws);
 	flush_workqueue(dev->wq);
 
-	ssr_req_cleanup(&dev->req);
 	status = dev->req.status;
+	ssr_req_cleanup(&dev->req);
 
-	mutex_unlock(&dev->mutex);
+	//mutex_unlock(&dev->mutex);
 
 	return status;
 }
@@ -459,15 +514,17 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 static void ssr_make_request(struct request_queue *queue, struct bio *bio)
 {
 	struct ssr_device *dev = queue->queuedata;
+	int status;
 
 	/*
 	printk(KERN_DEBUG "bio: %8p dir: %lu sector: %llu sectors: %d\n",
 		bio, bio_data_dir(bio), bio->bi_sector, bio_sectors(bio));
 	*/
 
-	ssr_do_bio(dev, bio);
-
-	bio_endio(bio, dev->req.status);
+	mutex_lock(&dev->mutex);
+	status = ssr_do_bio(dev, bio);
+	bio_endio(bio, status);
+	mutex_unlock(&dev->mutex);
 }
 
 static int open_disks(struct ssr_device *dev)
