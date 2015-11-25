@@ -1699,6 +1699,7 @@ static void dual_error(void)
 	phys2_corrupt_and_write_start(len, 1);
 	flush_disk_buffers();
 	n = log_read_start(len);
+	printf("failed: n = %d\n", n);
 	basic_test(n <= 0);
 	cleanup_test();
 }
@@ -1723,7 +1724,7 @@ static void my_test(void)
 }
 
 struct run_test_t test_array[] = {
-	/*
+
 	{ open_logical, "open(" LOGICAL_DISK_NAME ")", 4 },
 	{ close_logical, "close(" LOGICAL_DISK_NAME ")", 4 },
 	{ use_after_close_invalid, "use after close is invalid", 4 },
@@ -1801,8 +1802,6 @@ struct run_test_t test_array[] = {
 	{ recover_one_page_disk2, "recover one page filled with errors from disk2", 18 },
 	{ recover_ten_page_in_one_meg_disk2, "recover ten pages error in 1MB from disk2", 18 },
 	{ recover_one_meg_disk2, "recover 1MB filled with errors from disk2", 18 },
-	{ dual_error, "signal error when both physical disks are corrupted", 12 },
-	*/
 	{ dual_error, "signal error when both physical disks are corrupted", 12 },
 
 	//{ my_test, "read one sector after physical write (my test)", 16 },

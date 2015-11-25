@@ -102,39 +102,6 @@ void ssr_relay_write(struct ssr_device *dev)
 		submit_bio(bio->bi_rw, bio);
 		wait_for_completion(&event);
 		bio_put(bio);
-
-		/*
-		char *buf;
-		char *bbuf;
-		int nsect;
-		struct page *page;
-
-		bio = bio_alloc(GFP_NOIO, 1);
-		bio->bi_bdev = dev->disks[i];
-		bio->bi_sector = dev->req.bio->bi_sector;
-		bio->bi_rw = 0;
-		init_completion(&event);
-		bio->bi_private = &event;
-		bio->bi_end_io = bi_complete;
-
-		page = alloc_page(GFP_NOIO);
-		nsect = bio_sectors(dev->req.bio);
-		bio_add_page(bio, page, nsect * KERNEL_SECTOR_SIZE, 0);
-		bio->bi_vcnt = 1;
-		bio->bi_idx = 0;
-
-		bbuf = __bio_kmap_atomic(dev->req.bio, 0);
-		buf = __bio_kmap_atomic(bio, 0);
-		memcpy(buf, bbuf, nsect * KERNEL_SECTOR_SIZE);
-		__bio_kunmap_atomic(buf);
-		__bio_kunmap_atomic(bbuf);
-
-		submit_bio(0, bio);
-		wait_for_completion(&event);
-
-		bio_put(bio);
-		__free_page(page);
-		*/
 	}
 }
 
@@ -176,15 +143,6 @@ void ssr_relay_read(struct ssr_device *dev)
 		bio_put(bio);
 		__free_page(page);
 	}
-
-	//printk("disk1 read: %s \n", dev->req.data[0]);
-	//printk("disk2 read: %s \n", dev->req.data[1]);
-
-	/*
-	if (!memcmp(dev->req.data[0], dev->req.data[1], nsect * KERNEL_SECTOR_SIZE)) {
-		printk("Something is fishy!\n");
-	}
-	*/
 }
 
 static void dump_crcs(struct bio *bio, int nsect) __attribute__((unused));
@@ -429,7 +387,7 @@ int ssr_check_data(struct ssr_device *dev)
 		}
 	}
 
-	//if (!err) {
+	if (!err) {
 		if (crc1changed) {
 			//printk(KERN_DEBUG "Corrupt disk1 sectors found - correcting\n");
 			ssr_write_crc(dev, 0, first_crc_sector,
@@ -441,7 +399,7 @@ int ssr_check_data(struct ssr_device *dev)
 			ssr_write_crc(dev, 1, first_crc_sector,
 					num_crc_sectors, (char*) crcbuf2);
 		}
-	//}
+	}
 
 	return err;
 }
@@ -494,8 +452,6 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 {
 	int status;
 
-	//mutex_lock(&dev->mutex);
-
 	ssr_req_init(&dev->req);
 	dev->req.bio = bio;
 
@@ -505,8 +461,6 @@ static int ssr_do_bio(struct ssr_device *dev, struct bio *bio)
 
 	status = dev->req.status;
 	ssr_req_cleanup(&dev->req);
-
-	//mutex_unlock(&dev->mutex);
 
 	return status;
 }
@@ -523,8 +477,8 @@ static void ssr_make_request(struct request_queue *queue, struct bio *bio)
 
 	mutex_lock(&dev->mutex);
 	status = ssr_do_bio(dev, bio);
-	bio_endio(bio, status);
 	mutex_unlock(&dev->mutex);
+	bio_endio(bio, status);
 }
 
 static int open_disks(struct ssr_device *dev)
