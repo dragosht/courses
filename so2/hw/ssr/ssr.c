@@ -275,22 +275,13 @@ void ssr_update_crcs(struct ssr_device *dev)
 		crcbuf = dev->req.crcs[i];
 		buf = __bio_kmap_atomic(dev->req.bio, 0);
 
-		/*
-		printk("Write CRCs\n");
-		*/
 		for (s = 0; s < num_sectors; s++) {
 			u32 crc = crc32(0, buf + s * KERNEL_SECTOR_SIZE,
 				KERNEL_SECTOR_SIZE);
 			crcbuf[crcndx + s] = crc;
-			/*
-			printk("%x ", crc);
-			*/
 		}
 
 		__bio_kunmap_atomic(buf);
-		/*
-		printk("\n");
-		*/
 
 		ssr_write_crc(dev, i, first_crc_sector, num_crc_sectors, (char*) crcbuf);
 	}
@@ -424,13 +415,7 @@ static void ssr_work_handler(struct work_struct *work)
 
 	if (bio_data_dir(cur_bio)) {
 		/* Propagate writes and adjust CRCs */
-		if (dev->req.crcs[0] == 0 || dev->req.crcs[1] == 0) {
-			printk("What the?! ...\n");
-		}
 		ssr_relay_write(dev);
-		if (dev->req.crcs[0] == 0 || dev->req.crcs[1] == 0) {
-			printk("BUUUUUG\n");
-		}
 		ssr_update_crcs(dev);
 	} else {
 		/* Propagate reads and check errors */
