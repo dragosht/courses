@@ -71,12 +71,25 @@ static struct inode *minfs_iget(struct super_block *s, unsigned long ino)
 	}
 
 	/* TODO 4: read disk inode block (2nd block; index 1) */
-	bh = sb_read(s, 1);
+	if (!(bh = sb_bread(s, 1)))
+		goto out_bad_sb;
 
 	/* TODO 4: interpret disk inode as minfs_inode */
-	mi = (struct minfs_inode *) bh;
+	mi = (struct minfs_inode *) bh->b_data;
 
 	/* TODO 4: fill VFS inode */
+	inode->i_uid = mi->uid;
+	inode->i_gid = mi->gid;
+	inode->i_mode = mi->mode;
+	inode->i_size = mi->size;
+	inode->i_blocks = 0;
+	inode->i_atime = inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+
+	if (S_ISDIR(inode->i_mode)) {
+		inode->i_op = &simple_dir_inode_operations;
+		inode->i_fop = &simple_dir_operations;
+		inc_nlink(inode);
+	}
 
 	/* fill data for mii */
 	mii = container_of(inode, struct minfs_inode_info, vfs_inode);
@@ -123,7 +136,7 @@ static const struct super_operations minfs_ops = {
 	.statfs		= simple_statfs,
 	/* TODO 4: add alloc and destroy inode functions */
 	.alloc_inode	= minfs_alloc_inode,
-	.destroy_inode	minfs_destroy_inode,
+	.destroy_inode	= minfs_destroy_inode,
 };
 
 static int minfs_fill_super(struct super_block *s, void *data, int silent)
@@ -149,14 +162,14 @@ static int minfs_fill_super(struct super_block *s, void *data, int silent)
 		goto out_bad_sb;
 
 	/* TODO 2: interpret read data as minfs_super_block */
-	ms = (struct min_fs_superblock *) bh->b_data;
+	ms = (struct minfs_super_block *) bh->b_data;
 
 	/* TODO 2: check magic number; jump to out_bad_magic if not suitable */
 	if (ms->magic != MINFS_MAGIC)
 		goto out_bad_magic;
 
 	/* TODO 2: fill sbi with information from disk superblock */
-	sbi->version = MINFS_V1;
+	sbi->version = ms->version;
 
 	/* TODO 2: fill super_block with magic_number, super_operations */
 	s->s_magic = ms->magic;

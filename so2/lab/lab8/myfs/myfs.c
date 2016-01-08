@@ -45,7 +45,7 @@ struct inode *myfs_get_inode(struct super_block *sb, int mode)
 	 * TODO 3: inode operations for root inode (use S_ISDIR macro)
 	 *     directory link count should be incremented (use inc_nlink)
 	 */
-	if S_ISDIR(inode->i_flags) {
+	if S_ISDIR(inode->i_mode) {
 		inode->i_op = &simple_dir_inode_operations;
 		inode->i_fop = &simple_dir_operations;
 		inc_nlink(inode);
