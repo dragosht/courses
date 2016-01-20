@@ -13,9 +13,9 @@
  * Filesystem layout:
  *
  *      SB      IZONE 	     DATA
- *    ^	    ^ (1 block)
- *    |     |
- *    +-0   +-- 4096
+ *    ^	    ^ (1 block)      inode[0]    inode[1]    inode[2] ... inode[31]
+ *    |     |                data        data        data         data
+ *    +-0   +-- 4096         block2      block3      block4   ... block33
  */
 
 #define MINFS_SUPER_BLOCK	0
