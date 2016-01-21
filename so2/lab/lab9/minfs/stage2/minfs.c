@@ -283,8 +283,12 @@ static struct inode *minfs_new_inode(struct inode *dir)
 		return NULL;
 
 	inode->i_ino = idx;
+	inode->i_uid = current_fsuid();
+	inode->i_gid = current_fsgid();
 	inode_init_owner(inode, dir, 0);
 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+	inode->i_blocks = 0;
+
 	insert_inode_hash(inode);
 
 	return inode;
@@ -323,10 +327,11 @@ static int minfs_add_link(struct dentry *dentry, struct inode *inode)
 
 	/* TODO 5: place new entry in the available slot;
 	 * mark buffer_head as dirty */
-	dprintk("Placing new entry in slot: %d\n", inode->i_ino);
 
 	de->ino = inode->i_ino;
 	strcpy(de->name, name);
+	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
+
 	mark_buffer_dirty(bh);
 
 out:
