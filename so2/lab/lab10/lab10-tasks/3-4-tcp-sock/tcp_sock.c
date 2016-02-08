@@ -61,23 +61,55 @@ int __init my_tcp_sock_init(void)
 	int raddrlen = sizeof(raddr);
 
 	/* TODO 1: create listening socket */
+	err = sock_create_kern(AF_INET, SOCK_STREAM, IPPROTO_TCP, &sock);
+	if (err < 0) {
+		printk(KERN_ALERT "Unable to create listening socket\n");
+		goto out;
+	}
 
 	/* TODO 1: bind socket to loopback on port MY_TCP_PORT */
+	err = sock->ops->bind(sock, (struct sockaddr*) &addr, addrlen);
+	if (err < 0) {
+		printk(KERN_ALERT "Error in bind\n");
+		goto out_release;
+	}
 
 	/* TODO 1: start listening */
+	err = sock->ops->listen(sock, 1);
+	if (err < 0) {
+		printk(KERN_ALERT "Error in listen\n");
+		goto out_release;
+	}
 
 	/* TODO 2: create new socket for the accepted connection */
+	err = sock_create_kern(AF_INET, SOCK_STREAM, IPPROTO_TCP, &new_sock);
+	if (err < 0) {
+		printk(KERN_ALERT "Unable to create accpeted socket\n");
+		goto out_release;
+	}
 
 	/* TODO 2: accept a connection */
+	err = sock->ops->accept(sock, new_sock, 0);
+	if (err < 0) {
+		printk(KERN_ALERT "Error in accept\n");
+		goto out_release_new_sock;
+	}
 
 	/* TODO 2: get the address of the peer and print it */
+	if (new_sock->ops->getname(new_sock, (struct sockaddr*) &raddr, &raddrlen, 1)) {
+		printk(KERN_ALERT "Error in getname\n");
+		goto out_release_new_sock;
+	}
+	print_sock_address(raddr);
 
 	return 0;
 
 out_release_new_sock:
 	/* TODO 2: cleanup socket for accepted connection */
+	sock_release(new_sock);
 out_release:
 	/* TODO 1: cleanup listening socket */
+	sock_release(sock);
 out:
 	return err;
 }
@@ -85,9 +117,12 @@ out:
 void __exit my_tcp_sock_exit(void)
 {
 	/* TODO 2: cleanup socket for accepted connection */
+	sock_release(new_sock);
 
 	/* TODO 1: cleanup listening socket */
+	sock_release(sock);
 }
 
 module_init(my_tcp_sock_init);
 module_exit(my_tcp_sock_exit);
+
