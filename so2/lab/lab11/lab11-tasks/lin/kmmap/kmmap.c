@@ -52,8 +52,14 @@ static int my_read(struct file *file, char __user *user_buffer,
 		size_t size, loff_t *offset)
 {
 	/* TODO3: check size doesn't exceed our mapped area size */
+	if (size > NPAGES * PAGE_SIZE) {
+		size = NPAGES * PAGE_SIZE;
+	}
 
 	/* TODO3: copy from mapped area to user buffer */
+	if (copy_to_user(user_buffer, kmalloc_area, size)) {
+		return -EFAULT;
+	}
 
 	return 0;
 }
@@ -62,8 +68,14 @@ static int my_write(struct file *file, const char __user *user_buffer,
 		size_t size, loff_t *offset)
 {
 	/* TODO3: check size doesn't exceed our mapped area size */
+	if (size > NPAGES * PAGE_SIZE) {
+		size = NPAGES * PAGE_SIZE;
+	}
 
 	/* TODO3: copy from user buffer to mapped area */
+	if (copy_from_user(kmalloc_area, user_buffer, size)) {
+		return -EFAULT;
+	}
 
 	return 0;
 }
@@ -108,19 +120,32 @@ static int my_seq_show(struct seq_file *seq, void *v)
 	unsigned long total = 0;
 
 	/* TODO4: Get current process' mm_struct */
+	mm = get_task_mm(current);
+	if (!mm)
+		return 0;
 
 	/* TODO4: Iterate through all memory mappings and update total */
+	vma_iterator = mm->mmap;
+	while (vma_iterator) {
+		printk("%lx %lx\n",
+			vma_iterator->vm_start, vma_iterator->vm_end);
+		total += (vma_iterator->vm_end - vma_iterator->vm_start);
+		vma_iterator = vma_iterator->vm_next;
+	}
 
 	/* TODO4: Release mm_struct */
+	mmput(mm);
 
 	/* TODO4: print the total (%lu) to the seq_file */
+	seq_printf(seq, "%lu\n", total);
+
 	return 0;
 }
 
 static int my_seq_open(struct inode *inode, struct file *file)
 {
 	/* TODO4: use my_seq_show as display function */
-	return -ENOSYS;
+	return single_open(file, my_seq_show, NULL);
 }
 
 static const struct file_operations my_proc_file_ops = {
@@ -139,6 +164,11 @@ static int __init my_init(void)
 
 	/* TODO4: create proc entry PROC_ENTRY_NAME */
 	/* TODO4: initialize proc_fops with use my_proc_file_ops */
+	entry = proc_create(PROC_ENTRY_NAME, 0, NULL, &my_proc_file_ops);
+	if (!entry) {
+		ret = -ENOMEM;
+		goto out;
+	}
 
 	ret = register_chrdev_region(MKDEV(MY_MAJOR, 0), 1, "mymap");
 	if (ret < 0) {
@@ -184,6 +214,7 @@ out_unreg:
 	unregister_chrdev_region(MKDEV(MY_MAJOR, 0), 1);
 out_no_chrdev:
 	/* TODO4: remove proc entry PROC_ENTRY_NAME */
+	remove_proc_entry(PROC_ENTRY_NAME, NULL);
 out:
 	return ret;
 }
@@ -204,6 +235,7 @@ static void __exit my_exit(void)
 	unregister_chrdev_region(MKDEV(MY_MAJOR, 0), 1);
 
 	/* TODO4: remove proc entry PROC_ENTRY_NAME */
+	remove_proc_entry(PROC_ENTRY_NAME, NULL);
 }
 
 module_init(my_init);

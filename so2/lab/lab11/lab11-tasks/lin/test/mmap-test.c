@@ -21,6 +21,9 @@
 #define MMAP_DEV	"/dev/mymmap"
 #define PROC_ENTRY_PATH "/proc/" PROC_ENTRY_NAME
 
+//#define TASK_3
+#define TASK_4
+
 void test_contents(unsigned char *addr,
 		unsigned char value1, unsigned char value2,
 		unsigned char value3, unsigned char value4)
