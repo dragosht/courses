@@ -1,0 +1,30 @@
+objects = _test/stp_test.o
+
+.PHONY: all clean run pack _test_subdir_all _test_subdir_clean
+
+all: stp_test
+
+CFLAGS = -static -pthread -m32
+
+build-pre: stp_test
+
+stp_test: _test_subdir_all $(objects)
+	$(CC) -Wall -g -lrt -m32 -pthread -static -o $@ $(objects)
+
+_test_subdir_all:
+	make -C _test
+
+build-post:
+
+run: all
+	./run_tests.bash
+
+pack:
+	zip -r stp_test.zip _test/ Makefile.checker \
+		run_tests.bash README
+
+clean: _test_subdir_clean
+	-rm -f stp_test *~
+
+_test_subdir_clean:
+	make -C _test clean
