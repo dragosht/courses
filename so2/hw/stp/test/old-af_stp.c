@@ -15,6 +15,16 @@ MODULE_DESCRIPTION("STP (SO2 Transport Protocol)");
 MODULE_AUTHOR("Dragos Tarcatu");
 MODULE_LICENSE("GPL");
 
+#define STPLOG_PREFIX "[STP]: "
+
+DEFINE_HASHTABLE(stp_hbind, 16);
+
+struct stp_bind_entry {
+	__be16 port;
+	struct sock *sk;
+	struct hlist_node hnode;
+};
+
 struct stp_sock {
 	struct sock	*sk;
 	__be16		bport;
@@ -26,30 +36,85 @@ static struct proto stp_proto = {
 	.obj_size = sizeof(struct stp_sock),
 };
 
-
 static int stp_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
-	//struct stp_sock *ssk = (struct stp_sock *) sk;
+	struct stp_sock *ssk = (struct stp_sock *) sk;
+
+	printk(KERN_DEBUG "Releasing socket: %p\n", sock);
 
 	if (!sk)
 		return 0;
 
-	sock->sk = NULL;
+	/*
+	if (ssk->bport) {
+		// This was bound to some port. Remove this entry from the hash.
+		printk(KERN_DEBUG "Removing socket entry from hash\n");
+		struct stp_bind_entry *sbe;
+		struct hlist_node *tmp;
 
-	//skb_queue_purge(&sk->sk_receive_queue);
+		hash_for_each_possible_safe(stp_hbind, sbe, tmp, hnode, ssk->bport) {
+			if (sbe->port == ssk->bport) {
+				hash_del(&sbe->hnode);
+				break;
+			}
+		}
+	}
+	*/
+
+	sock->sk = NULL;
+	skb_queue_purge(&sk->sk_receive_queue);
 	sk_refcnt_debug_release(sk);
+
 	sock_put(sk);
 
 	return 0;
 }
 
+
+
+
 static int stp_bind(struct socket *sock, struct sockaddr *uaddr,
 			int addr_len)
 {
+	struct sockaddr_stp *addr = (struct sockaddr_stp *) uaddr;
+	struct sock *sk = sock->sk;
+	struct stp_sock *ssk = (struct stp_sock *) sk;
+
+	struct stp_bind_entry *sbe;
+
+	/* Check for proper address size */
+	if (addr_len != sizeof(struct sockaddr_stp))
+		return -EINVAL;
+	if (addr->sas_family != AF_STP)
+		return -EINVAL;
+
+	if (addr->sas_ifindex) {
+		if (!dev_get_by_index(sock_net(sk), addr->sas_ifindex))
+			return -ENODEV;
+	}
+
+	hash_for_each_possible(stp_hbind, sbe, hnode, addr->sas_port) {
+		if (sbe->port == addr->sas_port) {
+			return -EADDRINUSE;
+		}
+	}
+
+	sbe = kmalloc(sizeof(struct stp_bind_entry), GFP_KERNEL);
+	if (!sbe)
+		return -ENOMEM;
+
+
+	sbe->port = addr->sas_port;
+	ssk->bport = addr->sas_port;
+	//This probably also needs a reference count increase ...
+	sbe->sk = sk;
+	hash_add(stp_hbind, &sbe->hnode, sbe->port);
+
+	printk(KERN_DEBUG "Bind socket: %p to port: %d\n", ssk, addr->sas_port);
+
 	return 0;
 }
-
 
 int stp_connect(struct socket *sock, struct sockaddr *uaddr,
 		int addr_len, int flags)
@@ -75,7 +140,6 @@ int stp_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 	return 0;
 }
 
-
 static const struct proto_ops stp_ops = {
 	.family		= PF_STP,
 	.owner		= THIS_MODULE,
@@ -97,12 +161,12 @@ static const struct proto_ops stp_ops = {
 	.sendpage	= sock_no_sendpage,
 };
 
+
+
+
 static void stp_sock_destruct(struct sock *sk)
 {
 	skb_queue_purge(&sk->sk_error_queue);
-	if (!sock_flag(sk, SOCK_DEAD)) {
-		return;
-	}
 	sk_refcnt_debug_dec(sk);
 }
 
@@ -114,38 +178,45 @@ static int stp_create(struct net *net, struct socket *sock,
 	struct stp_sock *ssk;
 	int err;
 
+	printk(KERN_DEBUG "Creating socket: %p\n", sock);
+
+	/*
+	 * No support for anything other than datagrams ...
+	 * And only one protocol.
+	 */
 	if (sock->type != SOCK_DGRAM || protocol != 0)
 		return -ESOCKTNOSUPPORT;
 
+	sock->ops = &stp_ops;
 	sock->state = SS_UNCONNECTED;
 
 	sk = sk_alloc(net, PF_STP, GFP_KERNEL, &stp_proto);
 	if (!sk) {
-		printk(KERN_ALERT "Error allocating sk\n");
+		printk(KERN_ALERT STPLOG_PREFIX "Error allocating sk\n");
 		return -ENOBUFS;
 	}
 
-	sock->ops = &stp_ops;
-
-	sock_init_data(sock, sk);
-
 	ssk = (struct stp_sock*) sk;
 
+	sock_init_data(sock, sk);
+	sk->sk_destruct = stp_sock_destruct;
 	sk->sk_protocol = protocol;
+	sk->sk_backlog_rcv = sk->sk_prot->backlog_rcv;
 	sk->sk_family = PF_STP;
 
-	sk->sk_destruct = stp_sock_destruct;
 	sk_refcnt_debug_inc(sk);
+
+	//ssk->bport = 0;
 
 	return 0;
 }
-
 
 static const struct net_proto_family stp_family_ops = {
 	.family	= PF_STP,
 	.create = stp_create,
 	.owner	= THIS_MODULE,
 };
+
 
 
 static int stp_seq_show(struct seq_file *seq, void *v)
@@ -158,7 +229,6 @@ static int stp_seq_open(struct inode *inode, struct file *file)
 	return single_open_net(inode, file, stp_seq_show);
 }
 
-
 struct file_operations stp_seq_fops = {
 	.owner		= THIS_MODULE,
 	.open		= stp_seq_open,
@@ -166,8 +236,6 @@ struct file_operations stp_seq_fops = {
 	.llseek		= seq_lseek,
 	.release	= single_release_net,
 };
-
-
 
 static __net_init int stp_init_net(struct net *net)
 {
@@ -187,20 +255,20 @@ static __net_initdata struct pernet_operations stp_proc_ops = {
 	.exit = stp_exit_net,
 };
 
-
 int __init stp_init(void)
 {
 	int ret;
 
 	ret = register_pernet_subsys(&stp_proc_ops);
 	if (ret != 0) {
-		printk(KERN_ALERT "Unable to create /proc/net/ entry");
+		printk(KERN_ALERT STPLOG_PREFIX
+			"Unable to create /proc/net/ entry");
 		goto out;
 	}
 
 	ret = proto_register(&stp_proto, 0);
 	if (ret != 0) {
-		printk(KERN_ALERT "Unable to register protocol\n");
+		printk(KERN_ALERT STPLOG_PREFIX "Unable to register protocol\n");
 		goto out_clear_proc;
 	}
 

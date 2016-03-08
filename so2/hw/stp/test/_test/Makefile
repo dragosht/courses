@@ -1,5 +1,5 @@
 #CPPFLAGS = -DDEBUG -DLOG_LEVEL=LOG_DEBUG
-CFLAGS = -Wall -g -m32
+CFLAGS = -Wall -g -m32 -Wno-unused-function
 
 .PHONY: all clean
 

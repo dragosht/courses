@@ -154,15 +154,16 @@ static void test_proc_entry_inexistent_after_rmmod(void)
 
 static void test_socket(void)
 {
-	int s;
+	int s, r;
 
 	init_test();
 
 	s = socket(AF_STP, SOCK_DGRAM, 0);
-	printf("socket created: s = %d\n", s);
+	printf("stp_test: created socket: %d\n", s);
 	test(__FUNCTION__, s > 0, 5);
 
-	close(s);
+	r= close(s);
+	printf("stp_test: close: %d\n", r);
 	cleanup_test();
 }
 
@@ -1261,6 +1262,7 @@ static void (*test_fun_array[])(void) = {
 	test_proc_entry_inexistent_after_rmmod,
 	test_socket,
 	test_two_sockets,
+	/*
 	test_socket_bad_socket_type,
 	test_socket_bad_protocol,
 	test_close,
@@ -1286,6 +1288,7 @@ static void (*test_fun_array[])(void) = {
 	test_sendmsg_recvmsg_ping_pong,
 	test_send_receive,
 	test_send_receive_ping_pong,
+	*/
 };
 
 /*
@@ -1308,7 +1311,7 @@ int main(int argc, char **argv)
 	test_idx = atoi(argv[1]);
 
 	if (test_idx < 1 || test_idx >= sizeof(test_fun_array)/sizeof(test_fun_array[0])) {
-		fprintf(stderr, "Error: test index %d is out of bounds\n", test_idx);
+		//fprintf(stderr, "Error: test index %d is out of bounds\n", test_idx);
 		exit(EXIT_FAILURE);
 	}
 
