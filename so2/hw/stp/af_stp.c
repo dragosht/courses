@@ -17,7 +17,7 @@ MODULE_LICENSE("GPL");
 
 struct stp_sock {
 	struct sock	*sk;
-	__be16		bport;
+	int some_other_stuff;
 };
 
 static struct proto stp_proto = {
@@ -32,14 +32,18 @@ static int stp_release(struct socket *sock)
 	struct sock *sk = sock->sk;
 	//struct stp_sock *ssk = (struct stp_sock *) sk;
 
-	if (!sk)
-		return 0;
+	if (sk) {
+		printk("af_stp: stp_release socket: %p, sock: %p\n", sock, sk);
 
-	sock->sk = NULL;
+		synchronize_net();
+		sock_orphan(sk);
 
-	//skb_queue_purge(&sk->sk_receive_queue);
-	sk_refcnt_debug_release(sk);
-	sock_put(sk);
+		sock->sk = NULL;
+
+		skb_queue_purge(&sk->sk_receive_queue);
+		sk_refcnt_debug_release(sk);
+		sock_put(sk);
+	}
 
 	return 0;
 }
@@ -99,12 +103,42 @@ static const struct proto_ops stp_ops = {
 
 static void stp_sock_destruct(struct sock *sk)
 {
-	skb_queue_purge(&sk->sk_error_queue);
+	printk("stp_sock_destruct sock: %p\n", sk);
+
+	__skb_queue_purge(&sk->sk_receive_queue);
+	__skb_queue_purge(&sk->sk_error_queue);
+
+	//sk_mem_reclaim(sk);
+
+	WARN_ON(atomic_read(&sk->sk_rmem_alloc));
+	WARN_ON(atomic_read(&sk->sk_wmem_alloc));
+
 	if (!sock_flag(sk, SOCK_DEAD)) {
+		pr_err("Attempt to release alive stp socket %p\n", sk);
 		return;
 	}
+
+	//sk_refcnt_debug_dec(sk);
+
+	/*
+	__skb_queue_purge(&sk->sk_receive_queue);
+	__skb_queue_purge(&sk->sk_error_queue);
+
+	WARN_ON(atomic_read(&sk->sk_rmem_alloc));
+	WARN_ON(atomic_read(&sk->sk_wmem_alloc));
+
+	sk_mem_reclaim(sk);
+
+	if (!sock_flag(sk, SOCK_DEAD)) {
+		pr_err("Attempt to release alive stp socket %p\n", sk);
+		return;
+	}
+
 	sk_refcnt_debug_dec(sk);
+	sock_put(sk);
+	*/
 }
+
 
 /* Create an STP socket */
 static int stp_create(struct net *net, struct socket *sock,
@@ -112,20 +146,19 @@ static int stp_create(struct net *net, struct socket *sock,
 {
 	struct sock *sk;
 	struct stp_sock *ssk;
-	int err;
+	//int err;
 
 	if (sock->type != SOCK_DGRAM || protocol != 0)
 		return -ESOCKTNOSUPPORT;
 
 	sock->state = SS_UNCONNECTED;
+	sock->ops = &stp_ops;
 
 	sk = sk_alloc(net, PF_STP, GFP_KERNEL, &stp_proto);
 	if (!sk) {
 		printk(KERN_ALERT "Error allocating sk\n");
 		return -ENOBUFS;
 	}
-
-	sock->ops = &stp_ops;
 
 	sock_init_data(sock, sk);
 

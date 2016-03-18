@@ -154,16 +154,22 @@ static void test_proc_entry_inexistent_after_rmmod(void)
 
 static void test_socket(void)
 {
-	int s, r;
+	int s;
+	int ss;
+	int sss;
 
 	init_test();
 
 	s = socket(AF_STP, SOCK_DGRAM, 0);
-	printf("stp_test: created socket: %d\n", s);
 	test(__FUNCTION__, s > 0, 5);
 
-	r= close(s);
-	printf("stp_test: close: %d\n", r);
+	//ss = socket(AF_STP, SOCK_DGRAM, 0);
+	//sss = socket(AF_STP, SOCK_DGRAM, 0);
+
+	close(s);
+	//close(ss);
+	//close(sss);
+
 	cleanup_test();
 }
 
@@ -179,6 +185,9 @@ static void test_two_sockets(void)
 
 	s1 = socket(AF_STP, SOCK_DGRAM, 0);
 	s2 = socket(AF_STP, SOCK_DGRAM, 0);
+
+	printf("stp_test: created sockets: %d %d\n", s1, s2);
+
 	test(__FUNCTION__, s1 > 0 && s2 > 0 && s1 != s2, 2);
 
 	close(s1);
@@ -1261,8 +1270,8 @@ static void (*test_fun_array[])(void) = {
 	test_proc_entry_exists_after_insmod,
 	test_proc_entry_inexistent_after_rmmod,
 	test_socket,
-	test_two_sockets,
 	/*
+	test_two_sockets,
 	test_socket_bad_socket_type,
 	test_socket_bad_protocol,
 	test_close,
