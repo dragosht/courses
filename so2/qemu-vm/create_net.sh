@@ -1,14 +1,33 @@
 #!/bin/bash
 
-set -x
+if test $# -ne 1; then
+    echo "Usage: $0 <device>" 1>&2
+    echo " <device> must be tap0 or tap1"
+    exit 1
+fi
 
 device=$1
 
-[ $device = tap0 ] && addr=172.20.0.1/24
-[ $device = tap1 ] && addr=172.30.0.1/24
+case "$device" in
+    "tap0")
+        addr=172.20.0.1/24
+        ;;
+    "tap1")
+        addr=172.30.0.1/24
+        ;;
+    *)
+        echo "Unknown device" 1>&2
+        exit 1
+        ;;
+esac
 
-if ! ip link show dev $device &> /dev/null; then
-	sudo ip tuntap add mode tap user $USER dev $device
-	sudo ip link set dev $device up
-	sudo ip address add dev $device $addr
+# If device doesn't exist add device.
+if ! /sbin/ip link show dev "$device" > /dev/null 2>&1; then
+    sudo ip tuntap add mode tap user "$USER" dev "$device"
 fi
+
+# Reconfigure just to be sure (even if device exists).
+sudo /sbin/ip address flush dev "$device"
+sudo /sbin/ip link set dev "$device" down
+sudo /sbin/ip address add "$addr" dev "$device"
+sudo /sbin/ip link set dev "$device" up

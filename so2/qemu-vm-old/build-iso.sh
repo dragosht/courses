@@ -7,7 +7,7 @@ if ! genisoimage --version >/dev/null; then
     exit 1
 fi
 
-isolinuxbin=/home/dragosh/workspace/courses/so2/qemu-vm/isolinux.bin
+isolinuxbin=/usr/lib/syslinux/isolinux.bin
 if ! [ -f "$isolinuxbin" ]; then
     echo "can't find syslinux, aborting; please install syslinux and / or set \$isolinuxbin"
     exit 1
