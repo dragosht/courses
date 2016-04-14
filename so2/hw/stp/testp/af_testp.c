@@ -31,8 +31,8 @@ static inline struct testp_sock * testp_sk(struct sock *sk)
 }
 
 static struct proto testp_proto = {
-	.name = "testp",
 	.owner = THIS_MODULE,
+	.name = "testp",
 	.obj_size = sizeof(struct testp_sock),
 };
 
@@ -45,23 +45,28 @@ static int testp_release(struct socket *sock)
 	if (!sk)
 		return 0;
 
-	//skb_queue_purge(&sk->sk_receive_queue);
-	//__sock_put(sk);
-
 	printk(KERN_ALERT "releasing socket: %p sock: %p refcnt: %d wmem: %d rmem: %d\n",
 		sock, sk,
 		atomic_read(&sk->sk_refcnt),
 		atomic_read(&sk->sk_wmem_alloc),
 		atomic_read(&sk->sk_rmem_alloc));
 
+	/*
 	net = sock_net(sk);
 	ts = testp_sk(sk);
+
+	//preempt_disable();
+	//sock_prot_inuse_add(net, &testp_proto, -1);
+	//preempt_enable();
 
 	synchronize_net();
 	sock_orphan(sk);
 	sock->sk = NULL;
 
+	skb_queue_purge(&sk->sk_receive_queue);
 	sk_refcnt_debug_release(sk);
+	*/
+
 	sock_put(sk);
 
 	return 0;
@@ -111,8 +116,9 @@ static void testp_sock_destruct(struct sock *sk)
 		atomic_read(&sk->sk_wmem_alloc),
 		atomic_read(&sk->sk_rmem_alloc));
 
+
 	skb_queue_purge(&sk->sk_error_queue);
-	skb_queue_purge(&sk->sk_receive_queue);
+	//skb_queue_purge(&sk->sk_receive_queue);
 
 	WARN_ON(atomic_read(&sk->sk_rmem_alloc));
 	WARN_ON(atomic_read(&sk->sk_wmem_alloc));
@@ -129,7 +135,13 @@ static int testp_create(struct net *net, struct socket *sock,
 			int protocol, int kern)
 {
 	struct sock *sk;
+	struct testp_sock *ts;
 
+	sock->state = SS_UNCONNECTED;
+
+	if (sock->type != SOCK_DGRAM) {
+		return -ESOCKTNOSUPPORT;
+	}
 
 	sk = sk_alloc(net, PF_TESTP, GFP_KERNEL, &testp_proto);
 	if (!sk) {
@@ -137,7 +149,19 @@ static int testp_create(struct net *net, struct socket *sock,
 		return -ENOBUFS;
 	}
 
+	sock->ops = &testp_ops;
+
 	sock_init_data(sock, sk);
+
+	ts = testp_sk(sk);
+	sk->sk_family = PF_TESTP;
+	sk->sk_protocol = 0;
+
+	sk->sk_destruct = testp_sock_destruct;
+	//sk_refcnt_debug_inc(sk);
+
+	spin_lock_init(&ts->lock);
+
 
 	printk(KERN_ALERT "creating socket: %p sock: %p refcnt: %d wmem: %d rmem: %d\n",
 		sock, sk,
@@ -145,18 +169,9 @@ static int testp_create(struct net *net, struct socket *sock,
 		atomic_read(&sk->sk_wmem_alloc),
 		atomic_read(&sk->sk_rmem_alloc));
 
-
-	sk->sk_family = PF_TESTP;
-	sk->sk_protocol = protocol;
-	sk->sk_backlog_rcv = sk->sk_prot->backlog_rcv;
-
-	sk->sk_destruct = testp_sock_destruct;
-	sk->sk_backlog_rcv = sk->sk_prot->backlog_rcv;
-	sk_refcnt_debug_inc(sk);
-	spin_lock_init(&testp_sk(sk)->lock);
-
-	//sock->state = SS_UNCONNECTED;
-	sock->ops = &testp_ops;
+	//preempt_disable();
+	//sock_prot_inuse_add(net, &testp_proto, 1);
+	//preempt_enable();
 
 	return 0;
 }
