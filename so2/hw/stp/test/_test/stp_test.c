@@ -1275,7 +1275,6 @@ static void (*test_fun_array[])(void) = {
 	test_socket_bad_protocol,
 	test_close,
 	test_close_closed_socket,
-	/*
 	test_bind,
 	test_bind_eth0,
 	test_two_binds,
@@ -1297,7 +1296,6 @@ static void (*test_fun_array[])(void) = {
 	test_sendmsg_recvmsg_ping_pong,
 	test_send_receive,
 	test_send_receive_ping_pong,
-	*/
 };
 
 /*
