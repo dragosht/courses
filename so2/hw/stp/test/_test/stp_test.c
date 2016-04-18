@@ -1270,12 +1270,12 @@ static void (*test_fun_array[])(void) = {
 	test_proc_entry_exists_after_insmod,
 	test_proc_entry_inexistent_after_rmmod,
 	test_socket,
-	/*
 	test_two_sockets,
 	test_socket_bad_socket_type,
 	test_socket_bad_protocol,
 	test_close,
 	test_close_closed_socket,
+	/*
 	test_bind,
 	test_bind_eth0,
 	test_two_binds,
